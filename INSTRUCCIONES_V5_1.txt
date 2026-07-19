@@ -1,0 +1,11 @@
+PORTAL VILLA EL TRIGAL v5.1
+
+1. En Supabase > SQL Editor > New query, ejecuta REPARAR_ADMINISTRADOR.sql.
+   Esto es necesario si eliminaste y volviste a crear el usuario, porque cambió su UID.
+2. Sube todos estos archivos a la raíz del repositorio GitHub y reemplaza los existentes.
+3. Espera la publicación de GitHub Pages.
+4. Abre: https://villaeltrigal.github.io/Portal-Villa-El-Trigal/admin.html
+5. Usa el correo claudiog.16@hotmail.com.
+6. Si no recuerdas la contraseña, escribe el correo y pulsa “Olvidé mi contraseña”.
+
+IMPORTANTE: Nunca publiques una clave sb_secret_. La clave incluida es la Publishable Key pública.
