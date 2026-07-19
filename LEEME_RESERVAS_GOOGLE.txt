@@ -1,0 +1,19 @@
+PORTAL VECINAL VILLA EL TRIGAL — RESERVAS CON GOOGLE SHEETS
+
+Esta versión ya está conectada a la hoja publicada de reservas.
+
+Para agregar una reserva:
+1. Abre la hoja de Google Sheets.
+2. Agrega una fila con las columnas Fecha, Estado y Observación.
+3. Ejemplo: 20/09/2026 | Reservado | Cumpleaños.
+4. Google guarda automáticamente.
+5. Al recargar el portal, la fecha aparecerá en rojo.
+
+No debes ingresar los martes ni jueves: el portal los marca automáticamente como Zumba.
+Si escribes una reserva en un martes o jueves, la reserva de la hoja tiene prioridad y se mostrará en rojo.
+
+Estados admitidos: Reservado, Disponible y Zumba.
+Formatos de fecha admitidos: DD/MM/AAAA o AAAA-MM-DD.
+
+PUBLICACIÓN EN NETLIFY
+Sube esta carpeta o el archivo ZIP completo mediante Deploys > Deploy manually.
