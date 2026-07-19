@@ -1,0 +1,14 @@
+CORRECCIÓN v5.1.3 — TÍTULOS DE NOTICIAS Y GALERÍA
+
+1. En GitHub abre el repositorio Portal-Villa-El-Trigal.
+2. Pulsa Add file > Upload files.
+3. Sube index.html y reemplaza el archivo existente.
+4. Confirma con Commit changes.
+5. Espera 1–2 minutos.
+6. Abre el portal y presiona Ctrl + F5.
+
+Cambios:
+- "Pascua de Resurrección 2026" pasa a "Noticias y novedades".
+- "Galería Pascua 2026" pasa a "Galería comunitaria".
+
+Los títulos individuales de cada noticia y fotografía seguirán siendo los que escribas en el panel administrador.
