@@ -42,3 +42,13 @@ footer a{color:#c9d5d9}
 @media(max-width:850px){.service-grid,.improve-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.service-card{padding:23px}}
 @media(max-width:650px){.shortcuts{grid-template-columns:1fr 1fr}.form-panel{padding:20px}.improve-form{padding:21px}}
 @media(max-width:430px){.shortcuts{grid-template-columns:1fr}.footer-inner{align-items:flex-start}.footer-inner img{width:55px;height:55px}}
+
+/* Pizarrón comunitario y administración v4.0 */
+.noticeboard-section{background:linear-gradient(180deg,#fff8e8 0%,#fff 100%)}
+.announcements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.announcement-card{position:relative;background:#fff;border:1px solid #eadfca;border-radius:22px;padding:26px;box-shadow:0 12px 30px rgba(91,67,24,.08);border-top:5px solid #145e75}
+.announcement-card[data-category="Urgente"]{border-top-color:#bd2f2f}.announcement-card[data-category="Reunión"]{border-top-color:#145e75}.announcement-card[data-category="Actividad"]{border-top-color:#1f8a5b}.announcement-card[data-category="Información"]{border-top-color:#c98228}
+.announcement-type{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef5f7;color:#145e75;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.announcement-card h3{color:#173f4b;font-size:1.35rem;margin:.7em 0 .45em}.announcement-card p{color:#5d7178}.announcement-meta{display:grid;gap:7px;margin:18px 0 0;padding-top:16px;border-top:1px solid #edf0ee;font-size:.92rem;color:#435d66}.announcement-empty{grid-column:1/-1;text-align:center;border-top-color:#d5b46b}
+.admin-footer-link{display:inline-block;margin-top:8px;font-size:.86rem}
+@media(max-width:900px){.announcements-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.announcements-grid{grid-template-columns:1fr}}

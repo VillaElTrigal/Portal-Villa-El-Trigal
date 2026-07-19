@@ -18,6 +18,7 @@
       <button class="menu-button" aria-label="Abrir menú" onclick="document.body.classList.toggle('menu-open')">☰</button>
       <nav>
         <a href="#inicio">Inicio</a>
+        <a href="#anuncios">Pizarrón</a>
         <a href="#noticias">Noticias</a>
         <a href="#actividades">Actividades</a>
         <a href="#directiva">Directiva</a>
@@ -38,11 +39,6 @@
         <p class="eyebrow light">Junta de Vecinos</p>
         <h1>Villa El Trigal</h1>
         <p class="hero-copy">Información, trámites y servicios comunitarios en un solo lugar, de manera simple y cercana.</p>
-        <div class="actions">
-          <a class="button primary" href="#tramites">Realizar un trámite</a>
-          <a class="button white" href="#arriendo">Reservar la sede</a>
-          <a class="button outline-light" href="https://wa.me/56974596793" target="_blank" rel="noopener">Contactar por WhatsApp</a>
-        </div>
       </div>
     </section>
 
@@ -50,9 +46,26 @@
       <a href="#tramites"><span>📄</span><strong>Solicitar certificado</strong><small>Certificado de residencia</small></a>
       <a href="#arriendo"><span>🏛️</span><strong>Reservar la sede</strong><small>Revisa fechas disponibles</small></a>
       <a href="#actividades"><span>📅</span><strong>Ver actividades</strong><small>Eventos de la comunidad</small></a>
-      <a href="#noticias"><span>📢</span><strong>Noticias y avisos</strong><small>Información importante</small></a>
+      <a href="#anuncios"><span>📌</span><strong>Pizarrón de anuncios</strong><small>Citaciones e información</small></a>
       <a href="#mejorar"><span>❤️</span><strong>Ayúdanos a mejorar</strong><small>Sugerencias y reportes</small></a>
       <a href="#cuotas"><span>💳</span><strong>Pagar cuota</strong><small>Valor mensual: $2.000</small></a>
+    </section>
+
+    <section class="section noticeboard-section" id="anuncios">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="eyebrow">Información para la comunidad</p>
+          <h2>📌 Pizarrón de anuncios</h2>
+          <p class="section-intro">Citaciones, avisos importantes y novedades publicadas por la Junta de Vecinos.</p>
+        </div>
+        <div id="announcements-grid" class="announcements-grid" aria-live="polite">
+          <article class="announcement-card announcement-empty">
+            <span class="announcement-type">Información</span>
+            <h3>Próximamente publicaremos nuevos avisos</h3>
+            <p>Las citaciones y anuncios vigentes aparecerán en este espacio.</p>
+          </article>
+        </div>
+      </div>
     </section>
 
     <section class="section soft" id="noticias">
@@ -381,7 +394,7 @@
       <div>
         <strong>Junta de Vecinos Villa El Trigal</strong>
         <p>Construyendo juntos un mejor barrio.</p>
-        <small>Portal Comunitario Villa El Trigal · Versión 2.2 · Julio 2026 · © Junta de Vecinos Villa El Trigal</small>
+        <small>Portal Comunitario Villa El Trigal · Versión 4.0 Base · Julio 2026 · © Junta de Vecinos Villa El Trigal<br><a class="admin-footer-link" href="admin.html">Acceso administrador</a></small>
       </div>
     </div>
   </footer>
@@ -429,6 +442,9 @@
     });
 
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="portal-config.js"></script>
+  <script src="portal-content.js"></script>
   <script src="reservas.js"></script>
 </body>
 </html>
