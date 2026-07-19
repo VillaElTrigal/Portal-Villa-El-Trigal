@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420">
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1f8a5b"/>
+    <stop offset="100%" stop-color="#145e75"/>
+  </linearGradient>
+</defs>
+<circle cx="210" cy="210" r="195" fill="url(#g)"/>
+<circle cx="210" cy="210" r="165" fill="#ffffff"/>
+<path d="M112 220 L210 138 L308 220" fill="none" stroke="#145e75" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="144" y="210" width="132" height="104" rx="12" fill="#1f8a5b"/>
+<rect x="193" y="247" width="34" height="67" rx="6" fill="#ffffff"/>
+<path d="M78 286 C128 250 158 337 210 292 C261 247 294 329 342 286" fill="none" stroke="#f2a65a" stroke-width="18" stroke-linecap="round"/>
+<text x="210" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="#145e75">JJ.VV.</text>
+<text x="210" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="25" fill="#145e75">VILLA EL TRIGAL</text>
+</svg>
