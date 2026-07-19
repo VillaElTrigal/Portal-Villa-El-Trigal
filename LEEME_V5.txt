@@ -1,0 +1,12 @@
+PORTAL VILLA EL TRIGAL — VERSIÓN 5.0 ADMINISTRABLE
+
+1. Sube todos estos archivos al repositorio de GitHub Pages y reemplaza los existentes.
+2. Espera unos minutos a que GitHub Pages publique los cambios.
+3. Abre /admin.html en la dirección del portal.
+4. Ingresa con el correo administrador creado en Supabase y su contraseña.
+5. Desde el panel podrás publicar anuncios, noticias, actividades y fotografías.
+
+IMPORTANTE:
+- La clave incluida en portal-config.js es la clave pública de Supabase. Es normal que esté visible.
+- Nunca subas una clave sb_secret_ ni service_role.
+- Las reglas RLS creadas en Supabase son las que protegen las publicaciones.
