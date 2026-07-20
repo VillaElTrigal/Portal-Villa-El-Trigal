@@ -1,0 +1,6 @@
+1. Ejecuta REPARAR_NOTICIAS_V6_1_2.sql en Supabase.
+2. Sube a GitHub todos los archivos de esta carpeta, reemplazando los actuales.
+3. Espera 1 a 3 minutos y abre admin.html?v=612.
+4. Presiona Ctrl + F5.
+
+La noticia ahora puede publicarse sin fotografía. Si ocurre un error, el panel mostrará el detalle exacto en pantalla.

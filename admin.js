@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<
 const state={user:null,admin:null,currentImages:{noticias:[],galeria:[],actividades:[]}};
 const defs={
  anuncios:{title:'Anuncios',fields:[['titulo','Título','text',1],['categoria','Categoría','select',0,['reunion','urgente','actividad','informacion','seguridad','servicio']],['descripcion','Descripción','textarea',1],['fecha_evento','Fecha del evento','date'],['hora_evento','Hora','time'],['lugar','Lugar','text'],['fecha_vencimiento','Vence el','datetime-local'],['destacado','Destacado','checkbox'],['publicado','Publicado','checkbox']]},
- noticias:{title:'Noticias',fields:[['titulo','Título','text',1],['contenido','Texto de la noticia','textarea',1],['fecha_publicacion','Fecha','date'],['imagenes','Fotografías','multiimage'],['destacado','Destacada','checkbox'],['publicado','Publicada','checkbox']]},
+ noticias:{title:'Noticias',fields:[['titulo','Título','text',1],['contenido','Texto de la noticia','textarea',1],['fecha_publicacion','Fecha','date'],['imagenes','Fotografías (opcional, máximo 5)','multiimage'],['destacado','Destacada','checkbox'],['publicado','Publicada','checkbox']]},
  actividades:{title:'Actividades realizadas',fields:[['titulo','Nombre de la actividad','text',1],['descripcion','¿Qué se realizó?','textarea',1],['fecha','Fecha de realización','date',1],['imagen_url','Fotografía','image',1],['publicado','Publicada','checkbox']]},
  galeria:{title:'Galería',fields:[['titulo','Título del álbum','text',1],['descripcion','Descripción breve','textarea'],['fecha','Fecha de la actividad','date'],['imagenes','Fotografías','multiimage',1],['publicado','Publicado','checkbox']]}
 };
@@ -22,15 +22,71 @@ function renderPreviews(form,table){const box=form.querySelector('.multi-preview
 function bindMultiInputs(){document.querySelectorAll('input[type=file][multiple]').forEach(input=>input.onchange=()=>{const form=input.form,table=form.dataset.table;const existing=state.currentImages[table]||[];const selected=[...input.files];if(existing.length+selected.length>5){message('Solo puedes usar hasta 5 imágenes por publicación.',true);input.value='';return}selected.forEach(file=>existing.push(URL.createObjectURL(file)));state.currentImages[table]=existing;renderPreviews(form,table)})}
 function editRow(table,row){const form=document.querySelector(`form[data-table="${table}"]`);form.id.value=row.id;state.currentImages[table]=normalizeImages(row);for(const f of defs[table].fields){const[n,,t]=f;const input=form.elements[n];if(!input)continue;if(t==='checkbox')input.checked=!!row[n];else if(t==='image'){input.required=false;input.closest('label').querySelector('.current-image').textContent=row[n]?'Imagen actual cargada':''}else if(t==='multiimage'){input.required=false;renderPreviews(form,table)}else if(t==='datetime-local'&&row[n])input.value=row[n].slice(0,16);else input.value=row[n]??''}form.closest('.panel').querySelector('h3').textContent='Editar publicación';form.querySelector('.cancel').hidden=false;form.scrollIntoView({behavior:'smooth'})}
 function resetForm(form){const table=form.dataset.table;form.reset();form.id.value='';state.currentImages[table]=[];renderPreviews(form,table);form.closest('.panel').querySelector('h3').textContent='Nueva publicación';form.querySelector('.cancel').hidden=true;form.querySelectorAll('input[type=file]').forEach(i=>i.required=!!defs[table].fields.find(f=>f[0]===i.name)?.[3])}
-async function saveForm(form){const table=form.dataset.table;const fd=new FormData(form);const data={};for(const[n,,t]of defs[table].fields){if(t==='checkbox')data[n]=form.elements[n].checked;else if(t==='image'){const file=form.elements[n].files[0];if(file)data[n]=await upload(file,table)}else if(t==='multiimage'){}else data[n]=fd.get(n)||null}
-if(defs[table].fields.some(f=>f[2]==='multiimage')){const input=form.elements.imagenes;const old=normalizeBlobUrls(state.currentImages[table]);const files=[...input.files];const uploaded=files.length?await uploadMany(files,table):[];data.imagenes=[...old,...uploaded].slice(0,5);data.imagen_url=data.imagenes[0]||null;if(!data.imagenes.length)throw new Error('Debes agregar al menos una fotografía.');}
-// Compatibilidad con la estructura original de Supabase.
-if(table==='noticias'){
-  data.resumen=data.contenido;
-  data.categoria='Comunidad';
-  if(!data.fecha_publicacion)data.fecha_publicacion=new Date().toISOString().slice(0,10);
+async function saveForm(form){
+  const table=form.dataset.table;
+  const button=form.querySelector('button[type="submit"]');
+  const originalText=button.textContent;
+  button.disabled=true;
+  button.textContent='Guardando…';
+  try{
+    const fd=new FormData(form);
+    const data={};
+    for(const[n,,t]of defs[table].fields){
+      if(t==='checkbox')data[n]=form.elements[n].checked;
+      else if(t==='image'){
+        const file=form.elements[n].files[0];
+        if(file)data[n]=await upload(file,table);
+      }else if(t==='multiimage'){
+        // Las imágenes se procesan más abajo.
+      }else data[n]=fd.get(n)||null;
+    }
+
+    if(defs[table].fields.some(f=>f[2]==='multiimage')){
+      const input=form.elements.imagenes;
+      const old=normalizeBlobUrls(state.currentImages[table]);
+      const files=[...input.files].slice(0,5-old.length);
+      const uploaded=files.length?await uploadMany(files,table):[];
+      data.imagenes=[...old,...uploaded].slice(0,5);
+      data.imagen_url=data.imagenes[0]||null;
+      if(table==='galeria'&&!data.imagenes.length)throw new Error('Debes agregar al menos una fotografía al álbum.');
+    }
+
+    if(table==='noticias'){
+      data.titulo=(data.titulo||'').trim();
+      data.contenido=(data.contenido||'').trim();
+      if(!data.titulo||!data.contenido)throw new Error('Escribe el título y el texto de la noticia.');
+      data.resumen=data.contenido.slice(0,500);
+      data.categoria='Comunidad';
+      data.fecha_publicacion=data.fecha_publicacion||new Date().toISOString().slice(0,10);
+      data.publicado=Boolean(data.publicado);
+      data.destacado=Boolean(data.destacado);
+    }
+
+    data.creado_por=state.user.id;
+    const id=form.id.value;
+    let result;
+    if(id){
+      delete data.creado_por;
+      if(!data.imagen_url&&table==='actividades')delete data.imagen_url;
+      result=await sb.from(table).update(data).eq('id',id).select('id').single();
+    }else{
+      result=await sb.from(table).insert(data).select('id').single();
+    }
+    if(result.error)throw result.error;
+    message(table==='noticias'?'Noticia publicada correctamente.':'Contenido guardado correctamente.');
+    resetForm(form);
+    await loadTable(table);
+  }catch(err){
+    const detail=err?.message||String(err);
+    console.error('Error guardando',table,err);
+    message('No se pudo guardar: '+detail,true);
+    alert('No se pudo guardar la publicación.\n\nDetalle: '+detail);
+    throw err;
+  }finally{
+    button.disabled=false;
+    button.textContent=originalText;
+  }
 }
-data.creado_por=state.user.id;const id=form.id.value;let q;if(id){delete data.creado_por;if(!data.imagen_url&&table==='actividades')delete data.imagen_url;q=sb.from(table).update(data).eq('id',id)}else q=sb.from(table).insert(data);const{error}=await q;if(error)throw error;message('Contenido guardado correctamente.');resetForm(form);await loadTable(table)}
 function normalizeBlobUrls(arr){return(arr||[]).filter(x=>!String(x).startsWith('blob:'))}
 async function deleteRow(table,id){if(!confirm('¿Eliminar esta publicación?'))return;const{error}=await sb.from(table).delete().eq('id',id);if(error)return message(error.message,true);message('Publicación eliminada.');loadTable(table)}
 async function loadConfig(){const{data,error}=await sb.from('configuracion_portal').select('*').eq('id',1).maybeSingle();if(error)return message(error.message,true);if(!data)return;const f=$('config-form');['titulo_portada','texto_portada','whatsapp','telefono','correo','direccion','periodo_directiva'].forEach(k=>f.elements[k].value=data[k]||'');f.dataset.portada=data.portada_url||'';$('portada-actual').textContent=data.portada_url?'Foto de portada actual cargada':''}
