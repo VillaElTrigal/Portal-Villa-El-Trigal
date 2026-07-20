@@ -1,0 +1,13 @@
+PORTAL VILLA EL TRIGAL v6.1.1
+
+CAMBIOS
+- Corrige la publicación de noticias y mantiene compatibilidad con la tabla antigua.
+- Actividades simplificadas: nombre, descripción de lo realizado, fecha y una fotografía.
+- Agrega teléfono opcional a cada integrante de la directiva.
+- El teléfono de la directiva se muestra como enlace llamable en el portal.
+
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_V6_1_1.sql en Supabase.
+2. Subir a GitHub todos los archivos de esta carpeta, reemplazando los existentes.
+3. Esperar 1 a 3 minutos y abrir admin.html?v=611.
+4. Presionar Ctrl + F5.
