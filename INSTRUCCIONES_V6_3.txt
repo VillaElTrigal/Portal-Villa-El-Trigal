@@ -1,0 +1,20 @@
+PORTAL VILLA EL TRIGAL v6.3 — CORRECCIÓN DEL MENÚ POPUP
+
+Supabase ya está configurado. No ejecutes nuevamente el SQL.
+
+En la RAÍZ del repositorio de GitHub reemplaza estos archivos:
+- admin.html
+- admin.js
+- admin.css
+- index.html
+- popup.css
+- portal-popup.js
+
+IMPORTANTE: deben quedar al mismo nivel que index.html, no dentro de una carpeta nueva.
+
+Después del commit abre:
+https://villaeltrigal.github.io/Portal-Villa-El-Trigal/admin.html?v=630
+
+Presiona Ctrl + F5.
+
+Confirmación visual: bajo “Villa El Trigal” debe decir “Panel de administración v6.3” y en el menú debe aparecer “🚨 Aviso emergente”.
