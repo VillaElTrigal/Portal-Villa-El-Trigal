@@ -1,0 +1,9 @@
+PORTAL VILLA EL TRIGAL v6.2 - POPUP ADMINISTRABLE
+
+1. En Supabase > SQL Editor, ejecuta completo: ACTUALIZAR_SUPABASE_V6_2_POPUP.sql
+2. En GitHub reemplaza todos los archivos del portal por los incluidos en esta carpeta.
+3. Espera 1 a 2 minutos y abre el portal con ?v=620. Luego presiona Ctrl + F5.
+4. Ingresa al panel administrador y abre “Aviso emergente”.
+5. Crea el aviso, revisa “Vista previa” y guárdalo activo.
+
+El popup puede incluir imagen, vigencia automática, tipo de aviso, enlace y opción de mostrar una sola vez por dispositivo. Solo un aviso puede quedar activo a la vez.
