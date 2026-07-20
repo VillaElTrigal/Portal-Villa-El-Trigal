@@ -1,7 +1,14 @@
 (() => {
 const cfg=window.PORTAL_CONFIG||{}; if(!window.supabase||!cfg.supabaseUrl)return; const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const fmt=d=>d?new Intl.DateTimeFormat('es-CL',{day:'2-digit',month:'long',year:'numeric'}).format(new Date(d+'T12:00:00')):'';
+const fmt=d=>{
+  if(!d)return '';
+  const raw=String(d).trim();
+  const dateOnly=/^\d{4}-\d{2}-\d{2}$/.test(raw);
+  const parsed=new Date(dateOnly?`${raw}T12:00:00`:raw);
+  if(Number.isNaN(parsed.getTime()))return raw.slice(0,10);
+  return new Intl.DateTimeFormat('es-CL',{day:'2-digit',month:'long',year:'numeric'}).format(parsed);
+};
 const imgs=x=>Array.isArray(x.imagenes)&&x.imagenes.length?x.imagenes.filter(Boolean):(x.imagen_url?[x.imagen_url]:[]);
 async function get(table,order='creado_en'){const{data,error}=await sb.from(table).select('*').eq('publicado',true).order(order,{ascending:false,nullsFirst:false});if(error){console.warn(table,error);return[]}return data||[]}
 function photoGrid(images,title){const a=images.slice(0,5);if(!a.length)return'';return `<div class="publication-photos photos-${a.length}">${a.map((src,i)=>`<button type="button" onclick="openLightbox('${esc(src)}')" aria-label="Abrir foto ${i+1} de ${esc(title)}"><img src="${esc(src)}" alt="${esc(title)}"></button>`).join('')}</div>`}
@@ -12,5 +19,10 @@ async function loadGaleria(){const rows=await get('galeria','fecha');const el=do
 async function loadDocuments(){const{data,error}=await sb.from('documentos').select('*').eq('es_publico',true).eq('publicado',true).order('fecha_documento',{ascending:false,nullsFirst:false});const el=document.getElementById('public-documents');if(!el||error||!data?.length)return;if(error){console.warn('documentos',error);return}const icon=m=>m?.includes('pdf')?'📕':m?.includes('word')||m?.includes('document')?'📘':m?.includes('sheet')||m?.includes('excel')?'📗':'📄';el.innerHTML=data.map(x=>`<article class="document-card"><span class="document-icon">${icon(x.mime_type)}</span><div><span class="badge">${esc(x.categoria||'Documento')}</span><h3>${esc(x.titulo)}</h3>${x.descripcion?`<p>${esc(x.descripcion)}</p>`:''}${x.fecha_documento?`<small>${fmt(x.fecha_documento)}</small>`:''}<a class="button secondary document-download" href="${esc(x.archivo_url)}" target="_blank" rel="noopener">Ver o descargar</a></div></article>`).join('')}
 async function loadConfig(){const{data,error}=await sb.from('configuracion_portal').select('*').eq('id',1).maybeSingle();if(error||!data)return;const hero=document.querySelector('[data-dynamic-hero]');if(data.portada_url)hero.style.backgroundImage=`url("${data.portada_url.replace(/"/g,'')}")`;document.getElementById('hero-title').textContent=data.titulo_portada||'Villa El Trigal';document.getElementById('hero-copy').textContent=data.texto_portada||'';document.getElementById('contact-phone').textContent=data.telefono||'';document.getElementById('contact-email').textContent=data.correo||'';document.getElementById('contact-address').textContent=data.direccion||'';document.getElementById('board-period').textContent=data.periodo_directiva||'';const wa=String(data.whatsapp||'').replace(/\D/g,'');if(wa){document.getElementById('contact-whatsapp-link').href=`https://wa.me/${wa}`;document.getElementById('whatsapp-float').href=`https://wa.me/${wa}`;window.PORTAL_WHATSAPP=wa}}
 async function loadBoard(){const{data,error}=await sb.from('directiva').select('*').eq('activo',true).order('orden',{ascending:true});if(error||!data?.length)return;const el=document.getElementById('dynamic-board');el.innerHTML=data.map((x,i)=>`<article class="board-card ${i<3?'featured-member':''}"><div class="member-icon">👤</div><span class="role">${esc(x.cargo)}</span><h3>${esc(x.nombre)}</h3>${x.descripcion?`<p>${esc(x.descripcion)}</p>`:''}${x.telefono?`<p class="board-phone"><a href="tel:${esc(String(x.telefono).replace(/[^+\d]/g,''))}">📞 ${esc(x.telefono)}</a></p>`:''}</article>`).join('')}
-Promise.all([loadAnuncios(),loadNoticias(),loadActividades(),loadGaleria(),loadDocuments(),loadConfig(),loadBoard()]);
+Promise.allSettled([
+  loadAnuncios(),loadNoticias(),loadActividades(),loadGaleria(),
+  loadDocuments(),loadConfig(),loadBoard()
+]).then(results=>results.forEach((result,index)=>{
+  if(result.status==='rejected')console.error('Error cargando módulo del portal',index,result.reason);
+}));
 })();
