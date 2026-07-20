@@ -1,0 +1,8 @@
+CORRECCIÓN v6.1.5
+
+Reemplazar en GitHub solamente:
+- portal-content.js
+- index.html
+
+No ejecutar SQL en Supabase.
+La corrección evita que las fechas retrocedan un día por la zona horaria.
