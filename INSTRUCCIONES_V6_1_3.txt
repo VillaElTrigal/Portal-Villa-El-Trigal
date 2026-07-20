@@ -1,0 +1,10 @@
+PORTAL VILLA EL TRIGAL v6.1.3
+
+Correcciones:
+- Publicación de noticias con función dedicada y mensajes claros.
+- Fechas de noticias normalizadas para el campo calendario.
+- Nombre de la Junta de Vecinos legible junto al logo.
+
+No requiere ejecutar SQL adicional.
+Suba todos los archivos de esta carpeta a la raíz de GitHub y reemplace los existentes.
+Luego abra admin.html?v=613 y presione Ctrl+F5.

@@ -20,7 +20,7 @@ async function loadTable(table){const order=table==='actividades'?'fecha':table=
 function renderList(table,rows){const el=$(`list-${table}`);if(!rows.length){el.innerHTML='<div class="panel empty">Todavía no hay publicaciones.</div>';return}el.innerHTML=rows.map(x=>{const imgs=normalizeImages(x);return `<article class="item"><div>${imgs[0]?`<img class="thumb" src="${esc(imgs[0])}" alt="">`:''}<h3>${esc(x.titulo||'Sin título')}</h3><p>${esc(x.descripcion||x.contenido||'')}</p>${imgs.length?`<div class="item-meta">${imgs.length} foto${imgs.length===1?'':'s'}</div>`:''}<div class="item-meta">${x.publicado===false?'Borrador':'Publicado'}</div></div><div class="actions"><button class="button secondary" data-edit="${x.id}">Editar</button><button class="button danger" data-delete="${x.id}">Eliminar</button></div></article>`}).join('');el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editRow(table,rows.find(r=>r.id===b.dataset.edit)));el.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteRow(table,b.dataset.delete))}
 function renderPreviews(form,table){const box=form.querySelector('.multi-preview');if(!box)return;const imgs=state.currentImages[table]||[];box.innerHTML=imgs.map((src,i)=>`<figure><img src="${esc(src)}" alt=""><button type="button" data-remove="${i}" aria-label="Quitar imagen">×</button></figure>`).join('');const count=form.querySelector('.image-count');if(count)count.textContent=`${imgs.length} de 5`;box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{imgs.splice(Number(b.dataset.remove),1);renderPreviews(form,table)})}
 function bindMultiInputs(){document.querySelectorAll('input[type=file][multiple]').forEach(input=>input.onchange=()=>{const form=input.form,table=form.dataset.table;const existing=state.currentImages[table]||[];const selected=[...input.files];if(existing.length+selected.length>5){message('Solo puedes usar hasta 5 imágenes por publicación.',true);input.value='';return}selected.forEach(file=>existing.push(URL.createObjectURL(file)));state.currentImages[table]=existing;renderPreviews(form,table)})}
-function editRow(table,row){const form=document.querySelector(`form[data-table="${table}"]`);form.id.value=row.id;state.currentImages[table]=normalizeImages(row);for(const f of defs[table].fields){const[n,,t]=f;const input=form.elements[n];if(!input)continue;if(t==='checkbox')input.checked=!!row[n];else if(t==='image'){input.required=false;input.closest('label').querySelector('.current-image').textContent=row[n]?'Imagen actual cargada':''}else if(t==='multiimage'){input.required=false;renderPreviews(form,table)}else if(t==='datetime-local'&&row[n])input.value=row[n].slice(0,16);else input.value=row[n]??''}form.closest('.panel').querySelector('h3').textContent='Editar publicación';form.querySelector('.cancel').hidden=false;form.scrollIntoView({behavior:'smooth'})}
+function editRow(table,row){const form=document.querySelector(`form[data-table="${table}"]`);form.id.value=row.id;state.currentImages[table]=normalizeImages(row);for(const f of defs[table].fields){const[n,,t]=f;const input=form.elements[n];if(!input)continue;if(t==='checkbox')input.checked=!!row[n];else if(t==='image'){input.required=false;input.closest('label').querySelector('.current-image').textContent=row[n]?'Imagen actual cargada':''}else if(t==='multiimage'){input.required=false;renderPreviews(form,table)}else if(t==='date'&&row[n])input.value=String(row[n]).slice(0,10);else if(t==='datetime-local'&&row[n])input.value=String(row[n]).slice(0,16);else input.value=row[n]??''}form.closest('.panel').querySelector('h3').textContent='Editar publicación';form.querySelector('.cancel').hidden=false;form.scrollIntoView({behavior:'smooth'})}
 function resetForm(form){const table=form.dataset.table;form.reset();form.id.value='';state.currentImages[table]=[];renderPreviews(form,table);form.closest('.panel').querySelector('h3').textContent='Nueva publicación';form.querySelector('.cancel').hidden=true;form.querySelectorAll('input[type=file]').forEach(i=>i.required=!!defs[table].fields.find(f=>f[0]===i.name)?.[3])}
 async function saveForm(form){
   const table=form.dataset.table;
@@ -28,7 +28,49 @@ async function saveForm(form){
   const originalText=button.textContent;
   button.disabled=true;
   button.textContent='Guardando…';
+
   try{
+    /* Noticias usa una ruta dedicada para evitar incompatibilidades con campos antiguos. */
+    if(table==='noticias'){
+      const titulo=form.elements.titulo.value.trim();
+      const contenido=form.elements.contenido.value.trim();
+      if(!titulo||!contenido)throw new Error('Escribe el título y el texto de la noticia.');
+
+      const existing=normalizeBlobUrls(state.currentImages.noticias);
+      const files=[...(form.elements.imagenes?.files||[])].slice(0,Math.max(0,5-existing.length));
+      const uploaded=files.length?await uploadMany(files,'noticias'):[];
+      const imagenes=[...existing,...uploaded].slice(0,5);
+      const fecha=form.elements.fecha_publicacion.value || new Date().toISOString().slice(0,10);
+
+      const payload={
+        titulo,
+        resumen:contenido.slice(0,500),
+        contenido,
+        categoria:'Comunidad',
+        imagen_url:imagenes[0]||null,
+        imagenes,
+        publicado:form.elements.publicado.checked,
+        destacado:form.elements.destacado.checked,
+        fecha_publicacion:fecha,
+        creado_por:state.user.id
+      };
+
+      const id=form.elements.id.value;
+      let result;
+      if(id){
+        delete payload.creado_por;
+        result=await sb.from('noticias').update(payload).eq('id',id).select('*').single();
+      }else{
+        result=await sb.from('noticias').insert([payload]).select('*').single();
+      }
+      if(result.error)throw result.error;
+      console.info('Noticia guardada correctamente',result.data);
+      message(id?'Noticia actualizada correctamente.':'Noticia publicada correctamente.');
+      resetForm(form);
+      await loadTable('noticias');
+      return;
+    }
+
     const fd=new FormData(form);
     const data={};
     for(const[n,,t]of defs[table].fields){
@@ -51,29 +93,18 @@ async function saveForm(form){
       if(table==='galeria'&&!data.imagenes.length)throw new Error('Debes agregar al menos una fotografía al álbum.');
     }
 
-    if(table==='noticias'){
-      data.titulo=(data.titulo||'').trim();
-      data.contenido=(data.contenido||'').trim();
-      if(!data.titulo||!data.contenido)throw new Error('Escribe el título y el texto de la noticia.');
-      data.resumen=data.contenido.slice(0,500);
-      data.categoria='Comunidad';
-      data.fecha_publicacion=data.fecha_publicacion||new Date().toISOString().slice(0,10);
-      data.publicado=Boolean(data.publicado);
-      data.destacado=Boolean(data.destacado);
-    }
-
     data.creado_por=state.user.id;
-    const id=form.id.value;
+    const id=form.elements.id.value;
     let result;
     if(id){
       delete data.creado_por;
       if(!data.imagen_url&&table==='actividades')delete data.imagen_url;
       result=await sb.from(table).update(data).eq('id',id).select('id').single();
     }else{
-      result=await sb.from(table).insert(data).select('id').single();
+      result=await sb.from(table).insert([data]).select('id').single();
     }
     if(result.error)throw result.error;
-    message(table==='noticias'?'Noticia publicada correctamente.':'Contenido guardado correctamente.');
+    message('Contenido guardado correctamente.');
     resetForm(form);
     await loadTable(table);
   }catch(err){
@@ -81,7 +112,6 @@ async function saveForm(form){
     console.error('Error guardando',table,err);
     message('No se pudo guardar: '+detail,true);
     alert('No se pudo guardar la publicación.\n\nDetalle: '+detail);
-    throw err;
   }finally{
     button.disabled=false;
     button.textContent=originalText;
