@@ -1,0 +1,8 @@
+PORTAL VILLA EL TRIGAL v6.1
+
+1. En Supabase > SQL Editor > New query, pega y ejecuta SOLO el contenido de ACTUALIZAR_SUPABASE_V6_1.sql.
+2. Luego sube a GitHub todos los archivos y carpetas de este paquete, reemplazando los existentes.
+3. Espera 1 a 3 minutos y abre admin.html?v=610. Presiona Ctrl+F5.
+
+Incluye: portada y contacto editables, directiva editable, noticias y galería con hasta 5 fotos, y documentos públicos/privados administrables.
+Los documentos privados no aparecen en el portal público y se guardan en un bucket privado.

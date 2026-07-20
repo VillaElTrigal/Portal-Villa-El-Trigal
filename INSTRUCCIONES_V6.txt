@@ -1,0 +1,21 @@
+PORTAL VILLA EL TRIGAL v6.0
+
+NOVEDADES
+- Noticias simplificadas: título, texto, fecha y hasta 5 fotos.
+- Galería por álbum: título, descripción, fecha y hasta 5 fotos.
+- Las fotos se ajustan automáticamente en computador y celular.
+- Nueva sección "Datos del portal": permite cambiar portada, título, texto, WhatsApp, teléfono, correo, dirección y período de directiva.
+- Nueva sección "Directiva y suplentes": permite agregar, editar, ocultar, ordenar o eliminar integrantes.
+
+INSTALACIÓN
+1. Antes de subir los archivos a GitHub, abre Supabase > SQL Editor.
+2. Copia y ejecuta completo el archivo ACTUALIZAR_SUPABASE_V6.sql.
+3. Cuando aparezca "Actualización v6.0 completada", sube a GitHub todos los archivos y carpetas de este paquete, reemplazando los existentes.
+4. Espera 1 a 3 minutos.
+5. Abre admin.html?v=600 y presiona Ctrl+F5.
+6. Revisa primero "Datos del portal" y luego "Directiva y suplentes".
+
+IMPORTANTE
+- No borres portal-config.js: contiene la conexión pública con Supabase.
+- Esta actualización conserva publicaciones e imágenes anteriores.
+- El máximo es 5 fotos por noticia o álbum.

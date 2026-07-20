@@ -23,6 +23,7 @@
         <a href="#actividades">Actividades</a>
         <a href="#directiva">Directiva</a>
         <a href="#galeria">Galería</a>
+        <a href="#documentos">Documentos</a>
         <a href="#tramites">Trámites</a>
         <a href="#arriendo">Reserva de sede</a>
         <a href="#cuotas">Cuotas</a>
@@ -33,12 +34,12 @@
   </header>
 
   <main>
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" data-dynamic-hero>
       <div class="hero-overlay"></div>
       <div class="container hero-content">
         <p class="eyebrow light">Junta de Vecinos</p>
-        <h1>Villa El Trigal</h1>
-        <p class="hero-copy">Información, trámites y servicios comunitarios en un solo lugar, de manera simple y cercana.</p>
+        <h1 id="hero-title">Villa El Trigal</h1>
+        <p class="hero-copy" id="hero-copy">Información, trámites y servicios comunitarios en un solo lugar, de manera simple y cercana.</p>
       </div>
     </section>
 
@@ -115,53 +116,10 @@
         <div class="section-heading centered">
           <p class="eyebrow">Organización vecinal</p>
           <h2>Nuestra Directiva</h2>
-          <p class="section-intro">Directiva electa democráticamente para el período 2024–2027, con una duración de tres años. Su labor es representar a la comunidad, fomentar la participación vecinal y trabajar por el mejoramiento de Villa El Trigal.</p>
+          <p class="section-intro">Directiva electa democráticamente para el período <span id="board-period">2024–2027</span>, con una duración de tres años. Su labor es representar a la comunidad, fomentar la participación vecinal y trabajar por el mejoramiento de Villa El Trigal.</p>
         </div>
 
-        <div class="board-grid">
-          <article class="board-card featured-member">
-            <div class="member-icon">👤</div>
-            <span class="role">Presidente</span>
-            <h3>Fabián Campos Duval</h3>
-            <p>Representa a la Junta de Vecinos y coordina el trabajo de la directiva.</p>
-          </article>
-
-          <article class="board-card resignation-card">
-            <div class="member-icon">👤</div>
-            <span class="role">Secretaria</span>
-            <h3>Dyanira Núñez Véliz</h3>
-            <p>Responsable del registro de acuerdos, actas y comunicaciones institucionales.</p>
-            <div class="status-note">Presentó su renuncia voluntaria al cargo.</div>
-          </article>
-
-          <article class="board-card featured-member">
-            <div class="member-icon">👤</div>
-            <span class="role">Tesorero</span>
-            <h3>Claudio González Martínez</h3>
-            <p>Administra los recursos y mantiene el control de ingresos, gastos y rendiciones.</p>
-          </article>
-
-          <article class="board-card">
-            <div class="member-icon">👤</div>
-            <span class="role">Directora Suplente</span>
-            <h3>Daniela Marimán Contreras</h3>
-            <p>Apoya las actividades y funciones de la organización vecinal.</p>
-          </article>
-
-          <article class="board-card">
-            <div class="member-icon">👤</div>
-            <span class="role">Directora Suplente</span>
-            <h3>Graciela Carvacho Moraga</h3>
-            <p>Apoya las actividades y funciones de la organización vecinal.</p>
-          </article>
-
-          <article class="board-card">
-            <div class="member-icon">👤</div>
-            <span class="role">Directora Suplente</span>
-            <h3>Nayarette Canales González</h3>
-            <p>Apoya las actividades y funciones de la organización vecinal.</p>
-          </article>
-        </div>
+        <div id="dynamic-board" class="board-grid" aria-live="polite"></div>
       </div>
     </section>
 
@@ -179,6 +137,19 @@
           <button class="gallery-item" onclick="openLightbox('assets/pascua_2026_2.png')" aria-label="Abrir segunda foto">
             <img src="assets/pascua_2026_2.png" alt="Conejo de Pascua en actividad de Villa El Trigal">
           </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section documents-section" id="documentos">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="eyebrow">Información institucional</p>
+          <h2>Documentos de la Junta de Vecinos</h2>
+          <p class="section-intro">Actas, reglamentos, formularios y comunicados que la directiva ha decidido compartir con la comunidad.</p>
+        </div>
+        <div id="public-documents" class="documents-grid" aria-live="polite">
+          <article class="document-card document-empty"><span class="document-icon">📁</span><h3>Próximamente</h3><p>Los documentos públicos aparecerán en este espacio.</p></article>
         </div>
       </div>
     </section>
@@ -299,7 +270,7 @@
               <p><strong>Banco:</strong> BancoEstado</p>
               <p><strong>Tipo de cuenta:</strong> Chequera Electrónica / Cuenta Vista</p>
               <p><strong>Número de cuenta:</strong> 36570811031</p>
-              <p><strong>Correo:</strong> JJVVELTRIGAL123@HOTMAIL.COM</p>
+              <p><strong>Correo:</strong> <span id="contact-email">JJVVELTRIGAL123@HOTMAIL.COM</span></p>
             </div>
             <div class="rental-qr-row">
               <img src="assets/qr_pago.png" alt="Código QR con datos de transferencia para el abono">
@@ -333,7 +304,7 @@
             <p><strong>Banco:</strong> BancoEstado</p>
             <p><strong>Tipo de cuenta:</strong> Chequera Electrónica / Cuenta Vista</p>
             <p><strong>Número de cuenta:</strong> 36570811031</p>
-            <p><strong>Correo:</strong> JJVVELTRIGAL123@HOTMAIL.COM</p>
+            <p><strong>Correo:</strong> <span id="contact-email">JJVVELTRIGAL123@HOTMAIL.COM</span></p>
           </div>
 
           <a class="button white" href="https://wa.me/56974596793?text=Hola%2C%20informo%20que%20realic%C3%A9%20el%20pago%20de%20mi%20cuota%20de%20la%20JJ.VV.%20Villa%20El%20Trigal." target="_blank" rel="noopener">Informar pago por WhatsApp</a>
@@ -373,10 +344,10 @@
           <p>Escríbenos para consultas, actividades, sugerencias o información relacionada con la Junta de Vecinos.</p>
         </div>
         <div class="contact-card">
-          <p><strong>WhatsApp:</strong> +56 9 7459 6793</p>
-          <p><strong>Correo:</strong> JJVVELTRIGAL123@HOTMAIL.COM</p>
-          <p><strong>Dirección:</strong> Armando Sabaj 1278, San Antonio</p>
-          <a class="button primary" href="https://wa.me/56974596793" target="_blank" rel="noopener">Abrir WhatsApp</a>
+          <p><strong>WhatsApp:</strong> <span id="contact-phone">+56 9 7459 6793</span></p>
+          <p><strong>Correo:</strong> <span id="contact-email">JJVVELTRIGAL123@HOTMAIL.COM</span></p>
+          <p><strong>Dirección:</strong> <span id="contact-address">Armando Sabaj 1278, San Antonio</span></p>
+          <a id="contact-whatsapp-link" class="button primary" href="https://wa.me/56974596793" target="_blank" rel="noopener">Abrir WhatsApp</a>
         </div>
       </div>
     </section>
@@ -384,7 +355,7 @@
 
 </main>
 
-  <a class="whatsapp-float" href="https://wa.me/56974596793" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">💬</a>
+  <a id="whatsapp-float" class="whatsapp-float" href="https://wa.me/56974596793" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">💬</a>
 
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <button aria-label="Cerrar">×</button>
@@ -426,7 +397,8 @@
     }
 
     function openWhatsApp(message) {
-      window.open('https://wa.me/56974596793?text=' + encodeURIComponent(message), '_blank', 'noopener');
+      const wa = window.PORTAL_WHATSAPP || '56974596793';
+      window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(message), '_blank', 'noopener');
     }
 
     document.getElementById('certificate-form').addEventListener('submit', function(event) {

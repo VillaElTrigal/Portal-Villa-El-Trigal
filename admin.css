@@ -4,3 +4,6 @@
 
 /* Corrección: respetar el atributo hidden en login, panel y secciones */
 [hidden]{display:none!important;}
+.multi-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:10px}.multi-preview figure{margin:0;position:relative}.multi-preview img{width:100%;height:90px;object-fit:cover;border-radius:10px}.multi-preview button{position:absolute;right:4px;top:4px;border:0;border-radius:50%;width:26px;height:26px;cursor:pointer}.help{display:block;color:#60747a;margin-top:6px}.image-count{font-weight:700;color:#145e75}
+
+#section-documentos .help{margin-top:0}.stats{grid-template-columns:repeat(5,1fr)}@media(max-width:980px){.stats{grid-template-columns:repeat(2,1fr)}}
