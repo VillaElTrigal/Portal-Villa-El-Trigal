@@ -7,7 +7,7 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=630">
-  <link rel="stylesheet" href="styles.css?v=631">
+  <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=700">
 </head>
 <body>
   <header class="header">
@@ -29,7 +29,7 @@
         <a href="#arriendo">Reserva de sede</a>
         <a href="#cuotas">Cuotas</a>
         <a href="#mejorar">Ayúdanos a mejorar</a>
-        <a href="#contacto">Contacto</a>
+        <a href="#socios-solicitud">Hazte socio</a><a href="#contacto">Contacto</a>
       </nav>
     </div>
   </header>
@@ -354,6 +354,12 @@
     </section>
   
 
+<section id="socios-solicitud" class="section alt">
+ <div class="container"><div class="section-title"><span>Participación vecinal</span><h2>Solicita ingresar como socio</h2><p>Completa tus datos. La directiva revisará la solicitud antes de incorporarte al registro oficial.</p></div>
+ <div class="public-form-card"><form id="public-socio-form" class="public-grid"><label>Nombre completo<input name="nombre" required></label><label>RUT<input name="rut" required placeholder="12.345.678-9"></label><label>Dirección<input name="direccion" required></label><label>Teléfono<input name="telefono" required></label><label>Correo electrónico<input name="correo" type="email"></label><label>Observaciones<textarea name="observaciones"></textarea></label><div class="full"><button class="button primary" type="submit">Enviar solicitud</button><p id="public-socio-message"></p></div></form></div>
+ </div>
+</section>
+
 </main>
 
   <a id="whatsapp-float" class="whatsapp-float" href="https://wa.me/56974596793" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">💬</a>
@@ -422,6 +428,6 @@
   <script src="portal-config.js"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
-  <script src="reservas.js"></script>
+  <script src="reservas.js"></script><script src="portal-v7.js?v=700"></script>
 </body>
 </html>

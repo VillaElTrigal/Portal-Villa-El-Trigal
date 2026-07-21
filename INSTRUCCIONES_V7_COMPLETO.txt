@@ -1,0 +1,26 @@
+PORTAL VILLA EL TRIGAL V7.0 / PORTAL 2.0
+
+1. Antes de subir los archivos a GitHub, respalda la versión actual.
+2. En Supabase abre SQL Editor.
+3. Copia y ejecuta COMPLETO el archivo ACTUALIZAR_SUPABASE_V7_COMPLETO.sql.
+4. Confirma que el script termine sin errores.
+5. Reemplaza en GitHub los archivos del portal por los incluidos en esta carpeta.
+6. Espera la publicación de GitHub Pages y recarga con Ctrl+F5.
+
+NUEVAS FUNCIONES
+- Registro privado de socios y solicitudes públicas.
+- Grupo familiar con edad calculada automáticamente.
+- Exportación CSV para regalos de Navidad según edad configurable.
+- Gestión permanente de sede: arriendos, actividades, Zumba y bloqueos.
+- Pago interno flexible: abono, pago completo o saldo.
+- Selección obligatoria de Caja chica o Cuenta bancaria.
+- Confirmación por WhatsApp separada del registro financiero.
+- Finanzas: ingresos, gastos, transferencias internas y respaldo privado.
+- Saldos automáticos de Caja chica, Banco y Total.
+- Valores configurables desde Administración.
+
+IMPORTANTE
+- No borres los scripts SQL anteriores: sirven como historial.
+- El nuevo SQL usa IF NOT EXISTS y puede ejecutarse sobre la versión actual.
+- Los respaldos financieros se guardan de forma privada en Supabase Storage.
+- Prueba primero con un socio, un integrante familiar y un arriendo ficticio.
