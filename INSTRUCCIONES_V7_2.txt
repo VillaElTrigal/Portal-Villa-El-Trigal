@@ -1,0 +1,19 @@
+PORTAL VILLA EL TRIGAL v7.2
+
+1. En Supabase > SQL Editor, ejecuta completo ACTUALIZAR_SUPABASE_V7_2.sql.
+2. Verifica que finalice con Success y muestre 4 filas de diagnóstico.
+3. Sube TODO el contenido de esta carpeta a la raíz del repositorio GitHub, reemplazando lo anterior.
+4. Espera la publicación de GitHub Pages y abre con Ctrl+F5 o ventana incógnita.
+
+PRUEBAS RECOMENDADAS
+- Socios: crear, editar, grupo familiar, inactivar y eliminar.
+- RUT: escribir solo números; debe aplicar puntos y guion.
+- Celular: escribir los 8 dígitos posteriores a +56 9.
+- Reserva: crear y comprobar que la fecha aparece ocupada en el portal público, sin datos privados.
+- Finanzas: crear ingreso, gasto y transferencia; comprobar saldos y listado.
+- Reportes: probar mes actual, año actual, exportación CSV e impresión/PDF.
+- Campanilla: revisar solicitudes, próximos eventos y gastos sin respaldo.
+
+IMPORTANTE
+- No vuelvas a ejecutar scripts v7.0 o v7.1 después de este.
+- Mantén una copia ZIP de la versión anterior hasta terminar las pruebas.

@@ -7,7 +7,7 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=630">
-  <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=700">
+  <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=720">
 </head>
 <body>
   <header class="header">
@@ -234,7 +234,7 @@
         <div class="calendar-panel">
           <div class="calendar-toolbar">
             <div>
-              <h3>Calendario de disponibilidad 2026</h3>
+              <h3>Calendario de disponibilidad</h3>
               <p>Selecciona una fecha disponible para preparar tu solicitud por WhatsApp.</p>
             </div>
             <div class="calendar-legend" aria-label="Leyenda del calendario">
@@ -244,7 +244,7 @@
             </div>
           </div>
           <div id="rental-calendars" class="calendar-grid"></div>
-          <p id="calendar-sync-status" class="calendar-help">Cargando las reservas desde la hoja de Google…</p><p class="calendar-help">Las fechas disponibles corresponden solo a una consulta inicial. La reserva queda confirmada exclusivamente cuando la Junta de Vecinos responda por WhatsApp.</p>
+          <p id="calendar-sync-status" class="calendar-help">Cargando las reservas desde el sistema…</p><p class="calendar-help">Las fechas disponibles corresponden solo a una consulta inicial. La reserva queda confirmada exclusivamente cuando la Junta de Vecinos responda por WhatsApp.</p>
         </div>
 
         <div class="rental-details-grid">
@@ -257,7 +257,7 @@
               <li>La sede debe ser entregada <strong>limpia y ordenada</strong>.</li>
               <li>Cualquier daño a la infraestructura, mobiliario o equipamiento será responsabilidad de la persona que arrienda, quien deberá asumir su reparación o reposición.</li>
               <li>El horario autorizado de uso es desde las <strong>08:00 hasta las 22:00 horas como máximo</strong>.</li>
-              <li>Todos los martes y jueves hasta el 31 de diciembre de 2026 están destinados a <strong>clases de Zumba</strong> y no se encuentran disponibles para arriendo.</li>
+              <li>Las actividades permanentes, como Zumba, se mostrarán directamente en el calendario y no estarán disponibles para arriendo.</li>
             </ul>
           </article>
 
@@ -356,7 +356,7 @@
 
 <section id="socios-solicitud" class="section alt">
  <div class="container"><div class="section-title"><span>Participación vecinal</span><h2>Solicita ingresar como socio</h2><p>Completa tus datos. La directiva revisará la solicitud antes de incorporarte al registro oficial.</p></div>
- <div class="public-form-card"><form id="public-socio-form" class="public-grid"><label>Nombre completo<input name="nombre" required></label><label>RUT<input name="rut" required placeholder="12.345.678-9"></label><label>Dirección<input name="direccion" required></label><label>Teléfono<input name="telefono" required></label><label>Correo electrónico<input name="correo" type="email"></label><label>Observaciones<textarea name="observaciones"></textarea></label><div class="full"><button class="button primary" type="submit">Enviar solicitud</button><p id="public-socio-message"></p></div></form></div>
+ <div class="public-form-card"><form id="public-socio-form" class="public-grid"><label>Nombre completo<input name="nombre" required></label><label>RUT<input name="rut" required placeholder="12.345.678-9"></label><label>Dirección<input name="direccion" required></label><label>Celular<div class="public-phone"><span>+56 9</span><input name="telefono" inputmode="numeric" required placeholder="1234 5678"></div></label><label>Correo electrónico<input name="correo" type="email"></label><label>Observaciones<textarea name="observaciones"></textarea></label><div class="full"><button class="button primary" type="submit">Enviar solicitud</button><p id="public-socio-message"></p></div></form></div>
  </div>
 </section>
 
@@ -375,7 +375,7 @@
       <div>
         <strong>Junta de Vecinos Villa El Trigal</strong>
         <p>Construyendo juntos un mejor barrio.</p>
-        <small>Portal Comunitario Villa El Trigal · Versión 6.2 Popup administrable · Julio 2026 · © Junta de Vecinos Villa El Trigal<br><a class="admin-footer-link" href="admin.html">Acceso administrador</a></small>
+        <small>Portal Comunitario Villa El Trigal · Versión 7.2 Gestión integral · Julio 2026 · © Junta de Vecinos Villa El Trigal<br><a class="admin-footer-link" href="admin.html">Acceso administrador</a></small>
       </div>
     </div>
   </footer>
@@ -428,6 +428,6 @@
   <script src="portal-config.js"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
-  <script src="reservas.js"></script><script src="portal-v7.js?v=700"></script>
+  <script src="reservas.js"></script><script src="portal-v7.js?v=720"></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+PORTAL VILLA EL TRIGAL v7.1 - CORRECCION INTEGRAL
+
+1. En Supabase > SQL Editor, abra REPARAR_SUPABASE_V7_1.sql.
+2. Ejecute el archivo completo una sola vez. Es compatible con la ejecucion parcial anterior.
+3. El resultado final debe listar 7 tablas.
+4. Luego suba TODO el contenido de la carpeta Portal-Villa-El-Trigal-main a la raiz de GitHub.
+5. Espere la publicacion de GitHub Pages y recargue con Ctrl+F5.
+
+PRUEBAS RECOMENDADAS
+- Crear socio.
+- Agregar integrante del grupo familiar.
+- Crear reserva.
+- Registrar pago en Caja chica o Banco.
+- Abrir el portal publico y comprobar la seccion Hazte socio.
+
+IMPORTANTE
+- No vuelva a ejecutar ACTUALIZAR_SUPABASE_V7_COMPLETO.sql.
+- El portal publico conserva sus secciones anteriores y agrega Hazte socio.
+- Los modulos Socios, Finanzas y Gestion de sede son privados y aparecen en el administrador.
