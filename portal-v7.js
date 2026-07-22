@@ -260,6 +260,7 @@
         telefono: dbPhone,
         correo: form.elements.correo.value.trim() || null,
         observaciones: form.elements.observaciones.value.trim() || null,
+        autoriza_whatsapp: !!form.elements.autoriza_whatsapp?.checked,
         estado: 'pendiente'
       });
       if (error) {
@@ -271,9 +272,31 @@
     };
   }
 
+
+  async function setupChildRegistration() {
+    const token = new URLSearchParams(location.search).get('registro_ninos');
+    if (!token) return;
+    const { data: socio, error } = await sb.rpc('obtener_socio_por_token_ninos', { p_token: token });
+    if (error || !socio || !socio.length) {
+      alert('El enlace para registrar niños y niñas no es válido o ya no está disponible.');
+      return;
+    }
+    const info = socio[0];
+    const overlay = document.createElement('div');
+    overlay.className = 'public-child-overlay';
+    overlay.innerHTML = `<div class="public-child-card"><button type="button" class="public-child-close" aria-label="Cerrar">×</button><h2>Niños y niñas del hogar</h2><p>Socio titular: <strong>${escapeHtml(info.nombre_completo)}</strong></p><p>Domicilio asociado: <strong>${escapeHtml(info.direccion)}</strong></p><p class="help">Registra únicamente a los niños y niñas que viven en este domicilio. La dirección se asocia automáticamente y no puede modificarse.</p><form id="public-child-form" class="public-grid"><label>Nombre completo<input name="nombre" required></label><label>Fecha de nacimiento<input name="fecha_nacimiento" type="date" required></label><label>Sexo<select name="sexo"><option value="F">Niña</option><option value="M">Niño</option></select></label><div class="full"><button class="button primary" type="submit">Guardar niño o niña</button><p id="public-child-message"></p></div></form><div id="public-child-list"></div></div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('.public-child-close').onclick=()=>overlay.remove();
+    const form=overlay.querySelector('#public-child-form'), message=overlay.querySelector('#public-child-message'), list=overlay.querySelector('#public-child-list');
+    async function refresh(){const{data}=await sb.rpc('listar_ninos_por_token',{p_token:token});list.innerHTML=(data||[]).length?`<h3>Registros guardados</h3>${data.map(x=>`<p>🧒 ${escapeHtml(x.nombre_completo)} · ${new Date(x.fecha_nacimiento+'T12:00:00').toLocaleDateString('es-CL')}</p>`).join('')}`:'<p>Aún no hay niños o niñas registrados.</p>'}
+    form.onsubmit=async e=>{e.preventDefault();message.textContent='Guardando…';const{error}=await sb.rpc('registrar_nino_por_token',{p_token:token,p_nombre:form.elements.nombre.value.trim(),p_fecha_nacimiento:form.elements.fecha_nacimiento.value,p_sexo:form.elements.sexo.value});if(error){message.textContent='No se pudo guardar: '+error.message;return}form.reset();message.textContent='Registro guardado correctamente.';refresh()};
+    refresh();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     renderCalendar();
     setupRentalRequest();
     setupSocioForm();
+    setupChildRegistration();
   });
 })();

@@ -16,3 +16,5 @@
 .public-form-message{min-height:1.2rem;margin:0;color:#a33c3c;font-weight:700}
 .calendar-day.activity{background:#dceafd!important;color:#2058a1!important;border-color:#a8c8ef!important}
 @media(max-width:620px){.public-reservation-card{padding:22px 17px}.public-reservation-actions .button{width:100%;text-align:center}}
+
+.public-child-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:grid;place-items:center;padding:1rem}.public-child-card{background:#fff;border-radius:18px;max-width:720px;width:100%;max-height:92vh;overflow:auto;padding:1.5rem;position:relative}.public-child-close{position:absolute;right:1rem;top:.7rem;border:0;background:transparent;font-size:2rem;cursor:pointer}.public-child-card .help{color:#555}.public-child-card #public-child-list{margin-top:1rem;border-top:1px solid #ddd;padding-top:1rem}
