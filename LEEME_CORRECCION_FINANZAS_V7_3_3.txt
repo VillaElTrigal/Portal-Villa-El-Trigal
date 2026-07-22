@@ -1,0 +1,32 @@
+CORRECCIÓN FINANZAS V7.3.3
+==========================
+
+Archivos modificados:
+- admin-v7.js
+- admin.html
+
+Corrección principal:
+- El botón Guardar de Ingreso, Gasto y Transferencia ahora tiene type="submit".
+- Se evitó el error "Cannot set properties of null (setting 'disabled')".
+- El código protege el botón aunque el selector no lo encuentre.
+- Se valida que exista una sesión activa.
+- Se validan monto y concepto.
+- Se muestran errores en pantalla y en la consola.
+- Se actualizan Finanzas y Notificaciones después de guardar.
+- Se cambió la versión de caché a admin-v7.js?v=733.
+
+INSTALACIÓN EN GITHUB
+1. Descomprime este ZIP.
+2. En tu repositorio, reemplaza admin-v7.js y admin.html.
+3. También puedes cargar todo el contenido del proyecto si prefieres mantener la misma estructura.
+4. Confirma los cambios (Commit changes).
+5. Espera a que GitHub Pages publique.
+6. Abre el portal y presiona Ctrl + F5.
+
+PRUEBAS
+1. Registrar un ingreso pequeño.
+2. Registrar un gasto pequeño, marcando "No posee respaldo" si no adjuntas archivo.
+3. Registrar una transferencia entre fondos distintos.
+4. Confirmar que cambien Caja/Banco y aparezca el movimiento en la tabla.
+
+Nota: ya se había recomendado quitar NOT NULL de tipo_respaldo en Supabase. Esta versión no incluye cambios adicionales de base de datos.
