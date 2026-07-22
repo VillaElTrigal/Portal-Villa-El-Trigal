@@ -1,0 +1,12 @@
+CORRECCIÓN CAMPANA DE NOTIFICACIONES v7.3.5
+
+- Al abrir la campana, el contador de notificaciones no leídas desaparece.
+- Las notificaciones quedan marcadas como leídas en este navegador.
+- Si aparece una notificación nueva o cambia una reserva, el contador vuelve a mostrarse.
+- Al hacer clic fuera del panel, la campana se cierra.
+- Las lecturas antiguas se limpian automáticamente después de 90 días.
+
+Archivos modificados:
+- admin-v7.js
+- admin-v7.css
+- admin.html
