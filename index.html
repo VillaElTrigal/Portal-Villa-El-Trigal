@@ -7,7 +7,7 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=630">
-  <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=720">
+  <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=800">
 </head>
 <body>
   <header class="header">
@@ -235,7 +235,7 @@
           <div class="calendar-toolbar">
             <div>
               <h3>Calendario de disponibilidad</h3>
-              <p>Selecciona una fecha disponible para preparar tu solicitud por WhatsApp.</p>
+              <p>Selecciona una fecha disponible. Al enviar tus datos, la fecha quedará bloqueada como pendiente y la solicitud aparecerá en el panel de administración.</p>
             </div>
             <div class="calendar-legend" aria-label="Leyenda del calendario">
               <span><i class="available-dot"></i> Disponible</span>
@@ -244,7 +244,7 @@
             </div>
           </div>
           <div id="rental-calendars" class="calendar-grid"></div>
-          <p id="calendar-sync-status" class="calendar-help">Cargando las reservas desde el sistema…</p><p class="calendar-help">Las fechas disponibles corresponden solo a una consulta inicial. La reserva queda confirmada exclusivamente cuando la Junta de Vecinos responda por WhatsApp.</p>
+          <p id="calendar-sync-status" class="calendar-help">Cargando las reservas desde el sistema…</p><p class="calendar-help">Las solicitudes pendientes bloquean la fecha para evitar reservas duplicadas. La confirmación definitiva se realiza después de verificar el abono.</p>
         </div>
 
         <div class="rental-details-grid">
@@ -286,7 +286,7 @@
         </div>
 
         <div class="rental-action">
-          <a id="rental-whatsapp" class="button primary large-button" href="https://wa.me/56974596793?text=Hola%2C%20me%20gustar%C3%ADa%20consultar%20por%20una%20fecha%20disponible%20para%20arrendar%20la%20Sede%20Social%20Villa%20El%20Trigal.%20Entiendo%20que%20la%20reserva%20queda%20confirmada%20solo%20cuando%20la%20Junta%20de%20Vecinos%20responda%20por%20WhatsApp." target="_blank" rel="noopener">Solicitar reserva por WhatsApp</a>
+          <a id="rental-whatsapp" class="button primary large-button" href="https://wa.me/56974596793?text=Hola%2C%20me%20gustar%C3%ADa%20consultar%20por%20una%20fecha%20disponible%20para%20arrendar%20la%20Sede%20Social%20Villa%20El%20Trigal.%20Entiendo%20que%20la%20reserva%20queda%20confirmada%20solo%20cuando%20la%20Junta%20de%20Vecinos%20responda%20por%20WhatsApp." target="_blank" rel="noopener">Solicitar reserva</a>
           <p id="selected-date-text">Puedes elegir una fecha disponible en el calendario.</p>
         </div>
       </div>
@@ -428,6 +428,6 @@
   <script src="portal-config.js"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
-  <script src="reservas.js"></script><script src="portal-v7.js?v=720"></script>
+  <script src="portal-v7.js?v=800"></script>
 </body>
 </html>

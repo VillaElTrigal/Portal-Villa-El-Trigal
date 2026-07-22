@@ -1,2 +1,18 @@
 .public-form-card{max-width:850px;margin:auto;background:#fff;padding:1.5rem;border-radius:20px;box-shadow:0 10px 30px #173b4715}.public-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.public-grid label{display:grid;gap:.4rem;font-weight:700}.public-grid input,.public-grid textarea{width:100%;padding:.8rem;border:1px solid #ccd9dc;border-radius:10px;font:inherit}.public-grid .full,.public-grid label:has(textarea){grid-column:1/-1}@media(max-width:700px){.public-grid{grid-template-columns:1fr}}
 .calendar-day.activity{background:#2563eb!important;color:#fff!important}.calendar-day.past{opacity:.35}.public-phone{display:flex;align-items:center;border:1px solid #cbd5d8;border-radius:10px;overflow:hidden;background:#fff}.public-phone span{background:#eef4f5;padding:.8rem;font-weight:700;white-space:nowrap}.public-phone input{border:0!important;border-radius:0!important;box-shadow:none!important;width:100%}
+
+
+/* v8.0 · Solicitud pública integrada con Gestión de la Sede */
+.public-reservation-modal{position:fixed;inset:0;z-index:9999;background:rgba(12,36,42,.68);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.public-reservation-card{position:relative;width:min(620px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 24px 80px rgba(0,0,0,.28)}
+.public-reservation-card h3{margin:.2rem 0 .4rem;color:#145e75;font-size:1.5rem}
+.public-reservation-help{margin:0 0 18px;color:#61767d}
+.public-reservation-card form{display:grid;gap:14px}
+.public-reservation-card label{display:grid;gap:6px;font-weight:700;color:#294a52}
+.public-reservation-card input,.public-reservation-card textarea{width:100%;box-sizing:border-box;border:1px solid #cbd5d8;border-radius:10px;padding:.8rem;font:inherit}
+.public-reservation-card textarea{min-height:90px;resize:vertical}
+.public-modal-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:2rem;line-height:1;color:#557078;cursor:pointer}
+.public-reservation-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.public-form-message{min-height:1.2rem;margin:0;color:#a33c3c;font-weight:700}
+.calendar-day.activity{background:#dceafd!important;color:#2058a1!important;border-color:#a8c8ef!important}
+@media(max-width:620px){.public-reservation-card{padding:22px 17px}.public-reservation-actions .button{width:100%;text-align:center}}

@@ -1,0 +1,20 @@
+PORTAL VILLA EL TRIGAL v8.0 · RESERVAS INTEGRADAS
+
+ORDEN DE INSTALACIÓN
+1. En Supabase, abre SQL Editor.
+2. Ejecuta completo ACTUALIZAR_SUPABASE_V8_RESERVAS.sql.
+3. Verifica que el resultado muestre reservas de tipo arriendo y zumba.
+4. Sube a GitHub el contenido de esta carpeta.
+5. Espera la publicación de GitHub Pages y recarga con Ctrl + F5.
+
+QUÉ CAMBIA
+- El calendario público deja de usar Google Sheets.
+- Una solicitud pública se guarda en reservas_sede con estado pendiente.
+- La fecha se bloquea inmediatamente y aparece en Gestión de la Sede.
+- Se migran las 8 fechas del Excel entregado.
+- Se crean bloqueos de Zumba cada martes y jueves hasta el 31/12/2026.
+- Cancelar desde el panel libera la fecha, pero conserva el historial.
+- Editar permite completar datos o reprogramar una reserva.
+
+IMPORTANTE
+Las reservas migradas aparecen como “Reserva migrada (completar datos)” porque el Excel solo contenía fecha, estado y observación. Debes abrir Editar / reprogramar para agregar nombre, RUT y celular reales.

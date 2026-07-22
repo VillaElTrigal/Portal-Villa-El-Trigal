@@ -1,0 +1,13 @@
+VERSIÓN 7.3.6 — RESPUESTA AL APROBAR SOCIO
+
+Al aprobar una solicitud de ingreso, el panel ahora muestra una ventana con:
+- Botón Responder por WhatsApp.
+- Mensaje preparado para solicitar los datos del grupo familiar.
+- Botón para copiar el mensaje.
+- Botón para abrir inmediatamente el grupo familiar del nuevo socio.
+
+Archivos modificados:
+- admin-v7.js
+- admin.html
+
+Después de subirlos a GitHub, recarga el panel con Ctrl + F5.
