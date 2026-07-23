@@ -13,3 +13,4 @@
 @media(max-width:1050px){.zumba-days{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.zumba-days{grid-template-columns:repeat(2,minmax(0,1fr))}.zumba-month-nav{width:100%}.zumba-month-nav input[type="month"]{flex:1;min-width:0}.zumba-calendar-heading{align-items:flex-start}}
 @media(max-width:420px){.zumba-days{grid-template-columns:1fr}.zumba-days .check{padding:.5rem .6rem}}
+.v7-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;margin-top:.45rem}.special-admin{grid-column:1/-1;border:1px solid #d7e2d9;border-radius:12px;padding:1rem;background:#f8faf8}.special-admin[hidden]{display:none}.special-admin textarea{min-height:90px}@media(max-width:650px){.v7-check-grid{grid-template-columns:1fr}}

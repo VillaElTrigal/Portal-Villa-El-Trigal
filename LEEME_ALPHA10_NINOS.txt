@@ -1,0 +1,17 @@
+SIGVE v1.0.0 Alpha 10 – Niños y niñas
+
+1. Sube todos los archivos del proyecto a GitHub reemplazando los anteriores.
+2. En Supabase > SQL Editor ejecuta únicamente:
+   ACTUALIZAR_SUPABASE_ALPHA10_NINOS.sql
+3. Luego actualiza el portal con Ctrl + F5.
+
+Cambios:
+- RUT obligatorio y validado con dígito verificador.
+- Bloqueo de RUT duplicado entre niños activos y de RUT ya utilizado por un socio.
+- Parentesco obligatorio.
+- Participación en actividades.
+- Necesidades o consideraciones especiales, selección múltiple y observaciones.
+- Consentimiento obligatorio cuando se registra información sensible.
+- Vista pública y ficha administrativa actualizadas.
+
+Los registros antiguos que aún no tienen RUT o parentesco se conservan. Al editarlos, el sistema exigirá completar ambos campos.

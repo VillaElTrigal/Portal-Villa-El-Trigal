@@ -7,7 +7,7 @@
   <title>Registro de niños y niñas · Villa El Trigal</title>
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=631">
-  <link rel="stylesheet" href="registro-ninos.css?v=3">
+  <link rel="stylesheet" href="registro-ninos.css?v=4">
 </head>
 <body class="child-page">
   <main class="child-shell">
@@ -33,21 +33,67 @@
           <div><span>Número de socio</span><strong id="member-number"></strong></div><div><span>Domicilio asociado</span><strong id="member-address"></strong></div>
         </div>
 
-        <p class="child-help">Agrega solamente a los niños y niñas que viven en este domicilio. Puedes registrar más de uno. No se solicita RUT y la dirección se asocia automáticamente al socio titular.</p>
+        <p class="child-help">Agrega solamente a los niños y niñas que viven en este domicilio. El RUT y el parentesco son obligatorios. La información sobre necesidades o consideraciones especiales es opcional y se utilizará únicamente para facilitar una participación segura e inclusiva en actividades comunitarias.</p>
 
         <form id="child-form" class="child-form" novalidate>
-          <label class="full">Nombre completo
+          <label>RUT <span aria-hidden="true">*</span>
+            <input name="rut" data-rut inputmode="text" maxlength="12" required placeholder="12.345.678-9" autocomplete="off">
+            <small>Se valida el dígito verificador y no puede repetirse en otro hogar.</small>
+          </label>
+          <label>Parentesco <span aria-hidden="true">*</span>
+            <select name="parentesco" required>
+              <option value="">Selecciona una opción</option>
+              <option>Hijo(a)</option><option>Nieto(a)</option><option>Sobrino(a)</option>
+              <option>Bisnieto(a)</option><option>Hermano(a)</option><option>Tutelado(a)</option><option>Otro</option>
+            </select>
+          </label>
+          <label class="full">Nombre completo <span aria-hidden="true">*</span>
             <input name="nombre" autocomplete="name" maxlength="120" required placeholder="Ej.: Martina González Pérez">
           </label>
-          <label>Fecha de nacimiento
+          <label>Fecha de nacimiento <span aria-hidden="true">*</span>
             <input name="fecha_nacimiento" type="date" required>
           </label>
-          <label>Sexo
+          <label>Sexo <span aria-hidden="true">*</span>
             <select name="sexo" required>
               <option value="M">M - Niño</option>
               <option value="F">F - Niña</option>
             </select>
           </label>
+          <label class="full check-row">
+            <input name="participa_actividades" type="checkbox" checked>
+            Participa en actividades de la Junta de Vecinos
+          </label>
+          <label class="full check-row">
+            <input name="tiene_condicion_especial" type="checkbox" id="has-special">
+            ¿Tiene alguna necesidad o consideración especial?
+          </label>
+          <section id="special-fields" class="full special-fields" hidden aria-labelledby="special-title">
+            <h3 id="special-title">Necesidades o consideraciones especiales</h3>
+            <fieldset>
+              <legend>Selecciona todas las que correspondan</legend>
+              <div class="condition-grid">
+                <label><input type="checkbox" name="condicion" value="TEA"> TEA</label>
+                <label><input type="checkbox" name="condicion" value="TDAH"> TDAH</label>
+                <label><input type="checkbox" name="condicion" value="Discapacidad física"> Discapacidad física</label>
+                <label><input type="checkbox" name="condicion" value="Discapacidad visual"> Discapacidad visual</label>
+                <label><input type="checkbox" name="condicion" value="Discapacidad auditiva"> Discapacidad auditiva</label>
+                <label><input type="checkbox" name="condicion" value="Movilidad reducida"> Movilidad reducida</label>
+                <label><input type="checkbox" name="condicion" value="Enfermedad crónica"> Enfermedad crónica</label>
+                <label><input type="checkbox" name="condicion" value="Alergia alimentaria"> Alergia alimentaria</label>
+                <label><input type="checkbox" name="condicion" value="Otra"> Otra</label>
+              </div>
+            </fieldset>
+            <label>Otra condición o consideración
+              <input name="condicion_otro" maxlength="160" placeholder="Especifica solo si seleccionaste Otra">
+            </label>
+            <label>Observaciones para una atención adecuada
+              <textarea name="observaciones_especiales" rows="3" maxlength="700" placeholder="Ej.: no tolera ruidos fuertes, requiere acompañamiento, alergia específica, etc."></textarea>
+            </label>
+            <label class="check-row consent-row">
+              <input name="autoriza_datos_sensibles" type="checkbox">
+              Autorizo a la Junta de Vecinos Villa El Trigal a registrar esta información exclusivamente para facilitar la participación del niño o niña en actividades comunitarias y brindar una mejor atención.
+            </label>
+          </section>
           <div class="full child-actions">
             <button class="button primary" type="submit" id="save-child">Guardar niño o niña</button><button class="button secondary" type="button" id="cancel-edit" hidden>Cancelar edición</button>
             <span id="child-message" role="status" aria-live="polite"></span>
@@ -72,6 +118,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="portal-config.js"></script>
-  <script src="registro-ninos.js?v=1400"></script>
+  <script src="registro-ninos.js?v=1500"></script>
 </body>
 </html>
