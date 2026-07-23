@@ -1,0 +1,13 @@
+SIGVE v1.0.0 Alpha 11 - revisión final
+
+CAMBIOS INCLUIDOS
+1. Módulo Niños y niñas completo: RUT obligatorio, parentesco, participación, condiciones/consideraciones especiales y consentimiento.
+2. Calendario de Sede y Arriendos muestra un solo mes, con selector mes/año, flechas y botón Hoy.
+3. El calendario de Zumba muestra solo clases de Zumba, un mes a la vez, con flechas y botón Hoy.
+4. Nueva Reserva administrativa sin fines de lucro: bloquea horario, no genera pago ni movimiento financiero y registra auditoría.
+5. Campanilla activa para solicitudes de arriendo pendientes; se actualiza cada 30 segundos.
+
+SUPABASE
+Ejecutar solo: ACTUALIZAR_SUPABASE_SIGVE_V1_FINAL.sql
+
+Luego subir todos los archivos a GitHub y actualizar con Ctrl+F5.
