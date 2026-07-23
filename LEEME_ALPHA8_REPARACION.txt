@@ -1,0 +1,8 @@
+SIGVE Alpha 8 - Reparación
+1) Reemplaza TODOS los archivos del repositorio con los de este ZIP.
+2) Ejecuta REPARAR_SIGVE_ALPHA8.sql completo en Supabase.
+3) En la advertencia de Supabase selecciona “Run and enable RLS”.
+4) Cierra sesión, abre nuevamente y fuerza actualización con Ctrl+F5.
+5) En el pie/código cargado debe usarse admin-v7.js?v=1301.
+
+Compatibilidad: los enlaces antiguos index.html?registro_ninos=TOKEN ahora redirigen automáticamente al formulario nuevo.

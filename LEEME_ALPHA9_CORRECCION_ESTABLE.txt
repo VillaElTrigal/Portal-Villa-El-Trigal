@@ -1,0 +1,29 @@
+SIGVE v1.0.0 Alpha 9 - Corrección estable
+
+IMPORTANTE
+Esta versión corrige el error P0001 ocurrido al ejecutar la migración desde SQL Editor.
+El problema era que el script anterior llamaba una función que exigía auth.uid(), pero el editor SQL no tiene una sesión de usuario del portal.
+
+INSTALACIÓN
+1. Reemplaza TODO el contenido del repositorio por esta versión, manteniendo los archivos en la raíz del repositorio.
+2. En Supabase > SQL Editor, ejecuta solamente: CORRECCION_SIGVE_ALPHA9.sql
+3. En la advertencia de Supabase puedes elegir "Run and enable RLS". La tabla ninos_hogar queda explícitamente con RLS activado.
+4. Cierra sesión en el panel, vuelve a entrar y presiona Ctrl+F5.
+
+PRUEBAS
+A. Socios
+- Pulsa "Renumerar desde 001".
+- Los socios activos deben quedar 001, 002, 003... sin saltos.
+- El siguiente socio activo recibe el número siguiente al total de socios activos.
+- "Eliminar prueba" elimina físicamente y vuelve a renumerar.
+
+B. Zumba
+- En un mes cerrado aparece "Eliminar cierre y aporte de Finanzas".
+- Al confirmar, se desasocian los aportes, se elimina el cierre y se borra el movimiento financiero.
+- Luego cada aporte pendiente muestra su botón Eliminar.
+
+C. Niños y niñas
+- Al aprobar un socio, el mensaje de WhatsApp debe incluir:
+  https://villaeltrigal.github.io/Portal-Villa-El-Trigal/registro-ninos.html?token=...
+- El enlace abre el formulario público y permite agregar, editar y eliminar niños o niñas.
+- Los enlaces antiguos index.html?registro_ninos=... son redirigidos por portal-v7.js.

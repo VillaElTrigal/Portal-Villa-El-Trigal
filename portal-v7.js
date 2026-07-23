@@ -1,4 +1,13 @@
 (() => {
+  const q = new URLSearchParams(window.location.search);
+  const childToken = q.get('registro_ninos');
+  if (childToken) {
+    const target = new URL('./registro-ninos.html', window.location.href);
+    target.searchParams.set('token', childToken);
+    window.location.replace(target.href);
+    return;
+  }
+
   const cfg = window.PORTAL_CONFIG || {};
   if (!window.supabase || !cfg.supabaseUrl || !cfg.supabaseAnonKey) return;
 
