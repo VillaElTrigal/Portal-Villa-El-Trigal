@@ -13,6 +13,16 @@ function validRut(r){r=rutClean(r);if(r.length<2)return false;let body=r.slice(0
 const phoneDigits=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
 const formatPhone=v=>{const d=phoneDigits(v);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
 const phoneDb=v=>{const d=phoneDigits(v);return d.length===8?`+569${d}`:null};
+function whatsappLink(phone,text){
+ const raw=String(phone||'').replace(/\D/g,'');
+ let number=raw;
+ if(number.startsWith('0'))number=number.replace(/^0+/, '');
+ if(number.length===9&&number.startsWith('9'))number='56'+number;
+ else if(number.length===8)number='569'+number;
+ else if(number.length===11&&number.startsWith('56'))number=number;
+ if(!/^569\d{8}$/.test(number))return '';
+ return `https://wa.me/${number}?text=${encodeURIComponent(String(text||''))}`;
+}
 function bindRutPhone(root=document){root.querySelectorAll('[data-rut]').forEach(i=>{i.value=formatRut(i.value);i.addEventListener('input',()=>i.value=formatRut(i.value))});root.querySelectorAll('[data-phone]').forEach(i=>{i.value=formatPhone(i.value);i.addEventListener('input',()=>i.value=formatPhone(i.value))})}
 const msg=(t,e=false)=>{const x=$('#global-message');if(!x)return;x.textContent=t;x.className='form-message '+(e?'error':'success');setTimeout(()=>x.textContent='',5000)};
 function modal(html){const d=document.createElement('div');d.className='v7-modal';d.innerHTML=`<div class="v7-modal-card">${html}</div>`;d.onclick=e=>{if(e.target===d||e.target.closest('[data-close]'))d.remove()};document.body.append(d);bindRutPhone(d);return d}

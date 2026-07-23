@@ -1,0 +1,15 @@
+SIGVE v1.0.0 RC2.3 - CORRECCION URGENTE WHATSAPP
+
+Correccion realizada:
+- Se agrego la funcion whatsappLink que faltaba en admin-v7.js.
+- Al aprobar un socio, ahora se prepara correctamente la bienvenida con el enlace personal para registrar niños y niñas.
+- Tambien funciona el boton permanente "Reenviar bienvenida".
+- La funcion valida y normaliza celulares chilenos antes de abrir WhatsApp.
+
+Instalacion:
+1. Reemplazar los archivos del sitio por los incluidos en esta version.
+2. No es necesario ejecutar SQL nuevamente si RC2 ya fue instalado.
+3. Publicar en GitHub Pages y recargar con Ctrl + F5.
+
+Importante:
+El socio mostrado en el error ya fue aprobado. Para enviarle el mensaje, usar el boton "Reenviar bienvenida" en su fila.
