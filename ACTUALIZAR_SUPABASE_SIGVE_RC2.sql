@@ -34,6 +34,9 @@ create extension if not exists pgcrypto;
 alter table public.socios
   add column if not exists registro_ninos_token uuid;
 
+alter table public.socios
+  alter column registro_ninos_token set default gen_random_uuid();
+
 update public.socios
 set registro_ninos_token = gen_random_uuid()
 where registro_ninos_token is null;

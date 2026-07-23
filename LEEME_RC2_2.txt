@@ -1,0 +1,11 @@
+SIGVE v1.0.0 RC2.2
+
+- Al aprobar una solicitud se genera el enlace personal.
+- Se muestra Enviar bienvenida por WhatsApp.
+- El mensaje contiene aceptación, bienvenida de la Directiva, número de socio y enlace de Niños y Niñas.
+- En el listado quedan Reenviar bienvenida y Copiar enlace.
+
+Instalación:
+1. Reemplazar archivos en GitHub.
+2. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_RC2.sql en Supabase.
+3. Recargar con Ctrl+F5.
