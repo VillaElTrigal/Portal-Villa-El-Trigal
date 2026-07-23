@@ -1,0 +1,33 @@
+SIGVE v1.0.0 alpha.6 — Mejoras módulo Zumba
+
+Cambios incluidos:
+
+1. Días de clase corregidos visualmente
+- Lunes a domingo quedan dentro del contenedor.
+- Diseño adaptable a computador, tablet y celular.
+- Se pueden seleccionar todos los días de la semana al generar clases.
+
+2. Liberación masiva de clases
+- Nuevo botón: "Liberar clases masivamente".
+- Permite seleccionar fecha inicial, fecha final y días de la semana.
+- Muestra una vista previa con la cantidad de clases afectadas.
+- Al confirmar, las clases quedan en estado cancelado.
+- Los horarios dejan de bloquear Sede y Arriendos.
+- Las clases pueden reactivarse individualmente desde el calendario mensual.
+
+3. Calendario mensual
+- Muestra solo un mes a la vez.
+- Filtro nativo por mes y año.
+- Botones para retroceder y avanzar mes a mes.
+- Incluye clases activas y suspendidas del mes seleccionado.
+
+Base de datos:
+- Esta actualización no necesita ejecutar una migración SQL nueva.
+- Utiliza las tablas y permisos existentes de reservas_sede y auditoria.
+
+Prueba recomendada:
+1. Abre Administrador > Zumba.
+2. Selecciona días y genera clases.
+3. Cambia de mes con las flechas.
+4. Usa "Liberar clases masivamente".
+5. Comprueba en Sede y Arriendos que las fechas liberadas vuelven a estar disponibles.
