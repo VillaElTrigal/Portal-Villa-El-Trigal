@@ -16,6 +16,8 @@
   const dayNames = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
   let selectedRentalDate = null;
   let selectedRentalLabel = '';
+  const MIN_RENTAL_YEAR = 2026;
+  let rentalCalendarYear = Math.max(MIN_RENTAL_YEAR, new Date().getFullYear());
 
   const rutClean = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
   const formatRut = value => {
@@ -75,62 +77,67 @@
   async function renderCalendar() {
     const host = document.getElementById('rental-calendars');
     const status = document.getElementById('calendar-sync-status');
+    const yearLabel = document.getElementById('rental-year-label');
+    const previousButton = document.getElementById('rental-year-prev');
     if (!host) return;
+
+    rentalCalendarYear = Math.max(MIN_RENTAL_YEAR, rentalCalendarYear);
+    if (yearLabel) yearLabel.textContent = String(rentalCalendarYear);
+    if (previousButton) previousButton.disabled = rentalCalendarYear <= MIN_RENTAL_YEAR;
     host.innerHTML = '<p>Cargando calendario…</p>';
 
-    const start = new Date();
-    start.setHours(0,0,0,0);
-    start.setDate(1);
-    const end = new Date(start.getFullYear() + 1, start.getMonth(), 1);
+    const startKey = iso(rentalCalendarYear, 0, 1);
+    const endKey = iso(rentalCalendarYear + 1, 0, 1);
     const { data, error } = await sb
       .from('reservas_publicas')
       .select('*')
-      .gte('fecha_evento', iso(start.getFullYear(), start.getMonth(), 1))
-      .lt('fecha_evento', iso(end.getFullYear(), end.getMonth(), 1));
+      .gte('fecha_evento', startKey)
+      .lt('fecha_evento', endKey);
 
     if (error) {
       console.error('No fue posible cargar reservas_publicas:', error);
       host.innerHTML = '<p>No fue posible cargar el calendario.</p>';
-      if (status) status.textContent = 'Error al consultar la disponibilidad. Ejecuta primero el archivo SQL de la versión 8.0.';
+      if (status) status.textContent = 'Error al consultar la disponibilidad. Revisa la conexión con Supabase.';
       return;
     }
 
     const map = new Map((data || []).map(entry => [entry.fecha_evento, entry]));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     host.innerHTML = '';
-    for (let index = 0; index < 12; index++) {
-      const year = start.getFullYear() + Math.floor((start.getMonth() + index) / 12);
-      const month = (start.getMonth() + index) % 12;
+
+    for (let month = 0; month < 12; month++) {
       const card = document.createElement('article');
       card.className = 'month-card';
-      card.innerHTML = `<h4>${monthNames[month]} ${year}</h4>`;
+      card.innerHTML = `<h4>${monthNames[month]} ${rentalCalendarYear}</h4>`;
       const days = document.createElement('div');
       days.className = 'month-days';
       dayNames.forEach(name => days.insertAdjacentHTML('beforeend', `<span class="day-name">${name}</span>`));
-      const offset = (new Date(year, month, 1).getDay() + 6) % 7;
+      const offset = (new Date(rentalCalendarYear, month, 1).getDay() + 6) % 7;
       for (let blank = 0; blank < offset; blank++) days.insertAdjacentHTML('beforeend', '<span class="calendar-blank"></span>');
-      const count = new Date(year, month + 1, 0).getDate();
+      const count = new Date(rentalCalendarYear, month + 1, 0).getDate();
 
       for (let day = 1; day <= count; day++) {
-        const dateKey = iso(year, month, day);
+        const dateKey = iso(rentalCalendarYear, month, day);
         const entry = map.get(dateKey);
         const button = document.createElement('button');
         button.type = 'button';
         button.dataset.date = dateKey;
         button.textContent = day;
-        const date = new Date(year, month, day);
-        const past = date < new Date(new Date().setHours(0,0,0,0));
+        const date = new Date(rentalCalendarYear, month, day);
+        const past = date < today;
         if (past) {
           button.className = 'calendar-day past';
           button.disabled = true;
           button.title = 'Fecha pasada';
         } else if (entry) {
-          const cssClass = entry.tipo === 'zumba' ? 'zumba' : entry.tipo === 'actividad' ? 'activity' : 'reserved';
+          const cssClass = entry.tipo === 'zumba' ? 'zumba' : entry.tipo === 'actividad' || entry.tipo === 'administrativa' ? 'activity' : 'reserved';
           button.className = `calendar-day ${cssClass}`;
           button.disabled = true;
           button.title = entry.descripcion_publica || (entry.tipo === 'arriendo' ? 'Reservado' : 'Fecha no disponible');
         } else {
           button.className = 'calendar-day available';
-          button.onclick = () => selectDate(dateKey, readable(year, month, day));
+          button.onclick = () => selectDate(dateKey, readable(rentalCalendarYear, month, day));
           button.title = 'Disponible para solicitar';
         }
         days.appendChild(button);
@@ -138,7 +145,25 @@
       card.appendChild(days);
       host.appendChild(card);
     }
-    if (status) status.textContent = 'Calendario actualizado desde Gestión de la Sede.';
+    if (status) status.textContent = `Calendario ${rentalCalendarYear} actualizado desde Gestión de la Sede.`;
+  }
+
+  function configureRentalYearNavigation() {
+    const previousButton = document.getElementById('rental-year-prev');
+    const nextButton = document.getElementById('rental-year-next');
+    if (previousButton) previousButton.onclick = async () => {
+      if (rentalCalendarYear <= MIN_RENTAL_YEAR) return;
+      rentalCalendarYear -= 1;
+      selectedRentalDate = null;
+      selectedRentalLabel = '';
+      await renderCalendar();
+    };
+    if (nextButton) nextButton.onclick = async () => {
+      rentalCalendarYear += 1;
+      selectedRentalDate = null;
+      selectedRentalLabel = '';
+      await renderCalendar();
+    };
   }
 
   function openRentalForm() {
@@ -303,6 +328,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    configureRentalYearNavigation();
     renderCalendar();
     setupRentalRequest();
     setupSocioForm();

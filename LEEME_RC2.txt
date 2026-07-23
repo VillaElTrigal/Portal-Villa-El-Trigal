@@ -1,0 +1,14 @@
+SIGVE v1.0.0 RC2
+
+1. Sube todos los archivos de esta carpeta a GitHub, reemplazando los anteriores.
+2. En Supabase SQL Editor ejecuta solamente ACTUALIZAR_SUPABASE_SIGVE_RC2.sql.
+3. Espera el mensaje de ejecución correcta.
+4. Recarga el portal con Ctrl + F5.
+
+Cambios principales:
+- Reparación integral del formulario de niños y niñas.
+- RPC obtener, listar, registrar, actualizar y eliminar incluidas en un solo SQL.
+- RUT y parentesco obligatorios.
+- Consideraciones especiales y consentimiento.
+- Calendario público anual con flechas.
+- Año mínimo 2026; se puede avanzar sin límite y retroceder hasta 2026.

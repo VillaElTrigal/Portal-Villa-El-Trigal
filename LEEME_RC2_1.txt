@@ -1,0 +1,10 @@
+SIGVE v1.0.0 RC2.1
+
+1. Sube todos los archivos de esta carpeta a GitHub, reemplazando los anteriores.
+2. Para esta mejora de exportación NO es necesario ejecutar un SQL nuevo.
+3. Si todavía no instalaste RC2 en Supabase, ejecuta solamente ACTUALIZAR_SUPABASE_SIGVE_RC2.sql.
+4. Recarga el portal con Ctrl + F5.
+
+Cambio adicional:
+- La exportación de Navidad ahora incluye N°, RUT, Recibió regalo y Firma / Observación.
+- El RUT se exporta con formato chileno.

@@ -1,0 +1,10 @@
+SIGVE v1.0.0 RC1 CORREGIDO
+
+1. Reemplaza en GitHub todos los archivos de esta carpeta.
+2. En Supabase > SQL Editor, ejecuta solamente:
+   ACTUALIZAR_SUPABASE_SIGVE_RC1_CORREGIDO.sql
+3. Debe terminar sin el error 42723 de registrar_nino_por_token.
+4. Actualiza el portal con Ctrl + F5.
+
+Esta versión integra el formulario de niños y niñas y no requiere ejecutar Alpha 10 por separado.
+El SQL puede volver a ejecutarse sin borrar los registros existentes.
