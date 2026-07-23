@@ -1,0 +1,23 @@
+SIGVE v1.0.0-alpha.7
+
+CAMBIOS
+1. Socios
+- Numeración visible con tres dígitos: 001, 002, 003...
+- Botón "Renumerar desde 001" para la etapa de desarrollo.
+- Al eliminar físicamente un socio de prueba, se eliminan sus niños/as y se recompone la numeración.
+
+2. Zumba
+- El aporte individual pendiente puede eliminarse.
+- Un mes cerrado muestra "Eliminar cierre y aporte de Finanzas".
+- Al usarlo, los aportes vuelven a pendientes y el movimiento consolidado se elimina de Finanzas.
+
+3. Niños y niñas
+- El enlace de WhatsApp ahora abre registro-ninos.html?token=...
+- Página pública incluida en el ZIP.
+- Permite agregar, editar y eliminar niños/as asociados al socio.
+
+INSTALACIÓN
+1. Reemplazar en GitHub todos los archivos por los de este ZIP.
+2. Ejecutar ACTUALIZAR_SUPABASE_ALPHA7.sql en Supabase > SQL Editor.
+3. Esperar el despliegue de GitHub Pages y recargar con Ctrl+F5.
+4. Usar una vez el botón "Renumerar desde 001" para reiniciar la cuenta actual.

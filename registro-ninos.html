@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2f6b3c">
+  <title>Registro de niños y niñas · Villa El Trigal</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=631">
+  <link rel="stylesheet" href="registro-ninos.css?v=2">
+</head>
+<body class="child-page">
+  <main class="child-shell">
+    <section class="child-panel" aria-labelledby="child-title">
+      <header class="child-header">
+        <img src="assets/logo.svg" alt="Junta de Vecinos Villa El Trigal">
+        <div>
+          <p class="eyebrow">Junta de Vecinos Villa El Trigal</p>
+          <h1 id="child-title">Registro de niños y niñas del hogar</h1>
+        </div>
+      </header>
+
+      <div id="child-loading" class="child-status">Validando tu enlace personal…</div>
+
+      <div id="child-invalid" class="child-alert error" hidden>
+        <h2>Enlace no disponible</h2>
+        <p>Este enlace no es válido, está incompleto o el socio ya no se encuentra activo. Solicita uno nuevo a la directiva.</p>
+      </div>
+
+      <div id="child-content" hidden>
+        <div class="member-summary">
+          <div><span>Socio titular</span><strong id="member-name"></strong></div>
+          <div><span>Número de socio</span><strong id="member-number"></strong></div><div><span>Domicilio asociado</span><strong id="member-address"></strong></div>
+        </div>
+
+        <p class="child-help">Agrega solamente a los niños y niñas que viven en este domicilio. Puedes registrar más de uno. No se solicita RUT y la dirección se asocia automáticamente al socio titular.</p>
+
+        <form id="child-form" class="child-form" novalidate>
+          <label class="full">Nombre completo
+            <input name="nombre" autocomplete="name" maxlength="120" required placeholder="Ej.: Martina González Pérez">
+          </label>
+          <label>Fecha de nacimiento
+            <input name="fecha_nacimiento" type="date" required>
+          </label>
+          <label>Sexo
+            <select name="sexo" required>
+              <option value="M">M - Niño</option>
+              <option value="F">F - Niña</option>
+            </select>
+          </label>
+          <div class="full child-actions">
+            <button class="button primary" type="submit" id="save-child">Guardar niño o niña</button><button class="button secondary" type="button" id="cancel-edit" hidden>Cancelar edición</button>
+            <span id="child-message" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+
+        <section class="saved-children" aria-labelledby="saved-title">
+          <div class="saved-heading">
+            <h2 id="saved-title">Registros guardados</h2>
+            <span id="saved-count" class="count-badge">0</span>
+          </div>
+          <div id="child-list"></div>
+        </section>
+      </div>
+
+      <footer class="child-footer">
+        <p>La información será revisada por la directiva de la Junta de Vecinos.</p>
+        <a href="index.html">Volver al portal comunitario</a>
+      </footer>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="portal-config.js"></script>
+  <script src="registro-ninos.js?v=2"></script>
+</body>
+</html>
