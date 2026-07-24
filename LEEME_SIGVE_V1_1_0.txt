@@ -1,0 +1,45 @@
+SIGVE v1.1.0 — GESTIÓN FINANCIERA INTEGRADA
+============================================================
+
+INSTALACIÓN
+
+1. Haz un respaldo de la base de datos de Supabase.
+2. En Supabase abre SQL Editor.
+3. Ejecuta completo el archivo:
+
+   ACTUALIZAR_SUPABASE_SIGVE_V1_1_0.sql
+
+4. Sube todos los archivos de esta carpeta a GitHub, reemplazando los existentes.
+5. Espera la publicación de GitHub Pages y recarga con Ctrl + F5.
+6. Ingresa al panel de administración.
+
+MÓDULOS NUEVOS
+
+- Cuotas
+- Certificados
+- Libro de Caja
+- Informe mensual
+
+PRIMER USO
+
+A. Abre "Valores de gestión" y confirma:
+   - Valor de la cuota.
+   - Valor del certificado.
+
+B. Abre "Cuotas", selecciona el mes y pulsa "Generar / actualizar mes".
+
+C. Para registrar un pago pulsa "Registrar pago". El ingreso aparecerá
+   automáticamente en Finanzas y en el Libro de Caja.
+
+D. En "Certificados" pulsa "Emitir certificado". El primer folio nuevo
+   será 00209 cuando no existan certificados previos con un folio superior.
+
+E. En "Informe mensual" selecciona un mes y genera el documento. El botón
+   "Imprimir / PDF" permite guardarlo como PDF desde el navegador.
+
+IMPORTANTE
+
+- No ejecutes scripts SQL antiguos después de instalar v1.1.0.
+- Esta actualización no elimina socios, reservas ni movimientos existentes.
+- Si Supabase informa un error, copia el mensaje completo antes de intentar
+  otra modificación.

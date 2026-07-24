@@ -1,0 +1,7 @@
+/* SIGVE v1.1.0 */
+.v110-status{display:inline-flex;padding:.25rem .55rem;border-radius:999px;font-size:.78rem;font-weight:700;background:#eef2f7}
+.v110-status.pagado{background:#dcfce7;color:#166534}.v110-status.pendiente{background:#fef3c7;color:#92400e}.v110-status.exento_incorporacion{background:#dbeafe;color:#1e40af}.v110-status.anulado{background:#fee2e2;color:#991b1b}
+.v110-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}.v110-summary .stat{min-height:86px}
+.v110-table-actions{display:flex;gap:.35rem;flex-wrap:wrap}.v110-note{padding:.8rem 1rem;border-left:4px solid currentColor;background:rgba(0,0,0,.03);border-radius:.5rem}
+.report-letter{background:#fff;padding:2rem;max-width:920px;margin:1rem auto;border:1px solid #ddd}.report-letter-header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #222;padding-bottom:1rem}.report-letter-header img{width:72px;height:72px}.report-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:5rem;text-align:center}.report-signatures div{border-top:1px solid #333;padding-top:.4rem}
+@media print{body *{visibility:hidden!important}.report-letter,.report-letter *{visibility:visible!important}.report-letter{position:absolute;left:0;top:0;width:100%;border:0;margin:0;padding:1cm}.sidebar,.topbar{display:none!important}}
