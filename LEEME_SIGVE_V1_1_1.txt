@@ -1,0 +1,17 @@
+SIGVE v1.1.1 — ACTUALIZACIÓN REAL PARA REVISIÓN
+
+1. Antes de subir los archivos a GitHub, abre Supabase > SQL Editor.
+2. Copia y ejecuta TODO el contenido de:
+   ACTUALIZAR_SUPABASE_SIGVE_V1_1_1.sql
+3. Sube/reemplaza todos los archivos del ZIP en tu repositorio.
+4. En el panel entra a “Autoridades y firmas”.
+5. Registra presidente, secretario y tesorero y carga sus firmas.
+6. Activa “Generación digital” y marca qué autoridades firmarán.
+7. En Certificados usa “Registrar certificado manual”.
+
+IMPORTANTE
+- El folio ahora se escribe manualmente y no puede repetirse.
+- El certificado queda editable.
+- Al cambiar de Pendiente a Pagado se crea un solo ingreso.
+- La glosa es: Pago certificado de residencia - Folio N° XXXXX.
+- Las imágenes de firmas deben pesar menos de 700 KB.
