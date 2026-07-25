@@ -19,3 +19,8 @@
 
 ### Base para SIGVE 2.0
 - La estructura de cuotas, certificados y solicitudes queda preparada para ser consultada posteriormente desde el Portal del Socio.
+
+## v1.1.2 — 24-07-2026
+- Informe mensual muestra la glosa completa de cada movimiento y distingue abonos, saldos y pagos completos de arriendo.
+- Nueva vista de impresión/PDF independiente, en tamaño carta.
+- Se agregan columnas Fecha, Detalle y Monto en ingresos y egresos.

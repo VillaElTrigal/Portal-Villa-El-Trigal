@@ -1,0 +1,20 @@
+SIGVE v1.1.2 — Corrección del informe mensual
+Fecha: 24-07-2026
+
+CAMBIOS
+1. El informe financiero mensual ahora muestra el detalle real guardado en cada movimiento, en vez de agruparlo solo como "Arriendo sede".
+   Ejemplos:
+   - Abono arriendo sede - 24/07/2026
+   - Saldo arriendo sede - 24/07/2026
+   - Pago completo arriendo sede - 24/07/2026
+   - Pago certificado de residencia - Folio N° 00211
+
+2. Se incorporó una impresión independiente del informe mensual.
+   El botón "Imprimir / PDF" abre una vista limpia, tamaño carta, y activa el diálogo de impresión del navegador.
+
+3. El informe incluye Fecha, Detalle y Monto para cada ingreso y egreso.
+
+INSTALACIÓN
+- Reemplaza los archivos del portal por los contenidos de este ZIP y vuelve a publicar GitHub Pages.
+- No es necesario ejecutar un nuevo script SQL para esta corrección.
+- Puede ser necesario actualizar la página con Ctrl + F5 para borrar la versión anterior guardada en caché.

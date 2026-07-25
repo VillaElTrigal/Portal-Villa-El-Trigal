@@ -5,3 +5,5 @@
 .v110-table-actions{display:flex;gap:.35rem;flex-wrap:wrap}.v110-note{padding:.8rem 1rem;border-left:4px solid currentColor;background:rgba(0,0,0,.03);border-radius:.5rem}
 .report-letter{background:#fff;padding:2rem;max-width:920px;margin:1rem auto;border:1px solid #ddd}.report-letter-header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #222;padding-bottom:1rem}.report-letter-header img{width:72px;height:72px}.report-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:5rem;text-align:center}.report-signatures div{border-top:1px solid #333;padding-top:.4rem}
 @media print{body *{visibility:hidden!important}.report-letter,.report-letter *{visibility:visible!important}.report-letter{position:absolute;left:0;top:0;width:100%;border:0;margin:0;padding:1cm}.sidebar,.topbar{display:none!important}}
+
+.report-detail-table .report-date{width:105px;white-space:nowrap}.report-detail-table .report-amount,.report-amount{text-align:right;white-space:nowrap;width:130px}
