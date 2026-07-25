@@ -1,0 +1,12 @@
+SIGVE v1.1.3 - Corrección de impresión del informe mensual
+
+Cambios:
+- El botón Imprimir / PDF ya no abre una ventana emergente.
+- La impresión se ejecuta en la misma pestaña con window.print().
+- Se corrigió el conflicto de estilos que ocultaba el informe mensual al imprimir.
+- Mantiene las glosas detalladas de abonos, saldos y pagos completos.
+
+Instalación:
+1. Reemplaza los archivos del sitio por los de este paquete.
+2. No requiere ejecutar SQL nuevo.
+3. Después de publicar, presiona Ctrl + F5.
