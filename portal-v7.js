@@ -265,10 +265,30 @@
     });
   }
 
-  function setupSocioForm() {
+  const normalizeSearch = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const viaLabel = via => `${via.tipo} ${via.nombre}`.trim();
+  async function loadPublicVias() {
+    const {data,error}=await sb.from('vias').select('id,tipo,nombre,aliases').eq('activa',true).order('nombre');
+    if(error){console.error('No fue posible cargar las vías:',error);return []}
+    return (data||[]).sort((a,b)=>viaLabel(a).localeCompare(viaLabel(b),'es',{sensitivity:'base'}));
+  }
+  function bindPublicViaPicker(form,vias){
+    const root=form.querySelector('[data-via-picker]'),input=form.elements.via_busqueda,hidden=form.elements.via_id,list=root.querySelector('.via-suggestions'),number=form.elements.numero_domicilio,preview=form.querySelector('[data-address-preview]');
+    let matches=[];
+    const updatePreview=()=>{const via=vias.find(v=>v.id===hidden.value);preview.textContent=via&&number.value.trim()?`📍 ${viaLabel(via)} ${number.value.trim()}`:'📍 Selecciona una vía e ingresa el número.'};
+    const close=()=>{list.hidden=true;input.setAttribute('aria-expanded','false')};
+    const choose=via=>{hidden.value=via.id;input.value=viaLabel(via);root.classList.remove('invalid');close();updatePreview()};
+    const render=()=>{const q=normalizeSearch(input.value);hidden.value='';matches=vias.filter(v=>!q||normalizeSearch([viaLabel(v),...(v.aliases||[])].join(' ')).includes(q)).slice(0,30);list.innerHTML=matches.length?matches.map((v,i)=>`<button type="button" class="via-suggestion" data-index="${i}" role="option">${viaLabel(v)}</button>`).join(''):'<div class="via-empty">No hay coincidencias. Consulta a la directiva.</div>';list.hidden=false;input.setAttribute('aria-expanded','true');list.querySelectorAll('[data-index]').forEach(b=>b.onclick=()=>choose(matches[Number(b.dataset.index)]));updatePreview()};
+    input.addEventListener('focus',render);input.addEventListener('input',render);input.addEventListener('keydown',e=>{if(e.key==='Escape')close()});number.addEventListener('input',()=>{number.value=number.value.replace(/[^0-9]/g,'');updatePreview()});document.addEventListener('click',e=>{if(!root.contains(e.target))close()});
+    return {valid:()=>{const ok=!!hidden.value;if(!ok)root.classList.add('invalid');return ok},reset:()=>{hidden.value='';input.value='';updatePreview()}};
+  }
+
+  async function setupSocioForm() {
     const form = document.getElementById('public-socio-form');
     const message = document.getElementById('public-socio-message');
     if (!form) return;
+    const vias=await loadPublicVias();
+    const picker=bindPublicViaPicker(form,vias);
     const rut = form.elements.rut;
     const phone = form.elements.telefono;
     rut.dataset.rut = '1';
@@ -278,6 +298,10 @@
       event.preventDefault();
       const formattedRut = formatRut(rut.value);
       const dbPhone = phoneDb(phone.value);
+      const via=vias.find(v=>v.id===form.elements.via_id.value);
+      const numero=form.elements.numero_domicilio.value.trim();
+      if (!picker.valid() || !via) {message.textContent='Selecciona una calle, pasaje o avenida válida de la lista.';return}
+      if (!numero) {message.textContent='Ingresa el número del domicilio.';return}
       if (!validRut(formattedRut)) {
         message.textContent = 'Revisa el RUT ingresado.';
         return;
@@ -290,7 +314,9 @@
       const { error } = await sb.from('solicitudes_socios').insert({
         nombre_completo: form.elements.nombre.value.trim(),
         rut: formattedRut,
-        direccion: form.elements.direccion.value.trim(),
+        via_id: via.id,
+        numero_domicilio: numero,
+        direccion: `${viaLabel(via)} ${numero}`,
         telefono: dbPhone,
         correo: form.elements.correo.value.trim() || null,
         observaciones: form.elements.observaciones.value.trim() || null,
@@ -301,11 +327,10 @@
         message.textContent = 'No se pudo enviar: ' + error.message;
         return;
       }
-      form.reset();
+      form.reset();picker.reset();
       message.textContent = 'Solicitud enviada correctamente. La directiva la revisará.';
     };
   }
-
 
   async function setupChildRegistration() {
     const token = new URLSearchParams(location.search).get('registro_ninos');
