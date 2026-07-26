@@ -42,19 +42,71 @@ async function loadLedger(){const from=$('#libro-from').value,to=$('#libro-to').
 function exportLedger(){csv(`libro-caja-${$('#libro-from').value}-${$('#libro-to').value}.csv`,[['Fecha','Concepto','Ingreso','Egreso','Fondo','Saldo'],...ledger.map(x=>[x.fecha,x.concepto,x.tipo==='ingreso'?x.monto:'',x.tipo==='gasto'?x.monto:'',x.fondo,x.saldo_acumulado])])}
 async function officialReport(){const m=$('#official-month').value;if(!m)return toast('Selecciona el mes del informe.',true);const b=monthBounds(m),st=await settings();const{data,error}=await client().from('movimientos_financieros').select('*').gte('fecha',b.from).lte('fecha',b.to).eq('anulado',false).in('tipo',['ingreso','gasto']).order('fecha',{ascending:true}).order('creado_en',{ascending:true});if(error)return toast(error.message,true);const rows=data||[],inc=rows.filter(x=>x.tipo==='ingreso'),out=rows.filter(x=>x.tipo==='gasto');const detail=a=>a.map(x=>[x.concepto||x.categoria||'Sin descripción',Number(x.monto),x.fecha]);const ti=inc.reduce((a,x)=>a+Number(x.monto),0),to=out.reduce((a,x)=>a+Number(x.monto),0);const before=await client().from('movimientos_financieros').select('tipo,monto').lt('fecha',b.from).eq('anulado',false).in('tipo',['ingreso','gasto']);const opening=(before.data||[]).reduce((a,x)=>a+(x.tipo==='ingreso'?Number(x.monto):-Number(x.monto)),0),closing=opening+ti-to;const label=new Date(b.from+'T12:00:00').toLocaleDateString('es-CL',{month:'long',year:'numeric'});const renderDetail=a=>a.length?detail(a).map(([concept,mount,date])=>`<tr><td class="report-date">${dateCL(date)}</td><td>${esc(concept)}</td><td class="report-amount">${money(mount)}</td></tr>`).join(''):'<tr><td colspan="3">Sin movimientos.</td></tr>';$('#official-report').innerHTML=`<article class="report-letter"><div class="report-letter-header"><img src="assets/logo.svg"><div><h2>${esc(st.nombre_organizacion||'Junta de Vecinos Villa El Trigal')}</h2><h3>Informe Financiero Mensual · ${label}</h3></div></div><p>Saldo inicial: <strong>${money(opening)}</strong></p><h3>Ingresos</h3><table class="v7-table report-detail-table"><thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th></tr></thead><tbody>${renderDetail(inc)}<tr><th colspan="2">Total ingresos</th><th class="report-amount">${money(ti)}</th></tr></tbody></table><h3>Egresos</h3><table class="v7-table report-detail-table"><thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th></tr></thead><tbody>${renderDetail(out)}<tr><th colspan="2">Total egresos</th><th class="report-amount">${money(to)}</th></tr></tbody></table><h3>Resumen</h3><table class="v7-table"><tbody><tr><td>Resultado del mes</td><td class="report-amount">${money(ti-to)}</td></tr><tr><th>Saldo final acumulado</th><th class="report-amount">${money(closing)}</th></tr></tbody></table><div class="report-signatures"><div>Presidente(a)</div><div>Secretario(a)</div><div>Tesorero(a)</div></div></article>`}
 async function printOfficialReport(){
-  if(!$('#official-report .report-letter')) await officialReport();
-  const report=$('#official-report .report-letter');
-  if(!report) return toast('Primero genera el informe mensual.',true);
+  // Abrir la ventana inmediatamente mantiene el gesto del clic y evita bloqueos del navegador.
+  const printWindow=window.open('','_blank');
+  if(!printWindow){
+    return toast('El navegador bloqueó la ventana de impresión. Habilita las ventanas emergentes para este sitio.',true);
+  }
+  printWindow.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando informe…</title></head><body style="font-family:Arial,sans-serif;padding:24px">Preparando informe mensual…</body></html>');
+  printWindow.document.close();
 
-  // Imprime en la misma pestaña para evitar el bloqueo de ventanas emergentes.
-  document.body.classList.add('printing-official-report');
-  const cleanup=()=>document.body.classList.remove('printing-official-report');
-  window.addEventListener('afterprint',cleanup,{once:true});
+  try{
+    if(!$('#official-report .report-letter')) await officialReport();
+    const report=$('#official-report .report-letter');
+    if(!report){
+      printWindow.close();
+      return toast('No fue posible generar el informe mensual.',true);
+    }
 
-  // Da tiempo al navegador para aplicar los estilos de impresión y cargar el logo.
-  requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{
-    try{window.print()}catch(error){cleanup();toast('No fue posible abrir la impresión. Intenta nuevamente.',true)}
-  },120)));
+    const base=document.baseURI;
+    const month=$('#official-month').value||today().slice(0,7);
+    printWindow.document.open();
+    printWindow.document.write(`<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="${esc(base)}">
+<title>Informe financiero mensual ${esc(month)}</title>
+<style>
+  @page{size:letter;margin:12mm}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif;font-size:12px}
+  .report-letter{width:100%;margin:0;padding:0;border:0;background:#fff;color:#111}
+  .report-letter-header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #222;padding-bottom:12px;margin-bottom:14px}
+  .report-letter-header img{width:64px;height:64px;object-fit:contain}
+  h2{margin:0 0 5px;font-size:19px} h3{margin:14px 0 7px;font-size:15px;page-break-after:avoid}
+  p{margin:8px 0}
+  table{width:100%;border-collapse:collapse;margin:7px 0 15px;page-break-inside:auto}
+  th,td{border:1px solid #aaa;padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#f1f1f1;font-weight:700}
+  tr{page-break-inside:avoid;page-break-after:auto}
+  .report-date{width:95px;white-space:nowrap}
+  .report-amount{text-align:right;white-space:nowrap;width:115px}
+  .report-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:70px;text-align:center}
+  .report-signatures div{border-top:1px solid #333;padding-top:6px}
+  @media print{html,body{width:100%}.report-letter{width:100%}}
+</style>
+</head>
+<body>${report.outerHTML}</body>
+</html>`);
+    printWindow.document.close();
+
+    const images=[...printWindow.document.images];
+    await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{
+      img.addEventListener('load',resolve,{once:true});
+      img.addEventListener('error',resolve,{once:true});
+    })));
+
+    setTimeout(()=>{
+      printWindow.focus();
+      printWindow.print();
+    },250);
+  }catch(error){
+    try{printWindow.close()}catch(_){ }
+    console.error('Error al imprimir informe mensual:',error);
+    toast('No fue posible preparar la impresión del informe mensual.',true);
+  }
 }
 
 function bind(){addMenu();const m=today().slice(0,7);$('#cuotas-month').value=m;$('#official-month').value=m;$('#libro-from').value=m+'-01';$('#libro-to').value=today();$('#cuotas-generate').onclick=generateQuotas;$('#cuotas-prev').onclick=()=>{$('#cuotas-month').value=monthMove($('#cuotas-month').value,-1);loadCuotas()};$('#cuotas-next').onclick=()=>{$('#cuotas-month').value=monthMove($('#cuotas-month').value,1);loadCuotas()};$('#cuotas-month').onchange=loadCuotas;$('#cuotas-search').oninput=renderCuotas;$('#cuotas-filter').onchange=renderCuotas;$('#new-certificado').onclick=newCert;$('#cert-search').oninput=renderCerts;$('#libro-load').onclick=loadLedger;$('#libro-export').onclick=exportLedger;$('#official-generate').onclick=officialReport;$('#official-print').onclick=printOfficialReport;document.addEventListener('click',e=>{const b=e.target.closest('[data-section]');if(!b)return;const k=b.dataset.section;if(!['cuotas','certificados','libro-caja','informe-mensual'].includes(k))return;document.querySelectorAll('[data-section]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.admin-section').forEach(s=>s.hidden=s.id!==`section-${k}`);$('#page-title').textContent=b.textContent.trim();setTimeout(()=>({cuotas:loadCuotas,certificados:loadCerts,'libro-caja':loadLedger,'informe-mensual':officialReport}[k]?.()),30)},true)}
