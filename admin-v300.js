@@ -114,6 +114,7 @@
             <button data-go="socios">＋ Gestionar socios</button>
             <button data-go="reservas-v7">＋ Revisar sede</button>
             <button data-go="historico">📚 Archivo histórico</button>
+            <button data-go="bitacora">📝 Ver bitácora</button>
           </div>
         </article>
       </section>
@@ -164,6 +165,7 @@
     dialog.showModal();
 
     const movementCount=await financialMovementCount(p.id);
+    const logCount=await bitacoraCount(p.id);
     const caja=isArchived?money(p.saldo_caja_cierre):liveStat('#stat-caja','$0');
     const banco=isArchived?money(p.saldo_banco_cierre):liveStat('#stat-banco','$0');
     const total=isArchived?money(p.saldo_total_cierre):money(parseMoney(caja)+parseMoney(banco));
@@ -198,12 +200,74 @@
         ${dossierModule('🏠','Reservas',reservas,'Uso de sede y agenda institucional',isArchived?'Próxima etapa':'Disponible')}
         ${dossierModule('📦','Inventario','Módulo preparado','Bienes, equipamiento y traspaso de activos','Próxima etapa')}
         ${dossierModule('🏗️','Proyectos','Módulo preparado','Proyectos ejecutados y pendientes de continuidad','Próxima etapa')}
+        ${dossierModule('📝','Bitácora institucional',`${logCount} eventos`,'Trazabilidad automática de acciones relevantes','Integrado')}
         ${dossierModule('🧾','Acta de entrega','Generación futura','Resumen formal para el cambio de directiva','Planificado')}
       </section>
       ${p.cierre_observaciones?`<section class="dossier-observations"><strong>Observaciones del cierre</strong><p>${esc(p.cierre_observaciones)}</p></section>`:''}
       <footer class="dossier-footer"><div><strong>Expediente institucional SIGVE</strong><span>La historia se conserva; los registros archivados no se modifican.</span></div><div class="actions"><button type="button" class="button secondary" data-print-dossier>🖨️ Imprimir / PDF</button><button class="button primary" value="cancel">Cerrar</button></div></footer>
     </form>`;
     dialog.querySelector('[data-print-dossier]')?.addEventListener('click',()=>window.print());
+  }
+
+
+
+  let bitacoraRows = [];
+
+  function ensureBitacoraUI(){
+    const nav=$('.sidebar nav');
+    if(nav && !nav.querySelector('[data-section="bitacora"]')){
+      const button=document.createElement('button');
+      button.type='button'; button.dataset.section='bitacora'; button.textContent='📝 Bitácora institucional';
+      const periodButton=nav.querySelector('[data-section="periodos"]');
+      if(periodButton) periodButton.insertAdjacentElement('afterend',button); else nav.appendChild(button);
+    }
+    const main=$('.admin-main');
+    if(main && !$('#section-bitacora')){
+      const section=document.createElement('section');
+      section.id='section-bitacora'; section.className='admin-section'; section.hidden=true;
+      section.innerHTML=`<div class="panel bitacora-header"><div><span class="historico-kicker">Transparencia y trazabilidad</span><h3>Bitácora Institucional</h3><p class="help">Registro automático de las acciones relevantes de cada administración. Los eventos no se editan ni se eliminan desde el panel.</p></div><button class="button secondary" type="button" data-refresh-bitacora>Actualizar</button></div><div class="bitacora-toolbar panel"><label>Módulo<select id="bitacora-filter"><option value="todos">Todos</option><option value="finanzas">Finanzas</option><option value="administracion">Administración</option><option value="sistema">Sistema</option></select></label><label>Buscar<input id="bitacora-search" placeholder="Concepto, acción o usuario"></label><div class="bitacora-count"><span>Eventos del período</span><strong id="bitacora-count">0</strong></div></div><div id="bitacora-list" class="bitacora-list"><div class="panel">Cargando bitácora…</div></div>`;
+      main.appendChild(section);
+      section.querySelector('[data-refresh-bitacora]')?.addEventListener('click',loadBitacora);
+      section.querySelector('#bitacora-filter')?.addEventListener('change',renderBitacora);
+      section.querySelector('#bitacora-search')?.addEventListener('input',renderBitacora);
+    }
+  }
+
+  function bitacoraIcon(modulo,accion){
+    if(modulo==='finanzas') return accion==='delete'?'🗑️':accion==='update'?'✏️':'💰';
+    if(modulo==='administracion') return '🏛️';
+    return '🧭';
+  }
+
+  function formatDateTime(value){
+    if(!value) return '—';
+    return new Date(value).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'});
+  }
+
+  function renderBitacora(){
+    const host=$('#bitacora-list'); if(!host) return;
+    const module=$('#bitacora-filter')?.value||'todos';
+    const query=($('#bitacora-search')?.value||'').trim().toLowerCase();
+    const rows=bitacoraRows.filter(x=>(module==='todos'||x.modulo===module)&&(!query||`${x.titulo||''} ${x.detalle||''} ${x.actor_email||''}`.toLowerCase().includes(query)));
+    const counter=$('#bitacora-count'); if(counter) counter.textContent=String(rows.length);
+    if(!rows.length){host.innerHTML='<div class="panel bitacora-empty"><div>📝</div><h3>Sin eventos para este filtro</h3><p>Las nuevas operaciones relevantes aparecerán automáticamente aquí.</p></div>';return;}
+    host.innerHTML=rows.map(x=>`<article class="bitacora-event"><div class="bitacora-icon">${bitacoraIcon(x.modulo,x.accion)}</div><div class="bitacora-content"><div class="bitacora-event-head"><strong>${esc(x.titulo)}</strong><span>${formatDateTime(x.creado_en)}</span></div><p>${esc(x.detalle||'Sin detalle')}</p><div class="bitacora-meta"><span>${esc(x.modulo||'sistema')}</span><span>${esc(x.actor_email||'Sistema SIGVE')}</span>${x.monto!=null?`<strong>${money(x.monto)}</strong>`:''}</div></div></article>`).join('');
+  }
+
+  async function loadBitacora(){
+    ensureBitacoraUI();
+    const host=$('#bitacora-list');
+    if(!activePeriod){if(host) host.innerHTML='<div class="panel bitacora-empty"><h3>Sin administración activa</h3><p>Activa un período para consultar su bitácora.</p></div>';return;}
+    let q=sb.from('bitacora_institucional').select('*').eq('periodo_id',activePeriod.id).order('creado_en',{ascending:false}).limit(500);
+    const {data,error}=await q;
+    if(error){if(host) host.innerHTML=`<div class="panel bitacora-error"><h3>No se pudo cargar la bitácora</h3><p>${esc(error.message)}</p><small>Confirma que ejecutaste el SQL de SIGVE v3.4.0.</small></div>`;return;}
+    bitacoraRows=data||[]; renderBitacora(); renderDashboard();
+  }
+
+  async function bitacoraCount(periodoId){
+    if(!periodoId) return 0;
+    const {count,error}=await sb.from('bitacora_institucional').select('id',{count:'exact',head:true}).eq('periodo_id',periodoId);
+    return error?0:Number(count||0);
   }
 
   function showHistoryDetail(id){
@@ -226,6 +290,7 @@
     renderBar(activePeriod);
     renderDashboard();
     renderHistory();
+    loadBitacora();
     setTimeout(renderDashboard,700);
   }
 
@@ -236,5 +301,5 @@
 
   window.addEventListener('sigve:periodo-activo',event=>{activePeriod=event.detail||null;renderBar(activePeriod);renderDashboard();});
   window.addEventListener('sigve:periodos-actualizados',loadPeriods);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{observeStats();loadPeriods();}); else {observeStats();loadPeriods();}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{ensureBitacoraUI();observeStats();loadPeriods();}); else {ensureBitacoraUI();observeStats();loadPeriods();}
 })();
