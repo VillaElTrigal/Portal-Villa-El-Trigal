@@ -1,0 +1,23 @@
+SIGVE v2.3 FINAL · REGISTRO DE NIÑOS Y NIÑAS
+
+INSTALACIÓN
+1. En Supabase > SQL Editor, abre una consulta nueva.
+2. Copia completo ACTUALIZAR_SUPABASE_SIGVE_V2_3_FINAL.sql.
+3. Presiona Run. Si Supabase pregunta por RLS, elige “Run and enable RLS”. El script ya activa RLS en la tabla nueva.
+4. Debe aparecer “Success. No rows returned”.
+5. Después sube a GitHub los archivos del proyecto, reemplazando los actuales.
+
+SUMMARY RECOMENDADO
+Implementar vigencia y renovación del registro de niños y niñas
+
+CAMBIOS
+- Vigencia real de 30 días.
+- RUT obligatorio, validado y sin duplicados (se conserva la implementación actual).
+- Se conserva íntegramente la sección actual de capacidades/necesidades especiales.
+- Opción formal para declarar que no hay niños ni niñas en el hogar.
+- Renovación de token limitada a una vez cada 24 horas.
+- Registro de solicitudes de renovación con RLS habilitado.
+- Mensaje de bienvenida actualizado con la vigencia.
+
+IMPORTANTE SOBRE CORREO/WHATSAPP
+La base deja la solicitud y el nuevo enlace preparados. Para envío totalmente automático sin que nadie abra WhatsApp o correo, es necesario conectar un proveedor externo (por ejemplo WhatsApp Business Cloud API y un servicio de correo mediante una Edge Function). Hasta conectar ese proveedor, la pantalla ofrece abrir WhatsApp, abrir correo o copiar el enlace.

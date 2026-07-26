@@ -7,7 +7,7 @@
   <title>Registro de niños y niñas · Villa El Trigal</title>
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=631">
-  <link rel="stylesheet" href="registro-ninos.css?v=4">
+  <link rel="stylesheet" href="registro-ninos.css?v=5">
 </head>
 <body class="child-page">
   <main class="child-shell">
@@ -24,7 +24,26 @@
 
       <div id="child-invalid" class="child-alert error" hidden>
         <h2>Enlace no disponible</h2>
-        <p>Este enlace no es válido, está incompleto o el socio ya no se encuentra activo. Solicita uno nuevo a la directiva.</p>
+        <p id="invalid-message">Este enlace no es válido, está incompleto o el socio ya no se encuentra activo.</p>
+      </div>
+
+      <div id="child-expired" class="child-alert expired" hidden>
+        <h2>Enlace vencido</h2>
+        <p>Por motivos de seguridad, este enlace tuvo una vigencia de <strong>30 días</strong>.</p>
+        <p>Selecciona cómo deseas preparar la recepción de un nuevo enlace:</p>
+        <div class="renew-actions">
+          <button type="button" class="button secondary" data-renew-method="correo">Correo</button>
+          <button type="button" class="button secondary" data-renew-method="whatsapp">WhatsApp</button>
+          <button type="button" class="button primary" data-renew-method="ambos">Ambos medios</button>
+        </div>
+        <p id="renew-message" role="status" aria-live="polite"></p>
+        <div id="renew-share" class="renew-share" hidden></div>
+      </div>
+
+      <div id="child-finished" class="child-alert success" hidden>
+        <h2>Información guardada</h2>
+        <p>Se registró que actualmente no hay niños ni niñas en este hogar.</p>
+        <p>Si esta situación cambia en el futuro, la directiva podrá generar un nuevo enlace.</p>
       </div>
 
       <div id="child-content" hidden>
@@ -33,7 +52,17 @@
           <div><span>Número de socio</span><strong id="member-number"></strong></div><div><span>Domicilio asociado</span><strong id="member-address"></strong></div>
         </div>
 
+        <div class="expiry-note">⏳ Este enlace tiene una duración de <strong>30 días</strong> desde su emisión.</div>
         <p class="child-help">Agrega solamente a los niños y niñas que viven en este domicilio. El RUT y el parentesco son obligatorios. La información sobre necesidades o consideraciones especiales es opcional y se utilizará únicamente para facilitar una participación segura e inclusiva en actividades comunitarias.</p>
+
+        <section class="no-children-card" id="no-children-card">
+          <div>
+            <h2>No hay niños ni niñas en el hogar</h2>
+            <p>Selecciona esta opción solamente cuando actualmente no residan niños ni niñas en este domicilio.</p>
+          </div>
+          <button type="button" class="button secondary" id="save-no-children">Guardar y finalizar</button>
+          <p id="no-children-message" class="full" role="status" aria-live="polite"></p>
+        </section>
 
         <form id="child-form" class="child-form" novalidate>
           <label>RUT <span aria-hidden="true">*</span>
@@ -118,6 +147,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="portal-config.js"></script>
-  <script src="registro-ninos.js?v=1600"></script>
+  <script src="registro-ninos.js?v=2300"></script>
 </body>
 </html>
