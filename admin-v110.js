@@ -42,26 +42,15 @@ async function loadLedger(){const from=$('#libro-from').value,to=$('#libro-to').
 function exportLedger(){csv(`libro-caja-${$('#libro-from').value}-${$('#libro-to').value}.csv`,[['Fecha','Concepto','Ingreso','Egreso','Fondo','Saldo'],...ledger.map(x=>[x.fecha,x.concepto,x.tipo==='ingreso'?x.monto:'',x.tipo==='gasto'?x.monto:'',x.fondo,x.saldo_acumulado])])}
 async function officialReport(){const m=$('#official-month').value;if(!m)return toast('Selecciona el mes del informe.',true);const b=monthBounds(m),st=await settings();const{data,error}=await client().from('movimientos_financieros').select('*').gte('fecha',b.from).lte('fecha',b.to).eq('anulado',false).in('tipo',['ingreso','gasto']).order('fecha',{ascending:true}).order('creado_en',{ascending:true});if(error)return toast(error.message,true);const rows=data||[],inc=rows.filter(x=>x.tipo==='ingreso'),out=rows.filter(x=>x.tipo==='gasto');const detail=a=>a.map(x=>[x.concepto||x.categoria||'Sin descripción',Number(x.monto),x.fecha]);const ti=inc.reduce((a,x)=>a+Number(x.monto),0),to=out.reduce((a,x)=>a+Number(x.monto),0);const before=await client().from('movimientos_financieros').select('tipo,monto').lt('fecha',b.from).eq('anulado',false).in('tipo',['ingreso','gasto']);const opening=(before.data||[]).reduce((a,x)=>a+(x.tipo==='ingreso'?Number(x.monto):-Number(x.monto)),0),closing=opening+ti-to;const label=new Date(b.from+'T12:00:00').toLocaleDateString('es-CL',{month:'long',year:'numeric'});const renderDetail=a=>a.length?detail(a).map(([concept,mount,date])=>`<tr><td class="report-date">${dateCL(date)}</td><td>${esc(concept)}</td><td class="report-amount">${money(mount)}</td></tr>`).join(''):'<tr><td colspan="3">Sin movimientos.</td></tr>';$('#official-report').innerHTML=`<article class="report-letter"><div class="report-letter-header"><img src="assets/logo.svg"><div><h2>${esc(st.nombre_organizacion||'Junta de Vecinos Villa El Trigal')}</h2><h3>Informe Financiero Mensual · ${label}</h3></div></div><p>Saldo inicial: <strong>${money(opening)}</strong></p><h3>Ingresos</h3><table class="v7-table report-detail-table"><thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th></tr></thead><tbody>${renderDetail(inc)}<tr><th colspan="2">Total ingresos</th><th class="report-amount">${money(ti)}</th></tr></tbody></table><h3>Egresos</h3><table class="v7-table report-detail-table"><thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th></tr></thead><tbody>${renderDetail(out)}<tr><th colspan="2">Total egresos</th><th class="report-amount">${money(to)}</th></tr></tbody></table><h3>Resumen</h3><table class="v7-table"><tbody><tr><td>Resultado del mes</td><td class="report-amount">${money(ti-to)}</td></tr><tr><th>Saldo final acumulado</th><th class="report-amount">${money(closing)}</th></tr></tbody></table><div class="report-signatures"><div>Presidente(a)</div><div>Secretario(a)</div><div>Tesorero(a)</div></div></article>`}
 async function printOfficialReport(){
-  // Abrir la ventana inmediatamente mantiene el gesto del clic y evita bloqueos del navegador.
-  const printWindow=window.open('','_blank');
-  if(!printWindow){
-    return toast('El navegador bloqueó la ventana de impresión. Habilita las ventanas emergentes para este sitio.',true);
-  }
-  printWindow.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando informe…</title></head><body style="font-family:Arial,sans-serif;padding:24px">Preparando informe mensual…</body></html>');
-  printWindow.document.close();
-
   try{
+    // El informe ya visible es la fuente de impresión. Si aún no existe, se genera primero.
     if(!$('#official-report .report-letter')) await officialReport();
     const report=$('#official-report .report-letter');
-    if(!report){
-      printWindow.close();
-      return toast('No fue posible generar el informe mensual.',true);
-    }
+    if(!report) return toast('No fue posible generar el informe mensual.',true);
 
-    const base=document.baseURI;
     const month=$('#official-month').value||today().slice(0,7);
-    printWindow.document.open();
-    printWindow.document.write(`<!doctype html>
+    const base=document.baseURI;
+    const html=`<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -69,41 +58,78 @@ async function printOfficialReport(){
 <base href="${esc(base)}">
 <title>Informe financiero mensual ${esc(month)}</title>
 <style>
-  @page{size:letter;margin:12mm}
+  @page{size:letter portrait;margin:12mm}
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif;font-size:12px}
-  .report-letter{width:100%;margin:0;padding:0;border:0;background:#fff;color:#111}
-  .report-letter-header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #222;padding-bottom:12px;margin-bottom:14px}
-  .report-letter-header img{width:64px;height:64px;object-fit:contain}
-  h2{margin:0 0 5px;font-size:19px} h3{margin:14px 0 7px;font-size:15px;page-break-after:avoid}
-  p{margin:8px 0}
-  table{width:100%;border-collapse:collapse;margin:7px 0 15px;page-break-inside:auto}
-  th,td{border:1px solid #aaa;padding:6px 8px;text-align:left;vertical-align:top}
-  th{background:#f1f1f1;font-weight:700}
-  tr{page-break-inside:avoid;page-break-after:auto}
-  .report-date{width:95px;white-space:nowrap}
-  .report-amount{text-align:right;white-space:nowrap;width:115px}
-  .report-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:70px;text-align:center}
-  .report-signatures div{border-top:1px solid #333;padding-top:6px}
-  @media print{html,body{width:100%}.report-letter{width:100%}}
+  html,body{margin:0!important;padding:0!important;background:#fff!important;color:#111!important;font-family:Arial,sans-serif!important;font-size:12px!important}
+  body{width:100%!important;min-height:auto!important}
+  .report-letter{display:block!important;visibility:visible!important;position:static!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:#fff!important;color:#111!important}
+  .report-letter *{visibility:visible!important}
+  .report-letter-header{display:flex!important;align-items:center!important;gap:14px!important;border-bottom:2px solid #222!important;padding-bottom:12px!important;margin-bottom:14px!important}
+  .report-letter-header img{display:block!important;width:64px!important;height:64px!important;object-fit:contain!important}
+  h2{margin:0 0 5px!important;font-size:19px!important;color:#111!important}
+  h3{margin:14px 0 7px!important;font-size:15px!important;color:#111!important;break-after:avoid-page;page-break-after:avoid}
+  p{margin:8px 0!important;color:#111!important}
+  table,.v7-table{display:table!important;width:100%!important;border-collapse:collapse!important;margin:7px 0 15px!important;background:#fff!important;color:#111!important;break-inside:auto;page-break-inside:auto}
+  thead{display:table-header-group!important} tbody{display:table-row-group!important}
+  tr{display:table-row!important;break-inside:avoid;page-break-inside:avoid;page-break-after:auto}
+  th,td{display:table-cell!important;border:1px solid #aaa!important;padding:6px 8px!important;text-align:left!important;vertical-align:top!important;color:#111!important;background:#fff!important}
+  th{background:#f1f1f1!important;font-weight:700!important}
+  .report-date{width:95px!important;white-space:nowrap!important}
+  .report-amount{text-align:right!important;white-space:nowrap!important;width:115px!important}
+  .report-signatures{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:28px!important;margin-top:70px!important;text-align:center!important}
+  .report-signatures div{border-top:1px solid #333!important;padding-top:6px!important;color:#111!important}
 </style>
 </head>
 <body>${report.outerHTML}</body>
-</html>`);
-    printWindow.document.close();
+</html>`;
 
-    const images=[...printWindow.document.images];
+    // Un iframe aislado evita la hoja en blanco producida por imprimir una ventana
+    // emergente antes de que el navegador termine de renderizarla.
+    const old=document.getElementById('sigve-official-print-frame');
+    if(old) old.remove();
+    const frame=document.createElement('iframe');
+    frame.id='sigve-official-print-frame';
+    frame.setAttribute('title','Impresión de informe mensual');
+    frame.style.position='fixed';
+    frame.style.right='0';
+    frame.style.bottom='0';
+    frame.style.width='1px';
+    frame.style.height='1px';
+    frame.style.border='0';
+    frame.style.opacity='0';
+    frame.style.pointerEvents='none';
+    document.body.appendChild(frame);
+
+    const doc=frame.contentDocument||frame.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    await new Promise(resolve=>{
+      if(doc.readyState==='complete') return resolve();
+      frame.addEventListener('load',resolve,{once:true});
+      setTimeout(resolve,1500);
+    });
+
+    if(doc.fonts?.ready){
+      try{await doc.fonts.ready}catch(_){ }
+    }
+    const images=[...doc.images];
     await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{
       img.addEventListener('load',resolve,{once:true});
       img.addEventListener('error',resolve,{once:true});
+      setTimeout(resolve,1500);
     })));
 
-    setTimeout(()=>{
-      printWindow.focus();
-      printWindow.print();
-    },250);
+    // Dos ciclos de render garantizan que el contenido ya esté pintado.
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const win=frame.contentWindow;
+    const cleanup=()=>setTimeout(()=>frame.remove(),500);
+    win.addEventListener('afterprint',cleanup,{once:true});
+    win.focus();
+    win.print();
+    setTimeout(()=>{if(document.body.contains(frame)) cleanup()},60000);
   }catch(error){
-    try{printWindow.close()}catch(_){ }
     console.error('Error al imprimir informe mensual:',error);
     toast('No fue posible preparar la impresión del informe mensual.',true);
   }
