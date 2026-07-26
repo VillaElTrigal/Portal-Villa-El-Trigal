@@ -153,6 +153,7 @@
       }
       el.remove();
       notify('Período cerrado y saldos finales registrados correctamente.');
+      window.dispatchEvent(new Event('sigve:periodos-actualizados'));
       load();
     };
   }
@@ -213,6 +214,7 @@
       }
       el.remove();
       notify('Período administrativo guardado correctamente.');
+      window.dispatchEvent(new Event('sigve:periodos-actualizados'));
       load();
     };
   }
