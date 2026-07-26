@@ -46,15 +46,36 @@ async function printOfficialReport(){
   const report=$('#official-report .report-letter');
   if(!report) return toast('Primero genera el informe mensual.',true);
 
-  // Imprime en la misma pestaña para evitar el bloqueo de ventanas emergentes.
+  // Se crea una copia exclusiva para impresión fuera de las secciones del panel.
+  // Esto evita conflictos con [hidden] y con los estilos generales de impresión.
+  document.querySelector('#official-print-root')?.remove();
+  const printRoot=document.createElement('div');
+  printRoot.id='official-print-root';
+  printRoot.setAttribute('aria-hidden','true');
+  printRoot.appendChild(report.cloneNode(true));
+  document.body.appendChild(printRoot);
   document.body.classList.add('printing-official-report');
-  const cleanup=()=>document.body.classList.remove('printing-official-report');
+
+  let cleaned=false;
+  const cleanup=()=>{
+    if(cleaned)return;
+    cleaned=true;
+    document.body.classList.remove('printing-official-report');
+    printRoot.remove();
+  };
   window.addEventListener('afterprint',cleanup,{once:true});
 
-  // Da tiempo al navegador para aplicar los estilos de impresión y cargar el logo.
+  // Da tiempo al navegador para dibujar la copia y cargar el logo.
   requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{
-    try{window.print()}catch(error){cleanup();toast('No fue posible abrir la impresión. Intenta nuevamente.',true)}
-  },120)));
+    try{
+      window.print();
+      // Respaldo para navegadores que no emiten afterprint al cancelar.
+      setTimeout(cleanup,1500);
+    }catch(error){
+      cleanup();
+      toast('No fue posible abrir la impresión. Intenta nuevamente.',true);
+    }
+  },180)));
 }
 
 function bind(){addMenu();const m=today().slice(0,7);$('#cuotas-month').value=m;$('#official-month').value=m;$('#libro-from').value=m+'-01';$('#libro-to').value=today();$('#cuotas-generate').onclick=generateQuotas;$('#cuotas-prev').onclick=()=>{$('#cuotas-month').value=monthMove($('#cuotas-month').value,-1);loadCuotas()};$('#cuotas-next').onclick=()=>{$('#cuotas-month').value=monthMove($('#cuotas-month').value,1);loadCuotas()};$('#cuotas-month').onchange=loadCuotas;$('#cuotas-search').oninput=renderCuotas;$('#cuotas-filter').onchange=renderCuotas;$('#new-certificado').onclick=newCert;$('#cert-search').oninput=renderCerts;$('#libro-load').onclick=loadLedger;$('#libro-export').onclick=exportLedger;$('#official-generate').onclick=officialReport;$('#official-print').onclick=printOfficialReport;document.addEventListener('click',e=>{const b=e.target.closest('[data-section]');if(!b)return;const k=b.dataset.section;if(!['cuotas','certificados','libro-caja','informe-mensual'].includes(k))return;document.querySelectorAll('[data-section]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.admin-section').forEach(s=>s.hidden=s.id!==`section-${k}`);$('#page-title').textContent=b.textContent.trim();setTimeout(()=>({cuotas:loadCuotas,certificados:loadCerts,'libro-caja':loadLedger,'informe-mensual':officialReport}[k]?.()),30)},true)}

@@ -4,37 +4,23 @@
 .v110-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}.v110-summary .stat{min-height:86px}
 .v110-table-actions{display:flex;gap:.35rem;flex-wrap:wrap}.v110-note{padding:.8rem 1rem;border-left:4px solid currentColor;background:rgba(0,0,0,.03);border-radius:.5rem}
 .report-letter{background:#fff;padding:2rem;max-width:920px;margin:1rem auto;border:1px solid #ddd}.report-letter-header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #222;padding-bottom:1rem}.report-letter-header img{width:72px;height:72px}.report-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:5rem;text-align:center}.report-signatures div{border-top:1px solid #333;padding-top:.4rem}
-@media print{body *{visibility:hidden!important}.report-letter,.report-letter *{visibility:visible!important}.report-letter{position:absolute;left:0;top:0;width:100%;border:0;margin:0;padding:1cm}.sidebar,.topbar{display:none!important}}
 
-.report-detail-table .report-date{width:105px;white-space:nowrap}.report-detail-table .report-amount,.report-amount{text-align:right;white-space:nowrap;width:130px}
-
-
-/* SIGVE v1.1.3: impresión del informe mensual en la misma pestaña */
+/* Impresión aislada del informe mensual */
+#official-print-root{display:none}
 @media print{
   @page{size:letter;margin:12mm}
   body.printing-official-report *{visibility:hidden!important}
-  body.printing-official-report #section-informe-mensual,
-  body.printing-official-report #section-informe-mensual #official-report,
-  body.printing-official-report #section-informe-mensual #official-report *{visibility:visible!important}
-  body.printing-official-report #section-informe-mensual{
+  body.printing-official-report #official-print-root,
+  body.printing-official-report #official-print-root *{visibility:visible!important}
+  body.printing-official-report #official-print-root{
     display:block!important;
     position:absolute!important;
-    inset:0 auto auto 0!important;
-    width:100%!important;
+    inset:0!important;
+    width:auto!important;
     margin:0!important;
     padding:0!important;
   }
-  body.printing-official-report #section-informe-mensual>.panel{display:none!important}
-  body.printing-official-report #official-report{
-    display:block!important;
-    position:absolute!important;
-    left:0!important;
-    top:0!important;
-    width:100%!important;
-    margin:0!important;
-    padding:0!important;
-  }
-  body.printing-official-report .report-letter{
+  body.printing-official-report #official-print-root .report-letter{
     display:block!important;
     position:static!important;
     width:100%!important;
@@ -47,14 +33,16 @@
     color:#111!important;
     font-size:12px!important;
   }
-  body.printing-official-report .report-letter-header img{width:64px!important;height:64px!important}
-  body.printing-official-report .v7-table{width:100%!important;border-collapse:collapse!important;margin:8px 0 16px!important}
-  body.printing-official-report .v7-table th,
-  body.printing-official-report .v7-table td{border:1px solid #bbb!important;padding:6px 8px!important;color:#111!important}
-  body.printing-official-report .report-date{width:95px!important;white-space:nowrap!important}
-  body.printing-official-report .report-amount{width:110px!important;text-align:right!important;white-space:nowrap!important}
-  body.printing-official-report .report-signatures{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:28px!important;margin-top:70px!important}
-  body.printing-official-report h3{page-break-after:avoid}
-  body.printing-official-report table{page-break-inside:auto}
-  body.printing-official-report tr{page-break-inside:avoid;page-break-after:auto}
+  body.printing-official-report #official-print-root .report-letter-header img{width:64px!important;height:64px!important}
+  body.printing-official-report #official-print-root .v7-table{display:table!important;width:100%!important;border-collapse:collapse!important;margin:8px 0 16px!important}
+  body.printing-official-report #official-print-root .v7-table thead{display:table-header-group!important}
+  body.printing-official-report #official-print-root .v7-table tbody{display:table-row-group!important}
+  body.printing-official-report #official-print-root .v7-table tr{display:table-row!important;page-break-inside:avoid;page-break-after:auto}
+  body.printing-official-report #official-print-root .v7-table th,
+  body.printing-official-report #official-print-root .v7-table td{display:table-cell!important;border:1px solid #bbb!important;padding:6px 8px!important;color:#111!important}
+  body.printing-official-report #official-print-root .report-date{width:95px!important;white-space:nowrap!important}
+  body.printing-official-report #official-print-root .report-amount{width:110px!important;text-align:right!important;white-space:nowrap!important}
+  body.printing-official-report #official-print-root .report-signatures{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:28px!important;margin-top:70px!important}
+  body.printing-official-report #official-print-root h3{page-break-after:avoid}
+  body.printing-official-report #official-print-root table{page-break-inside:auto}
 }
