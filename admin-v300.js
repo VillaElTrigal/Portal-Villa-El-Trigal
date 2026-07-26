@@ -7,6 +7,7 @@
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const dateCL = value => value ? new Date(`${value}T12:00:00`).toLocaleDateString('es-CL') : '—';
   const money = value => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(value || 0));
+  const parseMoney = text => Number(String(text || '').replace(/[^0-9-]/g,'')) || 0;
   let activePeriod = null;
   let closedPeriods = [];
 
@@ -35,24 +36,97 @@
 
   function openSection(name){ document.querySelector(`[data-section="${name}"]`)?.click(); }
 
-  function renderDashboard(){
+  function periodProgress(periodo){
+    if(!periodo?.fecha_inicio || !periodo?.fecha_termino) return 0;
+    const start=new Date(`${periodo.fecha_inicio}T00:00:00`).getTime();
+    const end=new Date(`${periodo.fecha_termino}T23:59:59`).getTime();
+    const now=Date.now();
+    if(now<=start) return 0;
+    if(now>=end) return 100;
+    return Math.max(0,Math.min(100,Math.round(((now-start)/(end-start))*100)));
+  }
+
+  function daysRemaining(periodo){
+    if(!periodo?.fecha_termino) return null;
+    return Math.ceil((new Date(`${periodo.fecha_termino}T23:59:59`).getTime()-Date.now())/86400000);
+  }
+
+  function ensureExecutiveDashboard(){
     const dashboard=$('#section-dashboard');
-    if(!dashboard) return;
-    let card=$('#sigve-dashboard-period');
-    if(!card){
-      card=document.createElement('div');
-      card.id='sigve-dashboard-period';
-      card.className='panel sigve-dashboard-period';
-      const stats=dashboard.querySelector('.stats');
-      stats ? stats.insertAdjacentElement('afterend',card) : dashboard.insertAdjacentElement('afterbegin',card);
+    if(!dashboard) return null;
+    let executive=$('#sigve-executive-dashboard');
+    if(!executive){
+      executive=document.createElement('div');
+      executive.id='sigve-executive-dashboard';
+      dashboard.insertAdjacentElement('afterbegin',executive);
     }
+    return executive;
+  }
+
+  function liveStat(id, fallback='0'){
+    return $(id)?.textContent?.trim() || fallback;
+  }
+
+  function renderDashboard(){
+    const executive=ensureExecutiveDashboard();
+    if(!executive) return;
     if(!activePeriod){
-      card.innerHTML='<div><h3>Administración institucional</h3><p class="help">No existe un período activo.</p></div><button class="button primary" data-open-periods>Gestionar períodos</button>';
-      card.querySelector('[data-open-periods]')?.addEventListener('click',()=>openSection('periodos'));
+      executive.innerHTML=`<section class="executive-hero no-period"><div><span class="historico-kicker">Centro de control institucional</span><h3>Configura una administración activa</h3><p>El panel ejecutivo se habilitará cuando exista un período vigente.</p></div><button class="button primary" data-open-periods>Gestionar períodos</button></section>`;
+      executive.querySelector('[data-open-periods]')?.addEventListener('click',()=>openSection('periodos'));
       return;
     }
-    card.innerHTML=`<div><span class="historico-kicker">Administración vigente</span><h3>${esc(activePeriod.nombre)}</h3><p class="help">${dateCL(activePeriod.fecha_inicio)} al ${dateCL(activePeriod.fecha_termino)} · Presidente/a: ${esc(activePeriod.presidente||'Sin registrar')}</p></div><div class="sigve-dashboard-actions"><div><span>Períodos archivados</span><strong>${closedPeriods.length}</strong></div><button class="button secondary" data-open-history>Ver archivo histórico</button></div>`;
-    card.querySelector('[data-open-history]')?.addEventListener('click',()=>openSection('historico'));
+    const progress=periodProgress(activePeriod);
+    const remaining=daysRemaining(activePeriod);
+    const caja=liveStat('#stat-caja','$0');
+    const banco=liveStat('#stat-banco','$0');
+    const total=money(parseMoney(caja)+parseMoney(banco));
+    executive.innerHTML=`
+      <section class="executive-hero">
+        <div class="executive-identity">
+          <span class="historico-kicker">Centro de control institucional</span>
+          <h3>${esc(activePeriod.nombre)}</h3>
+          <p>Una vista rápida del estado de la Junta de Vecinos y de la administración vigente.</p>
+        </div>
+        <div class="executive-progress">
+          <div class="executive-progress-head"><span>Avance del período</span><strong>${progress}%</strong></div>
+          <div class="executive-progress-track"><i style="width:${progress}%"></i></div>
+          <small>${remaining===null?'Vigencia no definida':remaining>=0?`${remaining} días para el término`:`Período vencido hace ${Math.abs(remaining)} días`}</small>
+        </div>
+      </section>
+      <section class="executive-metrics">
+        <article><span class="metric-icon">👥</span><div><small>Socios activos</small><strong>${liveStat('#stat-socios')}</strong></div><button data-go="socios" aria-label="Abrir socios">→</button></article>
+        <article><span class="metric-icon">💰</span><div><small>Disponible total</small><strong>${total}</strong></div><button data-go="finanzas" aria-label="Abrir finanzas">→</button></article>
+        <article><span class="metric-icon">🏠</span><div><small>Próximas reservas</small><strong>${liveStat('#stat-reservas')}</strong></div><button data-go="reservas-v7" aria-label="Abrir reservas">→</button></article>
+        <article><span class="metric-icon">📄</span><div><small>Documentos</small><strong>${liveStat('#stat-documentos')}</strong></div><button data-go="documentos" aria-label="Abrir documentos">→</button></article>
+      </section>
+      <section class="executive-columns">
+        <article class="panel executive-finance">
+          <div class="panel-heading"><div><span class="historico-kicker">Resumen financiero</span><h3>Fondos disponibles</h3></div><button class="button secondary" data-go="finanzas">Abrir Finanzas</button></div>
+          <div class="fund-row"><span>Caja chica</span><strong>${caja}</strong></div>
+          <div class="fund-row"><span>Cuenta bancaria</span><strong>${banco}</strong></div>
+          <div class="fund-row total"><span>Total institucional</span><strong>${total}</strong></div>
+        </article>
+        <article class="panel executive-actions">
+          <span class="historico-kicker">Accesos rápidos</span><h3>Gestiones frecuentes</h3>
+          <div class="quick-action-grid">
+            <button data-go="finanzas">＋ Registrar movimiento</button>
+            <button data-go="socios">＋ Gestionar socios</button>
+            <button data-go="reservas-v7">＋ Revisar sede</button>
+            <button data-go="historico">📚 Archivo histórico</button>
+          </div>
+        </article>
+      </section>
+      <section class="panel institutional-timeline">
+        <div class="panel-heading"><div><span class="historico-kicker">Continuidad institucional</span><h3>Línea de tiempo de la administración</h3></div><span class="timeline-status">En curso</span></div>
+        <div class="timeline-track">
+          <div class="timeline-point done"><i></i><strong>Inicio</strong><span>${dateCL(activePeriod.fecha_inicio)}</span></div>
+          <div class="timeline-line"><i style="width:${progress}%"></i></div>
+          <div class="timeline-point current"><i></i><strong>Hoy</strong><span>${new Date().toLocaleDateString('es-CL')}</span></div>
+          <div class="timeline-line remaining"></div>
+          <div class="timeline-point"><i></i><strong>Término</strong><span>${dateCL(activePeriod.fecha_termino)}</span></div>
+        </div>
+      </section>`;
+    executive.querySelectorAll('[data-go]').forEach(btn=>btn.addEventListener('click',()=>openSection(btn.dataset.go)));
   }
 
   function renderHistory(){
@@ -94,9 +168,15 @@
     renderBar(activePeriod);
     renderDashboard();
     renderHistory();
+    setTimeout(renderDashboard,700);
+  }
+
+  const statObserver=new MutationObserver(()=>{ if(activePeriod) renderDashboard(); });
+  function observeStats(){
+    ['#stat-socios','#stat-reservas','#stat-documentos','#stat-caja','#stat-banco'].forEach(sel=>{const el=$(sel);if(el)statObserver.observe(el,{childList:true,subtree:true,characterData:true});});
   }
 
   window.addEventListener('sigve:periodo-activo',event=>{activePeriod=event.detail||null;renderBar(activePeriod);renderDashboard();});
   window.addEventListener('sigve:periodos-actualizados',loadPeriods);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadPeriods); else loadPeriods();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{observeStats();loadPeriods();}); else {observeStats();loadPeriods();}
 })();
