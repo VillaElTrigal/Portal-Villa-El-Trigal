@@ -7,6 +7,7 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (v) => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const dateCL = (v) => v ? new Date(`${v}T12:00:00`).toLocaleDateString('es-CL') : '—';
+  const money = (v) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(Number(v || 0));
   let rows = [];
 
   function notify(text, isError = false) {
@@ -54,15 +55,19 @@
           <div><span>Estado</span><strong>${esc(p.estado)}</strong></div>
         </div>
         ${p.estado === 'activo' ? `<div class="periodo-subtle">Avance estimado del mandato: ${progress}%</div><div class="periodo-progress"><span style="width:${progress}%"></span></div>` : ''}
+        ${p.saldo_caja_inicial != null || p.saldo_banco_inicial != null ? `<div class="periodo-balance-row"><span>Saldo inicial caja: <strong>${money(p.saldo_caja_inicial)}</strong></span><span>Saldo inicial banco: <strong>${money(p.saldo_banco_inicial)}</strong></span></div>` : ''}
+        ${p.estado === 'cerrado' ? `<div class="periodo-balance-row cierre"><span>Saldo final caja: <strong>${money(p.saldo_caja_cierre)}</strong></span><span>Saldo final banco: <strong>${money(p.saldo_banco_cierre)}</strong></span></div>` : ''}
         ${p.observaciones ? `<p class="periodo-subtle">${esc(p.observaciones)}</p>` : ''}
         <div class="actions">
           <button class="button secondary" data-view-periodo="${p.id}">Ver detalle</button>
           ${editable ? `<button class="button primary" data-edit-periodo="${p.id}">Editar</button>` : ''}
+          ${p.estado === 'activo' ? `<button class="button danger" data-close-admin-period="${p.id}">Cerrar período</button>` : ''}
         </div>
       </article>`;
     }).join('')}</div>`;
     $$('[data-edit-periodo]', host).forEach(b => b.onclick = () => openForm(rows.find(x => x.id === b.dataset.editPeriodo)));
     $$('[data-view-periodo]', host).forEach(b => b.onclick = () => openDetail(rows.find(x => x.id === b.dataset.viewPeriodo)));
+    $$('[data-close-admin-period]', host).forEach(b => b.onclick = () => openClosePeriod(rows.find(x => x.id === b.dataset.closeAdminPeriod)));
   }
 
   async function load() {
@@ -98,10 +103,58 @@
         <div><span>Fecha de inicio</span><strong>${dateCL(p.fecha_inicio)}</strong></div>
         <div><span>Fecha de término</span><strong>${dateCL(p.fecha_termino)}</strong></div>
         <div><span>Presidente/a</span><strong>${esc(p.presidente || 'Sin registrar')}</strong></div>
-        <div><span>Creado</span><strong>${new Date(p.creado_en).toLocaleString('es-CL')}</strong></div>
+        <div><span>Creado</span><strong>${p.creado_en ? new Date(p.creado_en).toLocaleString('es-CL') : '—'}</strong></div>
+        <div><span>Saldo inicial caja</span><strong>${money(p.saldo_caja_inicial)}</strong></div>
+        <div><span>Saldo inicial banco</span><strong>${money(p.saldo_banco_inicial)}</strong></div>
+        ${p.estado === 'cerrado' ? `<div><span>Saldo final caja</span><strong>${money(p.saldo_caja_cierre)}</strong></div><div><span>Saldo final banco</span><strong>${money(p.saldo_banco_cierre)}</strong></div><div><span>Cerrado</span><strong>${p.cerrado_en ? new Date(p.cerrado_en).toLocaleString('es-CL') : '—'}</strong></div>` : ''}
       </div>
       <p><strong>Observaciones</strong><br>${esc(p.observaciones || 'Sin observaciones')}</p>
       <div class="periodos-actions"><button class="button secondary" data-close-periodos>Cerrar</button></div>`);
+  }
+
+
+  function openClosePeriod(p) {
+    if (!p || p.estado !== 'activo') return notify('Solo se puede cerrar el período activo.', true);
+    const el = modal(`<h3>Cerrar período administrativo</h3>
+      <div class="periodos-close-warning">
+        <strong>Esta acción es definitiva.</strong>
+        <p>El período quedará en modo histórico y ya no se podrá editar. SIGVE guardará una fotografía de los saldos actuales de Caja chica y Cuenta bancaria.</p>
+        <p>Los saldos financieros no se duplican ni se reinician: continuarán normalmente y quedarán registrados como referencia inicial del siguiente período activo.</p>
+      </div>
+      <form id="periodo-close-form">
+        <label>Observaciones de entrega<textarea name="observaciones" rows="4" maxlength="1000" placeholder="Ej.: Entrega realizada con documentación y saldos revisados."></textarea></label>
+        <label>Para confirmar, escribe <strong>CERRAR</strong><input name="confirmacion" autocomplete="off" required></label>
+        <div id="periodo-close-error" class="periodos-error" hidden></div>
+        <div class="periodos-actions"><button type="button" class="button secondary" data-close-periodos>Cancelar</button><button class="button danger" type="submit">Cerrar definitivamente</button></div>
+      </form>`);
+    $('#periodo-close-form', el).onsubmit = async e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      const errorEl = $('#periodo-close-error', el);
+      errorEl.hidden = true;
+      if (f.confirmacion.value.trim().toUpperCase() !== 'CERRAR') {
+        errorEl.textContent = 'Debes escribir CERRAR para confirmar.';
+        errorEl.hidden = false;
+        return;
+      }
+      const submit = f.querySelector('[type="submit"]');
+      submit.disabled = true;
+      submit.textContent = 'Cerrando…';
+      const { error } = await sb.rpc('cerrar_periodo_administrativo', {
+        p_periodo_id: p.id,
+        p_observaciones: f.observaciones.value.trim() || null
+      });
+      if (error) {
+        errorEl.textContent = error.message;
+        errorEl.hidden = false;
+        submit.disabled = false;
+        submit.textContent = 'Cerrar definitivamente';
+        return;
+      }
+      el.remove();
+      notify('Período cerrado y saldos finales registrados correctamente.');
+      load();
+    };
   }
 
   function openForm(p = {}) {
