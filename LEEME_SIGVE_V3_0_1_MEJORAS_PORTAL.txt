@@ -1,0 +1,25 @@
+SIGVE 3.0.1 — Mejoras del Portal del Socio
+
+Archivos actualizados:
+- portal-socio.html
+- portal-socio.js
+- portal-socio.css
+
+Mejoras incorporadas:
+1. El RUT del acceso se formatea automáticamente mientras se escribe.
+2. Se valida el dígito verificador antes de consultar a Supabase.
+3. Los RUT del portal y del grupo familiar se muestran como XX.XXX.XXX-X.
+4. El formulario de niños incluye la misma lista seleccionable de consideraciones del registro original.
+5. El parentesco ahora usa la misma lista del formulario original.
+6. El botón X y Cancelar cierran correctamente el formulario.
+7. Si existen cambios sin guardar, se solicita confirmación antes de cerrar.
+8. También se puede cerrar con la tecla Escape, con la misma confirmación.
+
+No requiere ejecutar SQL nuevo en Supabase.
+
+Publicación:
+Subir los tres archivos actualizados a GitHub, reemplazando los existentes.
+Summary sugerido:
+fix: mejorar formulario familiar y formato automático de RUT
+
+Después de publicar, esperar 1–2 minutos y actualizar con Ctrl + F5.
