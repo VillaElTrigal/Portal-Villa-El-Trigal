@@ -1,0 +1,28 @@
+SIGVE · CORRECCIÓN DEFINITIVA DEL PORTAL DEL SOCIO
+
+CAUSA CORREGIDA
+La función portal_socio_ingresar utilizaba digest(), pero la instalación de pgcrypto
+quedó en un esquema que la función no encontraba. Por eso el Portal siempre mostraba
+"Los datos ingresados son incorrectos".
+
+QUÉ HACER
+1. Abre Supabase > SQL Editor.
+2. Copia y ejecuta completo:
+   CORREGIR_PORTAL_SOCIO_SIN_DIGEST.sql
+3. Debe aparecer: Success. No rows returned.
+4. Prueba en el SQL Editor:
+
+   select public.portal_socio_ingresar('18.162.605-4', 1);
+
+5. Si devuelve un token largo, abre el Portal del Socio y actualiza con Ctrl + F5.
+6. Ingresa con RUT 18.162.605-4 y número 1, 01 o 001.
+
+NO ES NECESARIO
+- Configurar correo.
+- Configurar WhatsApp.
+- Desplegar Edge Functions.
+- Volver a ejecutar los instaladores anteriores.
+- Modificar otras tablas o módulos.
+
+RESUMEN SUGERIDO PARA GITHUB
+fix: corregir sesiones del Portal del Socio sin digest

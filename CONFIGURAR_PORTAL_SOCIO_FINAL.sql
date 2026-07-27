@@ -4,8 +4,6 @@
 
 begin;
 
-create extension if not exists pgcrypto;
-
 alter table public.socios drop constraint if exists socios_estado_check;
 alter table public.socios add constraint socios_estado_check
   check (lower(estado) in ('activo','inactivo','pendiente','rechazado','renunciado'));
@@ -72,7 +70,7 @@ begin
   v_rut := upper(regexp_replace(coalesce(p_rut,''), '[^0-9Kk]', '', 'g'));
   if v_rut = '' or p_numero_socio is null or p_numero_socio < 0 then return null; end if;
 
-  v_hash := encode(digest(v_rut, 'sha256'), 'hex');
+  v_hash := md5(v_rut);
   select count(*) into v_fallos
   from public.portal_socio_intentos
   where rut_hash=v_hash and exitoso=false and creado_en>now()-interval '15 minutes';
@@ -93,9 +91,9 @@ begin
 
   if v_socio is null then return null; end if;
 
-  v_token := encode(gen_random_bytes(32), 'hex');
+  v_token := gen_random_uuid()::text || gen_random_uuid()::text;
   insert into public.portal_socio_sesiones(socio_id, token_hash, expira_en)
-  values(v_socio, encode(digest(v_token,'sha256'),'hex'), now()+interval '8 hours');
+  values(v_socio, md5(v_token), now()+interval '8 hours');
   insert into public.portal_socio_auditoria(socio_id, accion)
   values(v_socio, 'inicio_sesion_numero_socio');
   return v_token;
@@ -116,14 +114,14 @@ begin
   select ps.socio_id into v_socio
   from public.portal_socio_sesiones ps
   join public.socios s on s.id=ps.socio_id
-  where ps.token_hash=encode(digest(p_token,'sha256'),'hex')
+  where ps.token_hash=md5(p_token)
     and ps.revocado_en is null
     and ps.expira_en>now()
     and ps.ultimo_uso_en>now()-interval '30 minutes'
     and lower(btrim(coalesce(s.estado,'')))='activo';
   if v_socio is not null then
     update public.portal_socio_sesiones set ultimo_uso_en=now()
-    where token_hash=encode(digest(p_token,'sha256'),'hex');
+    where token_hash=md5(p_token);
   end if;
   return v_socio;
 end;
@@ -247,7 +245,7 @@ $$;
 create or replace function public.portal_socio_cerrar_sesion(p_token text)
 returns boolean language plpgsql security definer set search_path=public as $$
 begin
-  update public.portal_socio_sesiones set revocado_en=now() where token_hash=encode(digest(p_token,'sha256'),'hex') and revocado_en is null;
+  update public.portal_socio_sesiones set revocado_en=now() where token_hash=md5(p_token) and revocado_en is null;
   return true;
 end;
 $$;
