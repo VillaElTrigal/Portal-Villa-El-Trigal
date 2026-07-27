@@ -1,0 +1,12 @@
+CORRECCIÓN DE ACCESO AL PORTAL DEL SOCIO
+
+1. En Supabase > SQL Editor, ejecuta:
+   CORREGIR_ACCESO_PORTAL_NUMERO_SOCIO.sql
+
+2. En GitHub, reemplaza al menos este archivo:
+   portal-socio.js
+
+3. Espera 1 a 3 minutos, abre el Portal y recarga con Ctrl + F5.
+
+La corrección permite ingresar el número de socio como 1, 01, 001 o 0001.
+El RUT puede ingresarse con o sin puntos y guion.
