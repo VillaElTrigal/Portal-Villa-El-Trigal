@@ -1,0 +1,45 @@
+SIGVE 3.0 · PORTAL DEL SOCIO
+================================
+
+ARCHIVOS NUEVOS
+- portal-socio.html
+- portal-socio.css
+- portal-socio.js
+- ACTUALIZAR_SUPABASE_SIGVE_V3_PORTAL_SOCIO.sql
+- supabase/functions/portal-socio-auth/index.ts
+
+INSTALACIÓN
+1. En Supabase > SQL Editor, ejecuta completo:
+   ACTUALIZAR_SUPABASE_SIGVE_V3_PORTAL_SOCIO.sql
+
+2. En Supabase > Authentication > Email Templates > Magic Link, confirma que la plantilla
+   muestre el código OTP con la variable {{ .Token }}. La duración funcional del Portal es 15 minutos.
+
+3. Despliega la Edge Function desde una terminal con Supabase CLI:
+   supabase functions deploy portal-socio-auth --no-verify-jwt
+
+   La función usa automáticamente SUPABASE_URL, SUPABASE_ANON_KEY y
+   SUPABASE_SERVICE_ROLE_KEY disponibles en el entorno de Supabase.
+
+4. Sube todos los archivos actualizados a GitHub Pages, incluyendo la carpeta supabase.
+   La carpeta supabase no se ejecuta en GitHub Pages; se conserva como código fuente.
+
+5. Prueba con un socio ACTIVO que tenga un correo válido registrado.
+
+FUNCIONES INCLUIDAS
+- Acceso con RUT y código enviado al correo registrado.
+- Código de un solo uso; la solicitud del Portal vence a los 15 minutos.
+- Sesión del Portal de 8 horas.
+- Edición de dirección, teléfono y correo.
+- Visualización de datos no editables del socio.
+- Alta, edición y retiro lógico de niños/as.
+- Declaración “sin niños”.
+- Sin límite de edad visible; Valores de gestiones continúa filtrando cada actividad.
+- Renuncia voluntaria: estado “renunciado”, fecha, medio, motivo y auditoría.
+- El socio renunciado deja de calificar como activo, pero no se elimina.
+
+IMPORTANTE
+- No se modificaron reservas, finanzas, Zumba ni Valores de gestiones.
+- La renuncia actual cambia el estado directamente tras una confirmación textual dentro de
+  una sesión que ya fue verificada por correo.
+- Para producción, configura SMTP propio en Supabase para asegurar la entrega de correos.

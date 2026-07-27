@@ -1,0 +1,16 @@
+SIGVE · Portal del Socio con RUT + número de socio
+
+1. En Supabase > SQL Editor, ejecuta:
+   ACTUALIZAR_SUPABASE_PORTAL_ACCESO_NUMERO_SOCIO.sql
+
+2. Publica todos los archivos del proyecto en GitHub Pages, reemplazando los anteriores.
+
+3. Prueba con un socio que tenga estado activo, RUT y número de socio.
+
+Cambios:
+- Ya no usa correo, OTP ni WhatsApp.
+- Acceso con RUT + número de socio.
+- Bloqueo por 5 intentos fallidos durante 15 minutos.
+- Sesión cerrada tras 30 minutos de inactividad.
+- Renuncia confirmada escribiendo nuevamente el número de socio.
+- El número de socio no se regenera y puede consultarse desde Administración.
