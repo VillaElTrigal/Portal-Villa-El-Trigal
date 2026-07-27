@@ -1,0 +1,13 @@
+SIGVE · PORTAL DEL SOCIO — ENTREGA FINAL
+
+1. En Supabase > SQL Editor, crea una consulta nueva.
+2. Copia y ejecuta TODO el archivo CONFIGURAR_PORTAL_SOCIO_FINAL.sql.
+3. Debe aparecer "Success. No rows returned".
+4. En GitHub, reemplaza el contenido del proyecto por los archivos de esta carpeta.
+5. Usa como Summary:
+   fix: configurar acceso definitivo al Portal del Socio
+6. Espera 1 a 2 minutos y abre el portal con Ctrl + F5.
+7. Prueba con RUT 18.162.605-4 y número de socio 1.
+
+Esta entrega acepta 1, 01 o 001 porque el navegador convierte el número antes de consultar.
+No necesitas Magic Link, OTP, correo, WhatsApp ni Edge Functions.
