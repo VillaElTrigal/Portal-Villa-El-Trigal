@@ -1,0 +1,24 @@
+SIGVE 3.0.2 - PORTAL DEL SOCIO Y HAZTE SOCIO
+
+Esta entrega modifica únicamente:
+1. Portal del Socio
+   - Dirección mediante selector oficial de calle/pasaje/avenida + número.
+   - Tarjeta de estado de cuotas: Al día/Pendiente, última cuota pagada,
+     cantidad pendiente y monto adeudado.
+
+2. Formulario Hazte Socio
+   - Nombres y apellidos separados.
+   - RUT.
+   - Fecha de nacimiento y edad calculada automáticamente.
+   - Estado civil.
+   - Ocupación, incluyendo opción Otro.
+   - Dirección mediante selector oficial + número.
+   - Teléfono, correo, observaciones y autorización de WhatsApp.
+
+PASO OBLIGATORIO EN SUPABASE
+Antes de publicar los archivos actualizados, ejecutar en Supabase > SQL Editor:
+
+ACTUALIZAR_SUPABASE_SIGVE_V3_0_2_PORTAL_Y_SOLICITUD.sql
+
+El Libro de Socios no fue incorporado todavía. Los nuevos campos quedan preparados
+para continuar con ese módulo en la siguiente etapa.

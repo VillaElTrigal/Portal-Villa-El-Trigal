@@ -362,7 +362,18 @@
 
 <section id="socios-solicitud" class="section alt">
  <div class="container"><div class="section-title"><span>Participación vecinal</span><h2>Solicita ingresar como socio</h2><p>Completa tus datos. La directiva revisará la solicitud antes de incorporarte al registro oficial.</p></div>
- <div class="public-form-card"><form id="public-socio-form" class="public-grid"><label>Nombre completo<input name="nombre" required></label><label>RUT<input name="rut" required placeholder="12.345.678-9"></label><div class="full public-address-block"><label>Calle, pasaje o avenida *<div class="via-picker" data-via-picker><input name="via_busqueda" autocomplete="off" required placeholder="Escribe una letra o el nombre de la vía" aria-expanded="false"><input name="via_id" type="hidden"><div class="via-suggestions" role="listbox" hidden></div></div></label><label>Número *<input name="numero_domicilio" inputmode="numeric" maxlength="10" required placeholder="Ej.: 1278"></label><p class="address-preview" data-address-preview>📍 Selecciona una vía e ingresa el número.</p></div><label>Celular<div class="public-phone"><span>+56 9</span><input name="telefono" inputmode="numeric" required placeholder="1234 5678"></div></label><label>Correo electrónico<input name="correo" type="email"></label><label>Observaciones<textarea name="observaciones"></textarea></label><label class="check full"><input name="autoriza_whatsapp" type="checkbox"> Autorizo comunicaciones de la Junta e invitación al grupo oficial de WhatsApp.</label><div class="full"><button class="button primary" type="submit">Enviar solicitud</button><p id="public-socio-message"></p></div></form></div>
+ <div class="public-form-card"><form id="public-socio-form" class="public-grid">
+<label>Nombre(s) *<input name="nombres" required autocomplete="given-name"></label>
+<label>Apellido paterno *<input name="apellido_paterno" required autocomplete="family-name"></label>
+<label>Apellido materno<input name="apellido_materno"></label>
+<label>RUT *<input name="rut" required placeholder="12.345.678-9"></label>
+<label>Fecha de nacimiento *<input name="fecha_nacimiento" type="date" required></label>
+<label>Edad<input name="edad_calculada" readonly placeholder="Se calcula automáticamente"></label>
+<label>Estado civil *<select name="estado_civil" required><option value="">Selecciona</option><option>Soltero(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option></select></label>
+<label>Ocupación *<select name="ocupacion" required><option value="">Selecciona</option><option>Estudiante</option><option>Trabajador dependiente</option><option>Trabajador independiente</option><option>Dueño(a) de casa</option><option>Otro</option></select></label>
+<label class="full" data-otra-ocupacion hidden>Especifica la ocupación<input name="ocupacion_otro" maxlength="120"></label>
+<div class="full public-address-block"><label>Calle, pasaje o avenida *<div class="via-picker" data-via-picker><input name="via_busqueda" autocomplete="off" required placeholder="Escribe una letra o el nombre de la vía" aria-expanded="false"><input name="via_id" type="hidden"><div class="via-suggestions" role="listbox" hidden></div></div></label><label>Número *<input name="numero_domicilio" inputmode="numeric" maxlength="10" required placeholder="Ej.: 1278"></label><p class="address-preview" data-address-preview>📍 Selecciona una vía e ingresa el número.</p></div>
+<label>Celular *<div class="public-phone"><span>+56 9</span><input name="telefono" inputmode="numeric" required placeholder="1234 5678"></div></label><label>Correo electrónico<input name="correo" type="email"></label><label class="full">Observaciones<textarea name="observaciones"></textarea></label><label class="check full"><input name="autoriza_whatsapp" type="checkbox"> Autorizo comunicaciones de la Junta e invitación al grupo oficial de WhatsApp.</label><div class="full"><button class="button primary" type="submit">Enviar solicitud</button><p id="public-socio-message"></p></div></form></div>
  </div>
 </section>
 
@@ -381,7 +392,7 @@
       <div>
         <strong>Junta de Vecinos Villa El Trigal</strong>
         <p>Construyendo juntos un mejor barrio.</p>
-        <small>Portal Comunitario Villa El Trigal · Versión 3.0 Portal del Socio · Julio 2026 · © Junta de Vecinos Villa El Trigal<br><a class="admin-footer-link" href="admin.html">Acceso administrador</a></small>
+        <small>Portal Comunitario Villa El Trigal · Versión 3.0.2 · Julio 2026 · © Junta de Vecinos Villa El Trigal<br><a class="admin-footer-link" href="admin.html">Acceso administrador</a></small>
       </div>
     </div>
   </footer>

@@ -291,6 +291,13 @@
     const picker=bindPublicViaPicker(form,vias);
     const rut = form.elements.rut;
     const phone = form.elements.telefono;
+    const birth = form.elements.fecha_nacimiento;
+    const occupation = form.elements.ocupacion;
+    const otherOccupation = form.querySelector('[data-otra-ocupacion]');
+    const calculateAge = value => { if(!value) return ''; const today=new Date(), born=new Date(value+'T00:00:00'); let years=today.getFullYear()-born.getFullYear(); const beforeBirthday=today.getMonth()<born.getMonth()||(today.getMonth()===born.getMonth()&&today.getDate()<born.getDate()); return years-(beforeBirthday?1:0); };
+    birth.max = new Date().toISOString().slice(0,10);
+    birth.addEventListener('change',()=>{form.elements.edad_calculada.value=calculateAge(birth.value)});
+    occupation.addEventListener('change',()=>{const show=occupation.value==='Otro';otherOccupation.hidden=!show;form.elements.ocupacion_otro.required=show;if(!show)form.elements.ocupacion_otro.value=''});
     rut.dataset.rut = '1';
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
     phone.addEventListener('input', () => phone.value = formatPhone(phone.value));
@@ -312,8 +319,15 @@
       }
       message.textContent = 'Enviando…';
       const { error } = await sb.from('solicitudes_socios').insert({
-        nombre_completo: form.elements.nombre.value.trim(),
+        nombres: form.elements.nombres.value.trim(),
+        apellido_paterno: form.elements.apellido_paterno.value.trim(),
+        apellido_materno: form.elements.apellido_materno.value.trim() || null,
+        nombre_completo: [form.elements.nombres.value,form.elements.apellido_paterno.value,form.elements.apellido_materno.value].map(v=>v.trim()).filter(Boolean).join(' '),
         rut: formattedRut,
+        fecha_nacimiento: form.elements.fecha_nacimiento.value,
+        estado_civil: form.elements.estado_civil.value,
+        ocupacion: form.elements.ocupacion.value,
+        ocupacion_otro: form.elements.ocupacion.value==='Otro' ? form.elements.ocupacion_otro.value.trim() : null,
         via_id: via.id,
         numero_domicilio: numero,
         direccion: `${viaLabel(via)} ${numero}`,
