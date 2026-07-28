@@ -1,0 +1,12 @@
+SIGVE 3.0.2 - Actualización estable de Socios
+
+Modifica:
+- admin-v7.js
+- portal-socio.html
+- portal-socio.js
+
+Ejecutar en Supabase:
+- ACTUALIZAR_SUPABASE_SIGVE_V3_0_2_DATOS_SOCIO_FECHA_FINAL.sql
+
+Incluye datos personales completos, protección de RUT/número/fecha de ingreso,
+fecha chilena al aprobar solicitudes y corrección del socio N.º 1.
