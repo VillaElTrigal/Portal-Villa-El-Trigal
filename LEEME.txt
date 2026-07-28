@@ -1,15 +1,17 @@
-PORTAL VECINAL VILLA EL TRIGAL - VERSIÓN 1.3
+SIGVE v3.0.3 - Parche de campos ocultos
 
-Esta carpeta está lista para ser publicada en Netlify.
+Archivo a reemplazar:
+- portal-socio.css
 
-Novedades de la versión 1.3:
-- Sección integrada de arriendo de la Sede Social.
-- Calendarios de julio a diciembre de 2026.
-- Martes y jueves bloqueados automáticamente por clases de Zumba.
-- Fechas reservadas incorporadas.
-- Fechas disponibles seleccionables para solicitar por WhatsApp.
-- Valor, horario, abono, condiciones y aviso de confirmación.
-- Mismos datos bancarios y código QR usados para las cuotas.
+Qué corrige:
+- La sección "Necesidades o consideraciones especiales" permanece oculta mientras la casilla no esté marcada.
+- El campo "Otra ocupación" permanece oculto mientras la ocupación seleccionada no sea "Otro".
+- Se mantiene la lógica existente que limpia los datos de condiciones especiales al desmarcar la casilla.
 
-PUBLICACIÓN EN NETLIFY:
-Suba esta carpeta completa o el archivo ZIP correspondiente. El archivo index.html se encuentra en la raíz.
+Instalación:
+1. Copia portal-socio.css a la carpeta principal del proyecto.
+2. Acepta reemplazar el archivo existente.
+3. Publica los cambios.
+4. Recarga la página con Ctrl+F5 para evitar que el navegador use el CSS anterior en caché.
+
+No requiere ejecutar SQL en Supabase.
