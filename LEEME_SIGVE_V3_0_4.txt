@@ -1,0 +1,20 @@
+SIGVE v3.0.4
+
+CAMBIOS
+1. Estandarización de nombres, apellidos, integrantes del hogar y responsables de reservas.
+2. Correos de socios guardados en minúsculas y sin espacios sobrantes.
+3. RUT conserva el formato chileno existente.
+4. Las direcciones y el catálogo desplegable de calles NO fueron modificados.
+5. Nueva acción "Cerrar saldo por migración" para reservas importadas desde Excel.
+6. La regularización no genera movimientos en Caja ni Banco y deja auditoría.
+
+INSTALACIÓN
+1. En Supabase > SQL Editor, ejecutar ACTUALIZAR_SUPABASE_SIGVE_V3_0_4.sql.
+2. Después publicar todos los archivos de esta carpeta en el sitio, reemplazando la versión anterior.
+3. Recargar el navegador con Ctrl + F5.
+
+PRUEBA RECOMENDADA
+- Abrir Administración > Reserva de Sede.
+- Buscar una reserva que muestre "Completar datos" y tenga saldo pendiente.
+- Presionar "Cerrar saldo por migración".
+- Confirmar que aparece "Regularizada por migración" y que no se crea ingreso financiero.
