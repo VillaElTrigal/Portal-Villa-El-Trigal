@@ -1,0 +1,13 @@
+SIGVE v4.0.4 - Certificado de residencia en celular
+
+Corrección realizada:
+- El certificado ahora usa un contenedor modal independiente.
+- El formulario deja de depender del atributo hidden aplicado al mismo panel.
+- Se conserva el formulario, sus validaciones y el envío por WhatsApp.
+- No se modificaron Hazte socio, Reserva de sede ni Supabase.
+
+Instalación:
+1. Reemplazar los archivos del repositorio por los incluidos en esta carpeta.
+2. Confirmar los cambios en GitHub.
+3. Esperar el despliegue de GitHub Pages.
+4. En el celular, cerrar la pestaña anterior y abrir nuevamente el sitio.

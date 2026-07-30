@@ -3,7 +3,7 @@
 
   const MODALS = {
     certificado: {
-      elementId: 'certificate-form-panel',
+      elementId: 'certificate-modal-root',
       title: 'Certificado de residencia',
       focusSelector: '#cert-name'
     },
@@ -57,10 +57,8 @@
     requestAnimationFrame(() => {
       modal.scrollTop = 0;
       const isSmallScreen = window.matchMedia('(max-width: 720px)').matches;
-      // En celular evitamos enfocar automáticamente un campo de texto, porque
-      // el teclado virtual puede reducir la vista y ocultar el formulario.
       const target = isSmallScreen
-        ? (modal.querySelector('[data-close-portal-modal], .close-panel') || modal.querySelector('button, a[href]'))
+        ? (modal.querySelector('.close-panel, [data-close-portal-modal]') || modal.querySelector('button, a[href]'))
         : (modal.querySelector(MODALS[name].focusSelector) || modal.querySelector('button, input, select, textarea, a[href]'));
       target?.focus({ preventScroll: true });
       setTimeout(() => { modal.scrollTop = 0; }, 80);
@@ -70,11 +68,12 @@
   function closeModal(restoreFocus = true) {
     if (!activeModal) return;
     const modal = getModal(activeModal);
+    const closingName = activeModal;
     modal?.classList.remove('portal-modal-active');
     modal?.removeAttribute('role');
     modal?.removeAttribute('aria-modal');
     modal?.removeAttribute('aria-label');
-    if (activeModal === 'certificado' && modal) modal.hidden = true;
+    if (closingName === 'certificado' && modal) modal.hidden = true;
     document.body.classList.remove('portal-modal-lock');
     activeModal = null;
 
@@ -94,18 +93,17 @@
   function installTriggers() {
     document.querySelectorAll('a[href="#arriendo"], a[href="#socios-solicitud"]').forEach(link => {
       const name = modalFromHref(link.getAttribute('href'));
-      if (!name) return;
-      link.dataset.openPortalModal = name;
+      if (name) link.dataset.openPortalModal = name;
     });
 
     const certificateShortcut = document.querySelector('.shortcuts a[href="#tramites"]');
     if (certificateShortcut) certificateShortcut.dataset.openPortalModal = 'certificado';
 
-    const certificateButton = document.querySelector('button[onclick="toggleCertificateForm()"]');
-    if (certificateButton) {
-      certificateButton.removeAttribute('onclick');
-      certificateButton.dataset.openPortalModal = 'certificado';
-    }
+    document.querySelectorAll('button[onclick="toggleCertificateForm()"], #certificate-form-panel .close-panel').forEach(button => {
+      button.removeAttribute('onclick');
+      if (button.classList.contains('close-panel')) button.dataset.closePortalModal = '';
+      else button.dataset.openPortalModal = 'certificado';
+    });
   }
 
   function trapTab(event) {
@@ -132,7 +130,6 @@
     addTopbar('socio');
     installTriggers();
 
-    // Conserva compatibilidad con llamadas antiguas del portal.
     window.toggleCertificateForm = () => {
       if (activeModal === 'certificado') closeModal();
       else openModal('certificado');
@@ -147,7 +144,7 @@
         return;
       }
 
-      if (event.target.closest('[data-close-portal-modal]') || event.target.closest('#certificate-form-panel .close-panel')) {
+      if (event.target.closest('[data-close-portal-modal]')) {
         event.preventDefault();
         closeModal();
         return;
@@ -164,7 +161,6 @@
       trapTab(event);
     });
 
-    // Si alguien entra mediante un enlace directo con hash, abre la ventana correspondiente.
     const initialName = modalFromHref(window.location.hash);
     if (initialName) {
       history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
