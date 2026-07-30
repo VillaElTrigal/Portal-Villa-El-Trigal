@@ -1,0 +1,200 @@
+/* SIGVE - Ventanas de trámites públicos
+   Mejora visual: Certificado de residencia, Reserva de sede y Hazte socio.
+   No modifica formularios, validaciones ni conexión con Supabase. */
+
+.portal-modal-ready #certificate-form-panel,
+.portal-modal-ready #arriendo,
+.portal-modal-ready #socios-solicitud {
+  display: none;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active,
+.portal-modal-ready #arriendo.portal-modal-active,
+.portal-modal-ready #socios-solicitud.portal-modal-active {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: rgba(9, 31, 40, .72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: clamp(12px, 3vw, 34px);
+  animation: portalModalFade .18s ease-out;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active {
+  max-width: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active::before,
+.portal-modal-ready #arriendo.portal-modal-active::before,
+.portal-modal-ready #socios-solicitud.portal-modal-active::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active > *,
+.portal-modal-ready #arriendo.portal-modal-active > .container,
+.portal-modal-ready #socios-solicitud.portal-modal-active > .container {
+  width: min(1120px, 100%);
+  margin-inline: auto;
+  background: #fff;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active {
+  background: rgba(9, 31, 40, .72);
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active > * {
+  width: min(760px, 100%);
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active .form-panel-header {
+  margin-top: max(2vh, 8px);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active .notice-box,
+.portal-modal-ready #certificate-form-panel.portal-modal-active form {
+  padding-inline: 24px;
+}
+
+.portal-modal-ready #certificate-form-panel.portal-modal-active form {
+  padding-bottom: 26px;
+  border-radius: 0 0 20px 20px;
+}
+
+.portal-modal-ready #arriendo.portal-modal-active,
+.portal-modal-ready #socios-solicitud.portal-modal-active {
+  padding-top: max(12px, 3vh);
+}
+
+.portal-modal-ready #arriendo.portal-modal-active > .container,
+.portal-modal-ready #socios-solicitud.portal-modal-active > .container {
+  position: relative;
+  border-radius: 22px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+  padding: clamp(18px, 3vw, 38px);
+  animation: portalModalRise .22s ease-out;
+}
+
+.portal-modal-topbar {
+  position: sticky;
+  top: -1px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: calc(clamp(18px, 3vw, 38px) * -1) calc(clamp(18px, 3vw, 38px) * -1) 24px;
+  padding: 15px clamp(18px, 3vw, 38px);
+  border-radius: 22px 22px 0 0;
+  color: #fff;
+  background: #145e75;
+  box-shadow: 0 5px 16px rgba(20,94,117,.18);
+}
+
+.portal-modal-topbar strong {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+}
+
+.portal-modal-close {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 50%;
+  background: rgba(255,255,255,.14);
+  color: #fff;
+  font: 700 28px/1 Arial, sans-serif;
+  cursor: pointer;
+}
+
+.portal-modal-close:hover,
+.portal-modal-close:focus-visible {
+  background: #fff;
+  color: #145e75;
+  outline: 3px solid rgba(255,255,255,.35);
+}
+
+body.portal-modal-lock {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+body.portal-modal-lock .portal-modal-active {
+  touch-action: pan-y;
+}
+
+@keyframes portalModalFade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes portalModalRise { from { transform: translateY(16px); opacity: .6 } to { transform: none; opacity: 1 } }
+
+@media (max-width: 720px) {
+  .portal-modal-ready #certificate-form-panel.portal-modal-active,
+  .portal-modal-ready #arriendo.portal-modal-active,
+  .portal-modal-ready #socios-solicitud.portal-modal-active {
+    padding: 0;
+    background: #fff;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active > *,
+  .portal-modal-ready #arriendo.portal-modal-active > .container,
+  .portal-modal-ready #socios-solicitud.portal-modal-active > .container {
+    width: 100%;
+    min-height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active .form-panel-header,
+  .portal-modal-topbar {
+    top: 0;
+    border-radius: 0;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active .form-panel-header {
+    margin-top: 0;
+  }
+
+  .portal-modal-topbar {
+    margin-top: calc(clamp(18px, 3vw, 38px) * -1);
+  }
+
+  .portal-modal-ready #arriendo.portal-modal-active .section-heading,
+  .portal-modal-ready #socios-solicitud.portal-modal-active .section-title {
+    text-align: left;
+  }
+
+  .portal-modal-ready #arriendo.portal-modal-active .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active .form-grid,
+  .portal-modal-ready #socios-solicitud.portal-modal-active .public-grid,
+  .portal-modal-ready #arriendo.portal-modal-active .rental-details-grid,
+  .portal-modal-ready #arriendo.portal-modal-active .rental-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active input,
+  .portal-modal-ready #certificate-form-panel.portal-modal-active textarea,
+  .portal-modal-ready #socios-solicitud.portal-modal-active input,
+  .portal-modal-ready #socios-solicitud.portal-modal-active select,
+  .portal-modal-ready #socios-solicitud.portal-modal-active textarea {
+    font-size: 16px; /* evita zoom automático en iPhone */
+  }
+}

@@ -1,0 +1,31 @@
+SIGVE v4.0.1 - VENTANAS DE TRÁMITES PÚBLICOS
+
+MEJORA INCLUIDA
+- Certificado de residencia se abre sobre la página.
+- Reserva de sede se abre sobre la página.
+- Hazte socio se abre sobre la página.
+- La página deja de desplazarse hasta el formulario o los calendarios.
+- En celular, cada ventana ocupa la pantalla y su contenido se desplaza internamente.
+- En PC y tablet, se muestra como una ventana centrada con fondo oscurecido.
+- Se puede cerrar con X, tocando fuera de la ventana (PC) o con la tecla Escape.
+
+NO SE MODIFICÓ
+- Supabase.
+- Formularios ni sus campos.
+- Validaciones.
+- Envío por WhatsApp.
+- Calendario y lógica de reservas.
+- Solicitud Hazte socio.
+
+ARCHIVOS NUEVOS
+- portal-modals.css
+- portal-modals.js
+
+ARCHIVO MODIFICADO
+- index.html
+
+INSTALACIÓN
+1. Subir/reemplazar estos archivos en GitHub.
+2. No ejecutar SQL.
+3. Esperar GitHub Pages y actualizar con Ctrl+F5.
+4. Probar en PC y celular los tres accesos.
