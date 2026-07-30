@@ -1,0 +1,31 @@
+SIGVE v4.1 MOBILE - PRIMERA ADAPTACIÓN RESPONSIVE
+==================================================
+
+Esta actualización adapta el panel de administración para teléfonos sin crear
+un sistema separado y sin modificar Supabase.
+
+CAMBIOS
+- Menú lateral deslizable mediante botón hamburguesa.
+- Barra inferior: Inicio, Socios, Finanzas, Reservas y Más.
+- Formularios en una columna.
+- Botones y campos adecuados para uso táctil.
+- Paneles, estadísticas, calendarios y ventanas adaptados.
+- Tablas con desplazamiento horizontal e indicación visible.
+- La versión de escritorio conserva su diseño y funcionamiento.
+
+ARCHIVOS NUEVOS
+- admin-mobile.css
+- admin-mobile.js
+- LEEME_SIGVE_V4_1_MOBILE.txt
+
+ARCHIVO MODIFICADO
+- admin.html
+
+INSTALACIÓN EN GITHUB
+1. Subir el contenido de la carpeta Portal-Villa-El-Trigal al repositorio.
+2. Reemplazar admin.html y agregar los dos archivos admin-mobile.*
+3. Commit sugerido: SIGVE v4.1 - primera adaptación móvil
+4. Esperar el despliegue de GitHub Pages.
+5. Abrir SIGVE desde el teléfono y actualizar la página.
+
+No se requiere ejecutar SQL en Supabase.
