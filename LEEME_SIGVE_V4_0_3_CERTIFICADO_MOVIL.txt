@@ -1,0 +1,10 @@
+SIGVE v4.0.3 - Corrección certificado en celular
+
+Cambios:
+- El formulario de Certificado de Residencia ocupa correctamente la pantalla del celular.
+- Se habilitó desplazamiento interno suave en iPhone y Android.
+- El teclado ya no se abre automáticamente al mostrar el formulario.
+- Se agregó compatibilidad con áreas seguras de pantalla.
+- Se actualizó la versión de caché de portal-modals.css y portal-modals.js.
+
+No requiere cambios ni SQL en Supabase.

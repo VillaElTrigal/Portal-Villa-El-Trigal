@@ -198,3 +198,56 @@ body.portal-modal-lock .portal-modal-active {
     font-size: 16px; /* evita zoom automático en iPhone */
   }
 }
+
+/* SIGVE v4.0.3 - Corrección de visualización del certificado en celulares */
+@media (max-width: 720px) {
+  .portal-modal-ready #certificate-form-panel.portal-modal-active {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 0 0 env(safe-area-inset-bottom, 0);
+    background: #fff;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active > * {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    background: #fff;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active .form-panel-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    padding: calc(14px + env(safe-area-inset-top, 0)) 18px 14px;
+    background: #fff;
+    border-bottom: 1px solid #d8e6e0;
+    box-shadow: 0 4px 12px rgba(20, 70, 78, .08);
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active .notice-box,
+  .portal-modal-ready #certificate-form-panel.portal-modal-active form {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .portal-modal-ready #certificate-form-panel.portal-modal-active form {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0));
+  }
+
+  body.portal-modal-lock {
+    touch-action: auto;
+  }
+
+  body.portal-modal-lock #certificate-form-panel.portal-modal-active {
+    touch-action: pan-y;
+  }
+}

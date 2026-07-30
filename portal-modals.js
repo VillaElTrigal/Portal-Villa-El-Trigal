@@ -56,8 +56,14 @@
 
     requestAnimationFrame(() => {
       modal.scrollTop = 0;
-      const target = modal.querySelector(MODALS[name].focusSelector) || modal.querySelector('button, input, select, textarea, a[href]');
+      const isSmallScreen = window.matchMedia('(max-width: 720px)').matches;
+      // En celular evitamos enfocar automáticamente un campo de texto, porque
+      // el teclado virtual puede reducir la vista y ocultar el formulario.
+      const target = isSmallScreen
+        ? (modal.querySelector('[data-close-portal-modal], .close-panel') || modal.querySelector('button, a[href]'))
+        : (modal.querySelector(MODALS[name].focusSelector) || modal.querySelector('button, input, select, textarea, a[href]'));
       target?.focus({ preventScroll: true });
+      setTimeout(() => { modal.scrollTop = 0; }, 80);
     });
   }
 
