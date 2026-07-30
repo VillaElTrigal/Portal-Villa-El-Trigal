@@ -1,0 +1,28 @@
+SIGVE v4.1 · CAJA DE CUOTAS
+
+NUEVO EN ADMINISTRACIÓN
+- Módulo "Caja de Cuotas".
+- Busca al socio por nombre, RUT o número.
+- Permite seleccionar una o varias cuotas pendientes.
+- Registra pago en efectivo o transferencia.
+- El pago queda asociado al socio.
+- Cada cuota confirmada crea automáticamente su ingreso en Finanzas.
+- Evita mezclar cuotas de socios distintos en una misma operación.
+
+NUEVO EN PORTAL SOCIO
+- Pestaña "Pago de cuotas".
+- Muestra las cuotas pendientes del socio.
+- Permite seleccionar qué meses pagó.
+- Calcula el total automáticamente.
+- Abre WhatsApp con nombre, RUT, número de socio, meses y monto.
+- El socio adjunta manualmente el comprobante en WhatsApp.
+
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V4_1_CAJA_CUOTAS.sql completo en Supabase > SQL Editor.
+2. Subir todos los archivos del proyecto a GitHub reemplazando los actuales.
+3. Esperar el despliegue y recargar con Ctrl + F5.
+
+IMPORTANTE
+- Esta versión sí requiere ejecutar el SQL incluido.
+- No elimina ni modifica pagos anteriores.
+- El módulo antiguo "Cuotas" se conserva para seguimiento y cobranza.
