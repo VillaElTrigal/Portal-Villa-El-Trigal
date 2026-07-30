@@ -297,7 +297,9 @@
     const calculateAge = value => { if(!value) return ''; const today=new Date(), born=new Date(value+'T00:00:00'); let years=today.getFullYear()-born.getFullYear(); const beforeBirthday=today.getMonth()<born.getMonth()||(today.getMonth()===born.getMonth()&&today.getDate()<born.getDate()); return years-(beforeBirthday?1:0); };
     birth.max = new Date().toISOString().slice(0,10);
     birth.addEventListener('change',()=>{form.elements.edad_calculada.value=calculateAge(birth.value)});
-    occupation.addEventListener('change',()=>{const show=occupation.value==='Otro';otherOccupation.hidden=!show;form.elements.ocupacion_otro.required=show;if(!show)form.elements.ocupacion_otro.value=''});
+    const syncOtherOccupation=()=>{const show=occupation.value==='Otro';otherOccupation.hidden=!show;form.elements.ocupacion_otro.required=show;if(!show)form.elements.ocupacion_otro.value=''};
+    occupation.addEventListener('change',syncOtherOccupation);
+    syncOtherOccupation();
     rut.dataset.rut = '1';
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
     phone.addEventListener('input', () => phone.value = formatPhone(phone.value));

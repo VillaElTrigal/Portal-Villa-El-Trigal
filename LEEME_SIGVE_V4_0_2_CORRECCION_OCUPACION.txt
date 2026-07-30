@@ -1,0 +1,9 @@
+SIGVE v4.0.2 - Corrección Hazte socio
+
+Cambio realizado:
+- El campo “Especifica la ocupación” permanece oculto al abrir Hazte socio.
+- Solo se muestra cuando la persona selecciona “Otro”.
+- Al cambiar desde “Otro” a otra alternativa, el campo se oculta y se limpia.
+
+No requiere cambios ni SQL en Supabase.
+Sube los archivos a GitHub y recarga el sitio con Ctrl + F5.
