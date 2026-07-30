@@ -1,0 +1,35 @@
+SIGVE v4.0 Responsive Base
+==========================
+
+OBJETIVO
+El mismo SIGVE se adapta automáticamente a computador, tablet y celular.
+No se creó una aplicación separada ni se cambió la lógica del sistema.
+
+CAMBIOS
+- Menú lateral tipo hamburguesa en celular.
+- Menú lateral normal en computador.
+- Formularios de una columna en celular.
+- Botones y campos cómodos para pantallas táctiles.
+- Paneles, estadísticas, imágenes y ventanas emergentes adaptables.
+- Tablas con desplazamiento horizontal para conservar toda la información.
+- Vista de escritorio conservada.
+
+ARCHIVOS NUEVOS
+- admin-responsive.css
+- admin-responsive.js
+- LEEME_SIGVE_V4_0_RESPONSIVE.txt
+
+ARCHIVO MODIFICADO
+- admin.html (solo para cargar los dos archivos responsive)
+
+SUPABASE
+No ejecutar SQL. Esta actualización no cambia la base de datos.
+
+GITHUB
+Subir el contenido de la carpeta Portal-Villa-El-Trigal al repositorio,
+reemplazando los archivos existentes. Mensaje sugerido:
+SIGVE v4.0 - adaptación responsive base
+
+PRUEBA
+Usar el mismo enlace de siempre. En celular, recargar la página o abrirla
+en una pestaña privada si el navegador conserva una versión anterior.

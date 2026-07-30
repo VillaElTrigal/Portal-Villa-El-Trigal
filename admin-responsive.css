@@ -1,0 +1,103 @@
+/* SIGVE 4.0 Responsive Base
+   Solo adapta la presentación. No modifica procesos ni datos. */
+
+.mobile-menu-button,
+.mobile-menu-backdrop{display:none}
+
+/* Evita que contenidos anchos rompan el diseño */
+.admin-section,
+.panel,
+.item,
+.v7-modal-card{min-width:0}
+img,video,canvas,svg{max-width:100%;height:auto}
+.v7-table-wrap,
+.cuotas-table-wrap{max-width:100%;-webkit-overflow-scrolling:touch}
+
+@media (max-width: 1024px){
+  .admin-shell{grid-template-columns:220px minmax(0,1fr)}
+  .admin-main{padding:1.25rem}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .form-grid,.v7-grid,.v7-grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .topbar{gap:1rem}
+}
+
+@media (max-width: 780px){
+  body.sigve-menu-open{overflow:hidden}
+  .admin-shell{display:block;min-height:100vh}
+  .admin-main{width:100%;max-width:none;padding:1rem;padding-top:4.75rem}
+
+  .mobile-menu-button{
+    display:grid;place-items:center;position:fixed;left:1rem;top:.85rem;z-index:12002;
+    width:46px;height:46px;border:0;border-radius:12px;background:var(--dark);color:#fff;
+    font-size:1.45rem;line-height:1;box-shadow:0 8px 24px #0003;cursor:pointer
+  }
+  .mobile-menu-button:focus-visible{outline:3px solid #80c9da;outline-offset:2px}
+
+  .mobile-menu-backdrop{
+    display:block;position:fixed;inset:0;background:#0008;z-index:11998;
+    opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease
+  }
+  body.sigve-menu-open .mobile-menu-backdrop{opacity:1;visibility:visible}
+
+  .sidebar{
+    position:fixed!important;inset:0 auto 0 0;z-index:12000;width:min(310px,86vw);height:100dvh;
+    overflow-y:auto;overscroll-behavior:contain;transform:translateX(-105%);
+    transition:transform .22s ease;box-shadow:18px 0 40px #0004;padding:1.25rem
+  }
+  body.sigve-menu-open .sidebar{transform:translateX(0)}
+  .sidebar nav{display:grid!important;grid-template-columns:1fr!important;gap:.3rem;margin:.8rem 0 auto}
+  .sidebar nav button,.sidebar nav a{min-height:44px;padding:.72rem .8rem}
+  .sidebar h1{margin:.5rem 0 .15rem}
+  .sidebar p{margin:.15rem 0 .5rem}
+
+  .topbar{
+    position:relative;display:flex;align-items:flex-start;justify-content:space-between;
+    gap:.75rem;margin-bottom:1rem
+  }
+  .topbar h2{font-size:1.45rem;margin:.2rem 0}
+  .top-actions{gap:.5rem;min-width:0}
+  #admin-name{display:none}
+  .notification-panel{position:fixed;top:4.2rem;right:.75rem;left:.75rem;width:auto;max-height:70vh;overflow:auto}
+
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.7rem}
+  .stat,.panel,.item{border-radius:14px;padding:1rem}
+  .stat strong{font-size:1.45rem;overflow-wrap:anywhere}
+
+  .form-grid,.v7-grid,.v7-grid.three,.v7-summary{grid-template-columns:1fr!important}
+  .form-grid label:has(textarea){grid-column:auto}
+  input,textarea,select{font-size:16px;min-height:44px}
+  textarea{min-height:110px}
+
+  .actions{display:grid;grid-template-columns:1fr;align-items:stretch}
+  .actions .button,.actions button,.actions a{width:100%;text-align:center;min-height:44px}
+  .button{min-height:44px}
+
+  .item{display:block}
+  .thumb{float:none;width:100%;height:auto;max-height:220px;margin:0 0 .8rem;object-fit:cover}
+  .panel-heading{display:block}
+  .status-pill{margin:.25rem 0 .75rem}
+
+  .v7-modal{padding:.5rem;align-items:end}
+  .v7-modal-card{width:100%;max-height:92dvh;border-radius:18px 18px 0 0;padding:1rem}
+
+  /* Las tablas conservan todas sus columnas y permiten desplazamiento lateral. */
+  .v7-table-wrap{overflow-x:auto!important;border-radius:12px}
+  .v7-table{min-width:760px}
+
+  .multi-preview{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width: 430px){
+  .admin-main{padding-left:.75rem;padding-right:.75rem}
+  .stats{grid-template-columns:1fr!important}
+  .stat{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .stat span{font-size:.9rem}
+  .stat strong{font-size:1.25rem;text-align:right}
+  .topbar h2{font-size:1.3rem}
+  .panel,.item{padding:.85rem}
+  .multi-preview{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .sidebar,.mobile-menu-backdrop{transition:none}
+}
