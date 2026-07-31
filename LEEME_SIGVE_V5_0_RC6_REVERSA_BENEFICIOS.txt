@@ -1,0 +1,14 @@
+SIGVE v5.0 RC6 · Cancelación y devolución de beneficios
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC6_REVERSA_BENEFICIOS.sql en Supabase.
+2. Publicar todos los archivos de esta carpeta.
+3. Presionar Ctrl + F5.
+
+CAMBIOS
+- Cancelar una reserva devuelve automáticamente el beneficio al socio.
+- La bitácora conserva el registro como “Revertido”.
+- Los usos revertidos ya no cuentan para el límite anual.
+- Un arriendo gratuito vuelve a quedar disponible.
+- Los registros revertidos pueden eliminarse manualmente de la bitácora (útil para pruebas).
+- Una reserva finalizada no permite devolución del beneficio.
+- Al reactivar una reserva cancelada, queda a precio normal y sin beneficio.
