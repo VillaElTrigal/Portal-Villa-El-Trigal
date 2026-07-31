@@ -172,7 +172,7 @@
       return;
     }
     document.querySelector('.public-reservation-modal')?.remove();
-    const modal = document.createElement('div');
+    const modal = document.createElement('dialog');
     modal.className = 'public-reservation-modal';
     modal.innerHTML = `
       <div class="public-reservation-card" role="dialog" aria-modal="true" aria-labelledby="reservation-title">
@@ -193,8 +193,23 @@
         </form>
       </div>`;
     document.body.appendChild(modal);
-    const close = () => modal.remove();
-    modal.addEventListener('click', event => { if (event.target === modal) close(); });
+    // showModal() coloca el formulario en la capa superior del navegador,
+    // por encima del calendario y de cualquier otro modal del portal.
+    if (typeof modal.showModal === 'function') modal.showModal();
+    else modal.setAttribute('open', '');
+    const close = () => {
+      try { if (modal.open && typeof modal.close === 'function') modal.close(); } catch (_) {}
+      modal.remove();
+    };
+    modal.addEventListener('click', event => {
+      const card = modal.querySelector('.public-reservation-card');
+      if (event.target === modal && card) {
+        const r = card.getBoundingClientRect();
+        const outside = event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
+        if (outside) close();
+      }
+    });
+    modal.addEventListener('cancel', event => { event.preventDefault(); close(); });
     modal.querySelector('.public-modal-close').onclick = close;
     modal.querySelector('[data-cancel]').onclick = close;
     const form = modal.querySelector('form');

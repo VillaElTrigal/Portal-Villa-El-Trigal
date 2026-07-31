@@ -1,0 +1,21 @@
+SIGVE v5.0 RC1 · Estabilización de Beneficios y Reserva de Sede
+
+CORRECCIONES INCLUIDAS
+1. Corrige el error de Supabase: column reference "beneficio_id" is ambiguous.
+2. Califica todas las referencias de tablas y variables en las funciones de beneficios.
+3. El formulario público de solicitud de reserva ahora utiliza un dialog nativo.
+4. El dialog se abre en la capa superior del navegador, siempre por encima del calendario.
+5. Permite cerrar con la X, Cancelar, Escape o pulsando fuera de la tarjeta.
+
+INSTALACIÓN
+1. En Supabase > SQL Editor, ejecutar completo:
+   CORREGIR_SUPABASE_SIGVE_V5_0_RC1.sql
+2. Reemplazar en GitHub los archivos del proyecto por los incluidos en este ZIP.
+3. Esperar el despliegue.
+4. Recargar la página con Ctrl + F5.
+
+PRUEBAS RECOMENDADAS
+- Portal Socio > Arrendar sede: verificar que cargue los beneficios sin el error beneficio_id.
+- Inicio > Arrendar sede: seleccionar una fecha y pulsar Solicitar reserva.
+- Confirmar que el formulario quede por delante del calendario.
+- Probar cerrar el formulario con X, Cancelar y Escape.

@@ -26,3 +26,15 @@
 .public-grid [data-otra-ocupacion][hidden]{display:none!important;}
 
 body:has(.public-reservation-modal){overflow:hidden}.public-reservation-modal{isolation:isolate}.portal-modal-active:has(+ .public-reservation-modal){pointer-events:none}
+
+
+/* SIGVE v5.0 RC1 · formulario de reserva en la capa superior del navegador */
+dialog.public-reservation-modal{
+  position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;
+  margin:0;border:0;padding:18px;background:transparent;overflow:auto;
+  display:none;align-items:center;justify-content:center;box-sizing:border-box;
+}
+dialog.public-reservation-modal[open]{display:flex;}
+dialog.public-reservation-modal::backdrop{background:rgba(12,36,42,.72);backdrop-filter:blur(2px);}
+dialog.public-reservation-modal .public-reservation-card{margin:auto;}
+@media(max-width:620px){dialog.public-reservation-modal{align-items:flex-start;padding:12px;padding-top:max(12px,env(safe-area-inset-top));}}

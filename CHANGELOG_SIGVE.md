@@ -24,3 +24,9 @@
 - Informe mensual muestra la glosa completa de cada movimiento y distingue abonos, saldos y pagos completos de arriendo.
 - Nueva vista de impresión/PDF independiente, en tamaño carta.
 - Se agregan columnas Fecha, Detalle y Monto en ingresos y egresos.
+
+## v5.0 RC1
+- Corregida referencia ambigua `beneficio_id` en las funciones SQL de beneficios.
+- Reescrita la consulta del Portal Socio con alias explícitos.
+- Formulario de solicitud de arriendo migrado a `dialog.showModal()` para garantizar que aparezca sobre el calendario.
+- Mejorado el cierre del formulario mediante fondo, Escape, X y botón Cancelar.
