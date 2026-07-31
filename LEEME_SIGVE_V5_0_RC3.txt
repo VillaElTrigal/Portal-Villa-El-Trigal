@@ -1,0 +1,21 @@
+SIGVE v5.0 RC3 · BENEFICIOS OPERATIVOS
+
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC3_BENEFICIOS_OPERATIVOS.sql en Supabase > SQL Editor.
+2. Publica todos los archivos de esta carpeta conservando la misma estructura.
+3. Limpia la caché del navegador o usa Ctrl+F5.
+
+CAMBIOS REALES
+- El Portal Socio transfiere su sesión al formulario de arriendo.
+- El formulario consulta los beneficios vigentes y muestra valor normal, descuento y total.
+- El descuento porcentual o fijo elegible se aplica automáticamente.
+- El arriendo gratuito se ofrece como opción y no se combina con otro beneficio.
+- La función SQL vuelve a evaluar todo en el servidor antes de guardar.
+- La reserva guarda socio, beneficio, valor original, descuento y valor final.
+- El uso del beneficio queda registrado en beneficios_usos.
+
+PRUEBA
+- Inicia sesión en Portal Socio.
+- Revisa que el beneficio aparezca disponible.
+- Pulsa Arrendar sede, elige una fecha y abre el formulario.
+- Confirma que aparezca el resumen económico.
+- Guarda la solicitud y revisa Administración > Sede y arriendos.

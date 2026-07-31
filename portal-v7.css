@@ -39,13 +39,5 @@ dialog.public-reservation-modal::backdrop{background:rgba(12,36,42,.72);backdrop
 dialog.public-reservation-modal .public-reservation-card{margin:auto;}
 @media(max-width:620px){dialog.public-reservation-modal{align-items:flex-start;padding:12px;padding-top:max(12px,env(safe-area-inset-top));}}
 
-
-/* SIGVE v5.0 RC2 · Beneficios operativos en solicitud pública */
-.public-benefit-panel{margin-top:1rem;padding:1rem;border:1px solid rgba(20,83,45,.18);border-radius:16px;background:#f7fbf8}
-.public-benefit-panel[hidden]{display:none}
-.benefit-auto{margin:.35rem 0 .8rem}
-.benefit-free-choice{display:flex!important;align-items:center;gap:.65rem;padding:.8rem;border-radius:12px;background:#fff;border:1px solid rgba(20,83,45,.16)}
-.benefit-free-choice input{width:auto!important;margin:0}
-#public-benefit-summary{margin-top:.8rem;padding-top:.7rem;border-top:1px dashed rgba(20,83,45,.25)}
-.benefit-price-row{display:flex;justify-content:space-between;gap:1rem;padding:.25rem 0}
-.benefit-price-row.total{margin-top:.35rem;padding-top:.55rem;border-top:1px solid rgba(20,83,45,.18);font-size:1.08rem}
+/* SIGVE v5.0 RC3 · resumen operativo de beneficios */
+.public-benefit-summary{margin:4px 0 8px;padding:16px;border:1px solid #d8e4dc;border-radius:14px;background:#f7fbf8}.public-benefit-summary h4{margin:0 0 10px}.public-price-row{display:flex;justify-content:space-between;gap:16px;padding:6px 0}.public-price-total{margin-top:6px;padding-top:12px;border-top:1px solid #ccd8d0;font-size:1.08rem}.public-free-choice{display:flex!important;align-items:center;gap:8px;margin-top:12px;font-weight:700}.public-free-choice input{width:auto!important}.public-benefit-note,.public-benefit-loading{margin:8px 0}.public-benefit-summary small{display:block;margin-top:6px}

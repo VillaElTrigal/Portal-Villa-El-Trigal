@@ -18,6 +18,7 @@
   let selectedRentalLabel = '';
   const MIN_RENTAL_YEAR = 2026;
   let rentalCalendarYear = Math.max(MIN_RENTAL_YEAR, new Date().getFullYear());
+  const money = value => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(value||0));
 
   const rutClean = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
   const formatRut = value => {
@@ -185,7 +186,9 @@
           <label>Celular<div class="public-phone"><span>+56 9</span><input name="telefono" required inputmode="numeric" maxlength="16" placeholder="1234 5678" autocomplete="tel"></div></label>
           <label>RUT (opcional)<input name="rut" maxlength="15" placeholder="12.345.678-9"></label>
           <label>Tipo de actividad / comentario<textarea name="observaciones" maxlength="500" placeholder="Ej.: cumpleaños familiar"></textarea></label>
-          <section class="public-benefit-panel" id="public-benefit-panel" hidden><p class="eyebrow">Programa de beneficios</p><div id="public-benefit-options"></div><div id="public-benefit-summary"></div></section>
+          <section class="public-benefit-summary" data-benefit-summary hidden>
+            <p class="public-benefit-loading">Revisando beneficios del socio…</p>
+          </section>
           <p class="public-form-message" aria-live="polite"></p>
           <div class="public-reservation-actions">
             <button type="submit" class="button primary">Guardar y continuar a WhatsApp</button>
@@ -216,51 +219,56 @@
     const form = modal.querySelector('form');
     const rut = form.elements.rut;
     const phone = form.elements.telefono;
-    let portalToken = null;
-    let benefitRows = [];
-    let selectedBenefitId = null;
-    let selectedBenefitType = null;
-    let originalValue = 0;
-    const benefitPanel = modal.querySelector('#public-benefit-panel');
-    const benefitOptions = modal.querySelector('#public-benefit-options');
-    const benefitSummary = modal.querySelector('#public-benefit-summary');
-    const moneyCL = value => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(value||0));
-    const renderBenefitSummary = () => {
-      if (!benefitRows.length) return;
-      const chosen = benefitRows.find(x => x.beneficio_id === selectedBenefitId);
-      const finalValue = chosen ? Number(chosen.valor_final||originalValue) : originalValue;
-      benefitSummary.innerHTML = `<div class="benefit-price-row"><span>Valor normal</span><strong>${moneyCL(originalValue)}</strong></div>${chosen?`<div class="benefit-price-row"><span>Beneficio aplicado</span><strong>${chosen.nombre}</strong></div><div class="benefit-price-row"><span>Descuento</span><strong>-${moneyCL(Math.max(0,originalValue-finalValue))}</strong></div>`:''}<div class="benefit-price-row total"><span>Total</span><strong>${moneyCL(finalValue)}</strong></div>`;
-    };
-    const loadBenefits = async () => {
-      if (!portalToken) return;
-      benefitPanel.hidden = false; benefitOptions.innerHTML = '<p>Revisando beneficios…</p>';
-      const {data,error} = await sb.rpc('portal_socio_beneficios_arriendo',{p_token:portalToken,p_fecha:selectedRentalDate});
-      if(error){benefitOptions.innerHTML='<p>No fue posible evaluar los beneficios. La solicitud continuará con precio normal.</p>';return}
-      benefitRows=(data||[]).filter(x=>x.cumple);
-      originalValue=Number((data||[])[0]?.valor_original||0);
-      const discounts=benefitRows.filter(x=>x.tipo!=='gratis');
-      const free=benefitRows.find(x=>x.tipo==='gratis');
-      const automatic=discounts.sort((a,b)=>Number(a.valor_final)-Number(b.valor_final))[0]||null;
-      selectedBenefitId=automatic?.beneficio_id||null; selectedBenefitType=automatic?.tipo||null;
-      if(!benefitRows.length){benefitOptions.innerHTML='<p>No hay beneficios disponibles para esta fecha.</p>';renderBenefitSummary();return}
-      benefitOptions.innerHTML = `${automatic?`<p class="benefit-auto">✅ Se aplicará automáticamente <strong>${automatic.nombre}</strong>.</p>`:''}${free?`<label class="benefit-free-choice"><input type="checkbox" id="use-free-benefit"> Usar mi arriendo gratuito anual</label>`:''}`;
-      const check=benefitOptions.querySelector('#use-free-benefit');
-      if(check) check.onchange=()=>{if(check.checked){selectedBenefitId=free.beneficio_id;selectedBenefitType='gratis'}else{selectedBenefitId=automatic?.beneficio_id||null;selectedBenefitType=automatic?.tipo||null}renderBenefitSummary()};
-      renderBenefitSummary();
-    };
+    let portalToken = '';
+    let availableBenefits = [];
+    let appliedBenefit = null;
+    let baseRentalValue = 0;
     try {
       const prefill = JSON.parse(sessionStorage.getItem('sigve_reserva_prefill') || 'null');
       if (prefill) {
         form.elements.nombre.value = prefill.nombre || '';
         rut.value = formatRut(prefill.rut || '');
         phone.value = formatPhone(prefill.telefono || '');
-        portalToken = prefill.portal_token || null;
+        portalToken = prefill.portal_token || sessionStorage.getItem('sigve_portal_token') || '';
         sessionStorage.removeItem('sigve_reserva_prefill');
+      } else {
+        portalToken = sessionStorage.getItem('sigve_portal_token') || '';
       }
     } catch (_) { sessionStorage.removeItem('sigve_reserva_prefill'); }
+
+    const benefitBox = form.querySelector('[data-benefit-summary]');
+    const renderBenefitSummary = () => {
+      if (!benefitBox || !portalToken) return;
+      const free = availableBenefits.find(b => b.cumple && b.tipo === 'gratis');
+      const automatic = availableBenefits.filter(b => b.cumple && b.tipo !== 'gratis').sort((a,b)=>Number(a.valor_final)-Number(b.valor_final))[0] || null;
+      const useFree = !!form.elements.usar_arriendo_gratis?.checked;
+      appliedBenefit = useFree && free ? free : automatic;
+      const finalValue = appliedBenefit ? Number(appliedBenefit.valor_final) : baseRentalValue;
+      const discount = Math.max(0, baseRentalValue-finalValue);
+      benefitBox.hidden = false;
+      benefitBox.innerHTML = `
+        <h4>Resumen del arriendo</h4>
+        <div class="public-price-row"><span>Valor normal</span><strong>${money(baseRentalValue)}</strong></div>
+        ${appliedBenefit ? `<div class="public-price-row"><span>Beneficio aplicado</span><strong>${appliedBenefit.nombre}</strong></div><div class="public-price-row"><span>Descuento</span><strong>-${money(discount)}</strong></div>` : '<p class="public-benefit-note">No hay un beneficio disponible para esta fecha.</p>'}
+        <div class="public-price-row public-price-total"><span>Total</span><strong>${money(finalValue)}</strong></div>
+        ${free ? `<label class="public-free-choice"><input type="checkbox" name="usar_arriendo_gratis" ${useFree?'checked':''}> Utilizar mi arriendo gratuito anual</label><small>Si no lo utilizas, se aplicará automáticamente el descuento porcentual disponible.</small>` : ''}`;
+      const checkbox = form.elements.usar_arriendo_gratis;
+      if (checkbox) checkbox.onchange = renderBenefitSummary;
+    };
+    const loadReservationBenefits = async () => {
+      if (!portalToken || !benefitBox) return;
+      benefitBox.hidden = false;
+      benefitBox.innerHTML = '<p class="public-benefit-loading">Revisando beneficios del socio…</p>';
+      const {data,error} = await sb.rpc('portal_socio_mis_beneficios',{p_token:portalToken});
+      if (error) { benefitBox.hidden=true; portalToken=''; return; }
+      availableBenefits = data || [];
+      const {data:cfgData}=await sb.from('configuracion_gestion').select('valor_arriendo').eq('id',1).maybeSingle();
+      baseRentalValue=Number(cfgData?.valor_arriendo||40000);
+      renderBenefitSummary();
+    };
+    loadReservationBenefits();
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
     phone.addEventListener('input', () => phone.value = formatPhone(phone.value));
-    loadBenefits();
 
     form.onsubmit = async event => {
       event.preventDefault();
@@ -281,15 +289,15 @@
       message.textContent = '';
       const whatsappWindow = window.open('about:blank', '_blank');
       try {
-        const rpcName = portalToken ? 'crear_solicitud_reserva_portal' : 'crear_solicitud_reserva';
+        const rpcName = portalToken ? 'crear_solicitud_reserva_con_beneficio' : 'crear_solicitud_reserva';
         const rpcArgs = portalToken ? {
-          p_token: portalToken,
           p_nombre: form.elements.nombre.value.trim(),
           p_telefono: dbPhone,
           p_fecha: selectedRentalDate,
           p_rut: formattedRut || null,
           p_observaciones: form.elements.observaciones.value.trim() || null,
-          p_beneficio_id: selectedBenefitId
+          p_token: portalToken,
+          p_usar_gratis: !!form.elements.usar_arriendo_gratis?.checked
         } : {
           p_nombre: form.elements.nombre.value.trim(),
           p_telefono: dbPhone,
@@ -299,9 +307,10 @@
         };
         const { error } = await sb.rpc(rpcName, rpcArgs);
         if (error) throw error;
-        const chosenBenefit = benefitRows.find(x=>x.beneficio_id===selectedBenefitId);
-        const benefitText = chosenBenefit ? ` Beneficio aplicado: ${chosenBenefit.nombre}. Total estimado: ${moneyCL(chosenBenefit.valor_final)}.` : '';
-        const whatsappText = `Hola, envié una solicitud de arriendo de la Sede Social Villa El Trigal para el día ${selectedRentalLabel}. Mi nombre es ${form.elements.nombre.value.trim()} y mi celular es ${formatPhone(dbPhone)}. Adjuntaré el comprobante del abono de $10.000. Entiendo que la reserva queda confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp.`;
+        const finalValue = appliedBenefit ? Number(appliedBenefit.valor_final) : baseRentalValue;
+        const benefitText = appliedBenefit ? ` Beneficio aplicado: ${appliedBenefit.nombre}. Total del arriendo: ${money(finalValue)}.` : '';
+        const paymentText = finalValue === 0 ? ' No corresponde abono por tratarse de un arriendo gratuito.' : ' Adjuntaré el comprobante del abono de $10.000.';
+        const whatsappText = `Hola, envié una solicitud de arriendo de la Sede Social Villa El Trigal para el día ${selectedRentalLabel}. Mi nombre es ${form.elements.nombre.value.trim()} y mi celular es ${formatPhone(dbPhone)}.${benefitText}${paymentText} Entiendo que la reserva queda confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp.`;
         const whatsappUrl = `https://wa.me/56974596793?text=${encodeURIComponent(whatsappText)}`;
         if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
         else window.location.href = whatsappUrl;
