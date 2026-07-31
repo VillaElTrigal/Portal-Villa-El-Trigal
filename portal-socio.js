@@ -120,14 +120,16 @@
   }
 
   $('openRentalFromPortal')?.addEventListener('click',()=>{
-    const prefill={
+    const context={
+      origen:'portal_socio',
+      portal_token:token,
       nombre:$('welcomeName').textContent.trim(),
       rut:$('rutRead').textContent.trim(),
       telefono:currentSocio?.telefono||'',
-      portal_token:token||''
+      creado_en:Date.now()
     };
-    sessionStorage.setItem('sigve_reserva_prefill',JSON.stringify(prefill));
-    location.href='index.html#arriendo';
+    sessionStorage.setItem('sigve_reserva_context',JSON.stringify(context));
+    location.href='index.html?reserva=portal_socio#arriendo';
   });
 
   if(token)enter();

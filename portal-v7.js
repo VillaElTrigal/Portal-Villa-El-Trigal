@@ -220,25 +220,35 @@
     const rut = form.elements.rut;
     const phone = form.elements.telefono;
     let portalToken = '';
+    let reservationOrigin = 'publico';
     let availableBenefits = [];
     let appliedBenefit = null;
-    let baseRentalValue = 0;
+    let baseRentalValue = 40000;
     try {
-      const prefill = JSON.parse(sessionStorage.getItem('sigve_reserva_prefill') || 'null');
-      if (prefill) {
-        form.elements.nombre.value = prefill.nombre || '';
-        rut.value = formatRut(prefill.rut || '');
-        phone.value = formatPhone(prefill.telefono || '');
-        portalToken = prefill.portal_token || sessionStorage.getItem('sigve_portal_token') || '';
-        sessionStorage.removeItem('sigve_reserva_prefill');
-      } else {
-        portalToken = sessionStorage.getItem('sigve_portal_token') || '';
+      const params = new URLSearchParams(location.search);
+      const launchedFromMemberPortal = params.get('reserva') === 'portal_socio';
+      const context = JSON.parse(sessionStorage.getItem('sigve_reserva_context') || 'null');
+      const freshContext = context && Number(context.creado_en || 0) > Date.now() - 15 * 60 * 1000;
+      if (launchedFromMemberPortal && freshContext && context.origen === 'portal_socio' && context.portal_token) {
+        reservationOrigin = 'portal_socio';
+        portalToken = context.portal_token;
+        form.elements.nombre.value = context.nombre || '';
+        rut.value = formatRut(context.rut || '');
+        phone.value = formatPhone(context.telefono || '');
       }
-    } catch (_) { sessionStorage.removeItem('sigve_reserva_prefill'); }
+      // El contexto es de un solo uso. Una apertura normal del portal siempre es pública.
+      sessionStorage.removeItem('sigve_reserva_context');
+      sessionStorage.removeItem('sigve_reserva_prefill');
+    } catch (_) {
+      sessionStorage.removeItem('sigve_reserva_context');
+      sessionStorage.removeItem('sigve_reserva_prefill');
+      portalToken = '';
+      reservationOrigin = 'publico';
+    }
 
     const benefitBox = form.querySelector('[data-benefit-summary]');
     const renderBenefitSummary = () => {
-      if (!benefitBox || !portalToken) return;
+      if (!benefitBox || reservationOrigin !== 'portal_socio' || !portalToken) return;
       const free = availableBenefits.find(b => b.cumple && b.tipo === 'gratis');
       const automatic = availableBenefits.filter(b => b.cumple && b.tipo !== 'gratis').sort((a,b)=>Number(a.valor_final)-Number(b.valor_final))[0] || null;
       const useFree = !!form.elements.usar_arriendo_gratis?.checked;
@@ -256,7 +266,7 @@
       if (checkbox) checkbox.onchange = renderBenefitSummary;
     };
     const loadReservationBenefits = async () => {
-      if (!portalToken || !benefitBox) return;
+      if (reservationOrigin !== 'portal_socio' || !portalToken || !benefitBox) { if (benefitBox) benefitBox.hidden = true; return; }
       benefitBox.hidden = false;
       benefitBox.innerHTML = '<p class="public-benefit-loading">Revisando beneficios del socio…</p>';
       const {data,error} = await sb.rpc('portal_socio_mis_beneficios',{p_token:portalToken});
@@ -289,8 +299,9 @@
       message.textContent = '';
       const whatsappWindow = window.open('about:blank', '_blank');
       try {
-        const rpcName = portalToken ? 'crear_solicitud_reserva_con_beneficio' : 'crear_solicitud_reserva';
-        const rpcArgs = portalToken ? {
+        const memberReservation = reservationOrigin === 'portal_socio' && !!portalToken;
+        const rpcName = memberReservation ? 'crear_solicitud_reserva_con_beneficio' : 'crear_solicitud_reserva';
+        const rpcArgs = memberReservation ? {
           p_nombre: form.elements.nombre.value.trim(),
           p_telefono: dbPhone,
           p_fecha: selectedRentalDate,

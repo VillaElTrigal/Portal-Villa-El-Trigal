@@ -1,0 +1,28 @@
+SIGVE v5.0 RC5 · FLUJOS DE RESERVA SEPARADOS
+
+1. Ejecutar en Supabase:
+   ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC5_ORIGEN_RESERVA.sql
+
+2. Publicar todos los archivos de esta carpeta.
+
+3. Recargar el navegador con Ctrl + F5.
+
+PRUEBA A · PORTAL DE INICIO
+- Abrir index.html directamente.
+- Elegir una fecha y solicitar reserva.
+- Debe permitir reservar normalmente.
+- No debe mostrar beneficios, descuentos ni arriendo gratuito.
+- En Administración debe indicar: Portal público / Sin beneficio aplicado.
+
+PRUEBA B · PORTAL DEL SOCIO
+- Ingresar a Mi SIGVE.
+- Abrir Arrendar sede.
+- Pulsar Ver calendario y solicitar arriendo.
+- Elegir una fecha.
+- Debe completar los datos del socio y mostrar solo sus beneficios válidos.
+- En Administración debe indicar: Portal Socio y el beneficio aplicado.
+
+SEGURIDAD
+- La reserva pública siempre se guarda a precio normal.
+- El beneficio solo se calcula cuando existe una sesión válida del Portal Socio.
+- Supabase vuelve a validar el socio y el beneficio antes de guardar.
