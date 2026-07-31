@@ -200,6 +200,15 @@
     const form = modal.querySelector('form');
     const rut = form.elements.rut;
     const phone = form.elements.telefono;
+    try {
+      const prefill = JSON.parse(sessionStorage.getItem('sigve_reserva_prefill') || 'null');
+      if (prefill) {
+        form.elements.nombre.value = prefill.nombre || '';
+        rut.value = formatRut(prefill.rut || '');
+        phone.value = formatPhone(prefill.telefono || '');
+        sessionStorage.removeItem('sigve_reserva_prefill');
+      }
+    } catch (_) { sessionStorage.removeItem('sigve_reserva_prefill'); }
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
     phone.addEventListener('input', () => phone.value = formatPhone(phone.value));
 

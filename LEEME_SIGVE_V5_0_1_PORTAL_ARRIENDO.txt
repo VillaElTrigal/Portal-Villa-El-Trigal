@@ -1,0 +1,12 @@
+SIGVE v5.0.1 · Portal Socio y formulario de arriendo
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_0_1_PORTAL_BENEFICIOS.sql en Supabase.
+2. Reemplazar los archivos del proyecto en GitHub.
+3. Esperar el despliegue y recargar con Ctrl + F5.
+
+Cambios:
+- Nueva pestaña "Arrendar sede" en Portal Socio.
+- Muestra el cumplimiento de requisitos y beneficios disponibles.
+- Botón directo al calendario de arriendo.
+- Nombre, RUT y teléfono se completan automáticamente al llegar desde Portal Socio.
+- El formulario de solicitud ahora se abre por encima del calendario, sin necesidad de cerrar la ventana anterior.

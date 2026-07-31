@@ -3,7 +3,7 @@
 
 
 /* v8.0 · Solicitud pública integrada con Gestión de la Sede */
-.public-reservation-modal{position:fixed;inset:0;z-index:9999;background:rgba(12,36,42,.68);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.public-reservation-modal{position:fixed;inset:0;z-index:10060;background:rgba(12,36,42,.68);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
 .public-reservation-card{position:relative;width:min(620px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 24px 80px rgba(0,0,0,.28)}
 .public-reservation-card h3{margin:.2rem 0 .4rem;color:#145e75;font-size:1.5rem}
 .public-reservation-help{margin:0 0 18px;color:#61767d}
@@ -24,3 +24,5 @@
 
 /* SIGVE v4.0.2: el campo de ocupación adicional solo aparece al elegir “Otro”. */
 .public-grid [data-otra-ocupacion][hidden]{display:none!important;}
+
+body:has(.public-reservation-modal){overflow:hidden}.public-reservation-modal{isolation:isolate}.portal-modal-active:has(+ .public-reservation-modal){pointer-events:none}

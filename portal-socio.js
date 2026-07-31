@@ -2,7 +2,7 @@
   'use strict';
   const cfg=window.PORTAL_CONFIG||{};
   const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
-  let token=sessionStorage.getItem('sigve_portal_token'), children=[], currentMemberNumber='', childFormDirty=false, vias=[];
+  let token=sessionStorage.getItem('sigve_portal_token'), children=[], currentMemberNumber='', childFormDirty=false, vias=[], currentSocio=null;
   const $=(id)=>document.getElementById(id);
   const msg=(id,text,type='')=>{const e=$(id);e.textContent=text;e.className=`message ${type}`};
   const rpc=async(fn,args={})=>{const {data,error}=await sb.rpc(fn,args);if(error)throw new Error(error.message);return data};
@@ -42,7 +42,7 @@
   $('fechaNacimiento').max=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   $('fechaNacimiento').addEventListener('change',()=>{$('edad').value=calcAge($('fechaNacimiento').value)});
 
-  async function enter(){try{if(!vias.length)await loadVias();if(!viaPicker)viaPicker=bindViaPicker();const rows=await rpc('portal_socio_mis_datos',{p_token:token});const s=rows?.[0];if(!s)throw new Error();currentMemberNumber=normalizeMemberNumber(s.numero_socio);$('loginView').hidden=true;$('portalView').hidden=false;$('logout').hidden=false;$('welcomeName').textContent=s.nombre_completo;$('numero').textContent=s.numero_socio||'—';$('rutRead').textContent=formatRut(s.rut);$('fechaIngreso').textContent=fmtDate(s.fecha_ingreso);$('estado').textContent=s.estado;$('nombres').value=s.nombres||'';$('apellidoPaterno').value=s.apellido_paterno||'';$('apellidoMaterno').value=s.apellido_materno||'';$('fechaNacimiento').value=s.fecha_nacimiento||'';$('edad').value=calcAge(s.fecha_nacimiento);$('estadoCivil').value=s.estado_civil||'';$('ocupacion').value=s.ocupacion||'';$('ocupacionOtro').value=s.ocupacion_otro||'';syncOccupation();viaPicker.set(s.via_id,s.numero_domicilio,s.direccion);$('telefono').value=s.telefono||'';$('correo').value=s.correo||'';const pending=Number(s.cuotas_pendientes||0);$('duesStatus').textContent=pending?'Pendiente':'Al día';$('duesStatus').classList.toggle('pending',pending>0);$('lastPaid').textContent=s.ultima_cuota_pagada?fmtDate(s.ultima_cuota_pagada):'Sin pagos registrados';$('pendingCount').textContent=pending;$('pendingAmount').textContent=money(s.monto_adeudado);await loadChildren();await loadPortalQuotas()}catch(e){console.error(e);sessionStorage.removeItem('sigve_portal_token');token=null;$('loginView').hidden=false;$('portalView').hidden=true;$('logout').hidden=true;msg('authMsg','Tu sesión venció o no fue posible cargar tus datos. Ingresa nuevamente.','error')}}
+  async function enter(){try{if(!vias.length)await loadVias();if(!viaPicker)viaPicker=bindViaPicker();const rows=await rpc('portal_socio_mis_datos',{p_token:token});const s=rows?.[0];if(!s)throw new Error();currentSocio=s;currentMemberNumber=normalizeMemberNumber(s.numero_socio);$('loginView').hidden=true;$('portalView').hidden=false;$('logout').hidden=false;$('welcomeName').textContent=s.nombre_completo;$('numero').textContent=s.numero_socio||'—';$('rutRead').textContent=formatRut(s.rut);$('fechaIngreso').textContent=fmtDate(s.fecha_ingreso);$('estado').textContent=s.estado;$('nombres').value=s.nombres||'';$('apellidoPaterno').value=s.apellido_paterno||'';$('apellidoMaterno').value=s.apellido_materno||'';$('fechaNacimiento').value=s.fecha_nacimiento||'';$('edad').value=calcAge(s.fecha_nacimiento);$('estadoCivil').value=s.estado_civil||'';$('ocupacion').value=s.ocupacion||'';$('ocupacionOtro').value=s.ocupacion_otro||'';syncOccupation();viaPicker.set(s.via_id,s.numero_domicilio,s.direccion);$('telefono').value=s.telefono||'';$('correo').value=s.correo||'';const pending=Number(s.cuotas_pendientes||0);$('duesStatus').textContent=pending?'Pendiente':'Al día';$('duesStatus').classList.toggle('pending',pending>0);$('lastPaid').textContent=s.ultima_cuota_pagada?fmtDate(s.ultima_cuota_pagada):'Sin pagos registrados';$('pendingCount').textContent=pending;$('pendingAmount').textContent=money(s.monto_adeudado);await loadChildren();await loadPortalQuotas();await loadPortalBenefits()}catch(e){console.error(e);sessionStorage.removeItem('sigve_portal_token');token=null;$('loginView').hidden=false;$('portalView').hidden=true;$('logout').hidden=true;msg('authMsg','Tu sesión venció o no fue posible cargar tus datos. Ingresa nuevamente.','error')}}
   $('dataForm').addEventListener('submit',async(e)=>{e.preventDefault();const address=viaPicker.get();if(!address){msg('dataMsg','Selecciona una calle, pasaje o avenida válida e ingresa el número.','error');return}if($('ocupacion').value==='Otro'&&!$('ocupacionOtro').value.trim()){msg('dataMsg','Especifica tu ocupación.','error');return}msg('dataMsg','Guardando…');try{await rpc('portal_socio_actualizar_datos',{p_token:token,p_nombres:$('nombres').value.trim(),p_apellido_paterno:$('apellidoPaterno').value.trim(),p_apellido_materno:$('apellidoMaterno').value.trim(),p_fecha_nacimiento:$('fechaNacimiento').value,p_estado_civil:$('estadoCivil').value,p_ocupacion:$('ocupacion').value,p_ocupacion_otro:$('ocupacion').value==='Otro'?$('ocupacionOtro').value.trim():null,p_via_id:address.via_id,p_numero_domicilio:address.numero_domicilio,p_telefono:$('telefono').value,p_correo:$('correo').value});$('welcomeName').textContent=[$('nombres').value.trim(),$('apellidoPaterno').value.trim(),$('apellidoMaterno').value.trim()].filter(Boolean).join(' ');msg('dataMsg','Datos actualizados correctamente.','success')}catch(err){msg('dataMsg',err.message,'error')}});
   async function loadChildren(){children=await rpc('portal_socio_listar_ninos',{p_token:token})||[];const box=$('childrenList');if(!children.length){box.innerHTML='<div class="notice">No hay niños o niñas registrados actualmente.</div>';return}box.innerHTML=children.map(n=>`<article class="child-card"><div><h3>${escape(n.nombre_completo)}</h3><p>RUT: ${escape(formatRut(n.rut))} · Nacimiento: ${fmtDate(n.fecha_nacimiento)}</p><p>${escape(n.parentesco||'Hijo(a)')}${n.tiene_condicion_especial?' · Con consideración especial':''}</p></div><div class="child-actions"><button data-edit="${n.id}">Editar</button><button data-delete="${n.id}">Retirar</button></div></article>`).join('');box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openChild(children.find(n=>n.id===b.dataset.edit)));box.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removeChild(b.dataset.delete))}
 
@@ -102,6 +102,31 @@
     const name=$('welcomeName').textContent.trim(),number=$('numero').textContent.trim(),rut=$('rutRead').textContent.trim();
     const text=`Hola. Adjunto el comprobante del pago de mi cuota social.\n\nSOCIO: ${name}\nN° DE SOCIO: ${number}\nRUT: ${rut}\nCUOTA(S): ${months}\nMONTO TOTAL: ${money(total)}\nMEDIO: Transferencia\n\nPor favor confirmar la recepción del comprobante.\nJunta de Vecinos Villa El Trigal.`;
     window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+  });
+
+
+  async function loadPortalBenefits(){
+    const box=$('portalBenefitsSummary'); if(!box)return;
+    try{
+      const rows=await rpc('portal_socio_mis_beneficios',{p_token:token})||[];
+      if(!rows.length){box.innerHTML='<div class="notice">Actualmente no hay beneficios activos para el arriendo de la sede.</div>';return}
+      box.innerHTML=rows.map(b=>{
+        const ok=!!b.cumple;
+        const icon=b.tipo==='gratis'?'🎁':'🏅';
+        const value=b.tipo==='gratis'?'1 arriendo gratuito disponible':b.tipo==='porcentaje'?`${Number(b.valor||0)}% de descuento`:`${money(b.valor)} de descuento`;
+        return `<article class="benefit-status ${ok?'eligible':'pending'}"><div class="benefit-icon">${icon}</div><div><h3>${escape(b.nombre)}</h3><p class="benefit-result">${ok?'✅ Beneficio disponible':'⏳ Aún no disponible'}</p><p>${escape(b.motivo||'')}</p><small>${escape(b.detalle||value)}</small></div></article>`;
+      }).join('');
+    }catch(err){box.innerHTML='<div class="notice">No fue posible revisar tus beneficios.</div>';msg('benefitsMsg',err.message,'error')}
+  }
+
+  $('openRentalFromPortal')?.addEventListener('click',()=>{
+    const prefill={
+      nombre:$('welcomeName').textContent.trim(),
+      rut:$('rutRead').textContent.trim(),
+      telefono:currentSocio?.telefono||''
+    };
+    sessionStorage.setItem('sigve_reserva_prefill',JSON.stringify(prefill));
+    location.href='index.html#arriendo';
   });
 
   if(token)enter();
