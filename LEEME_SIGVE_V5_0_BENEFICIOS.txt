@@ -1,0 +1,18 @@
+SIGVE v5.0.0 – Programa de Beneficios
+
+INSTALACIÓN
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_0_BENEFICIOS.sql completo en Supabase > SQL Editor.
+2. Reemplaza los archivos del repositorio con los incluidos en este ZIP.
+3. Espera el despliegue de GitHub Pages y recarga con Ctrl + F5.
+
+INCLUYE
+- Nuevo menú Beneficios.
+- Beneficio Socio Cumplidor editable.
+- Arriendo Gratuito Anual editable y limitado a un uso por año.
+- Requisitos por cuotas pagadas y ausencia de deuda vencida.
+- Descuento fijo, porcentual o arriendo gratis.
+- Integración con Nueva reserva: selección de socio, evaluación automática y ajuste del valor.
+- Registro estructurado en la reserva y bitácora de usos.
+
+IMPORTANTE
+El beneficio se evalúa usando cuotas pagadas del año de la reserva. Los beneficios no se combinan: se aplica el primero elegible según prioridad (por defecto, arriendo gratis antes que descuento).

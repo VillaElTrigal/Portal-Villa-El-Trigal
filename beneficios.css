@@ -1,0 +1,8 @@
+
+/* SIGVE v5.0 · Programa de Beneficios */
+.beneficios-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1rem;margin:1rem 0}
+.beneficio-card{background:#fff;border:1px solid #dfe5ec;border-radius:16px;padding:1.1rem;box-shadow:0 4px 14px rgba(15,23,42,.06)}
+.beneficio-card h4{margin:.15rem 0 .25rem}.beneficio-card .badge{display:inline-flex;padding:.25rem .55rem;border-radius:999px;font-size:.78rem;font-weight:700;background:#eef2ff;color:#3730a3}.beneficio-card .badge.off{background:#f1f5f9;color:#64748b}
+.beneficio-card .benefit-summary{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin:1rem 0}.benefit-summary div{background:#f8fafc;border-radius:10px;padding:.7rem}.benefit-summary span{display:block;font-size:.76rem;color:#64748b}.benefit-summary strong{display:block;margin-top:.2rem}
+.benefit-evaluation{border:1px solid #bbf7d0;background:#f0fdf4;border-radius:12px;padding:.8rem;margin-top:.7rem}.benefit-evaluation.warn{border-color:#fde68a;background:#fffbeb}
+@media(max-width:700px){.beneficios-grid{grid-template-columns:1fr}.beneficio-card .benefit-summary{grid-template-columns:1fr}}
