@@ -1,0 +1,23 @@
+SIGVE v5.0 RC2 · BENEFICIOS OPERATIVOS
+
+1. Ejecuta en Supabase SQL Editor:
+   ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC2_BENEFICIOS_OPERATIVOS.sql
+
+2. Luego publica/reemplaza todos los archivos de esta carpeta.
+
+PRUEBA RECOMENDADA
+- Configura Socio Cumplidor con 0 cuotas y 25% de descuento.
+- Ingresa al Portal Socio.
+- Abre Arrendar sede y selecciona una fecha disponible.
+- Verifica que aparezca el valor normal, beneficio y total con descuento.
+- Envía la solicitud.
+- En Administración > Sede y arriendos, verifica el beneficio, valor normal,
+  descuento y total.
+- Para arriendo gratuito, habilita el beneficio y marca la casilla “Usar mi
+  arriendo gratuito anual”. El total debe quedar en $0 y no combinarse con
+  el descuento porcentual.
+
+IMPORTANTE
+El uso del beneficio se registra al guardar la solicitud pendiente. Si luego
+la reserva se cancela, la directiva debe revisar el historial antes de volver
+a habilitar ese uso.

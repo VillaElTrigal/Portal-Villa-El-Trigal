@@ -123,7 +123,8 @@
     const prefill={
       nombre:$('welcomeName').textContent.trim(),
       rut:$('rutRead').textContent.trim(),
-      telefono:currentSocio?.telefono||''
+      telefono:currentSocio?.telefono||'',
+      portal_token:token
     };
     sessionStorage.setItem('sigve_reserva_prefill',JSON.stringify(prefill));
     location.href='index.html#arriendo';
