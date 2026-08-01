@@ -1,0 +1,9 @@
+SIGVE v5.0 RC8 · Certificado de residencia unificado
+
+- Unifica Portal público, Portal Socio y Administración.
+- Finalidad desplegable: Laboral, Estudiantil, Transporte y Otro.
+- “Especificar otra finalidad” aparece solo al elegir Otro.
+- Elimina de la interfaz: Destino/Institución, Referencia, Observaciones y Nacionalidad.
+- Mantiene RUT automático XX.XXX.XXX-X y correlativo único.
+- Agrega teléfono y correo al formulario público y administrativo.
+- Mantiene registro, WhatsApp y pago integrado con Finanzas.

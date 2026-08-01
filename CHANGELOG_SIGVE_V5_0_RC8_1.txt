@@ -1,0 +1,7 @@
+SIGVE v5.0 RC8.1
+
+- Restablece el campo Nacionalidad en Portal público, Portal Socio y Administración.
+- La nacionalidad se guarda en certificados_emitidos.
+- Se incluye en el mensaje de WhatsApp y en la emisión digital del certificado.
+- Se mantienen eliminados Destino/Institución, Referencia y Observaciones.
+- Se mantiene Finalidad desplegable con campo Otro condicional.

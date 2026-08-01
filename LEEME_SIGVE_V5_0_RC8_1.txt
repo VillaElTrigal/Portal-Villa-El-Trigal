@@ -1,0 +1,4 @@
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC8_1_NACIONALIDAD.sql en Supabase > SQL Editor.
+2. Subir el contenido del proyecto a GitHub reemplazando archivos.
+3. Esperar el despliegue y recargar con Ctrl+F5.
+4. Probar certificado desde portal público, Portal Socio y Administración.

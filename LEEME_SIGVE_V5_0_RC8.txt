@@ -1,0 +1,4 @@
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC8_CERTIFICADO_UNIFICADO.sql en Supabase.
+2. Sube el contenido del proyecto a GitHub reemplazando los archivos.
+3. Espera GitHub Pages y recarga con Ctrl+F5.
+4. Prueba certificado desde portal público, Portal Socio y Administración.
