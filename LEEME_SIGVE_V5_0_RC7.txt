@@ -1,0 +1,37 @@
+SIGVE v5.0 RC7 — Certificados y reservas con beneficios
+
+ORDEN DE INSTALACIÓN
+1. En Supabase > SQL Editor, ejecutar completo:
+   ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC7_CERTIFICADOS_Y_BENEFICIOS.sql
+2. Subir a GitHub el contenido de la carpeta Portal-Villa-El-Trigal, reemplazando los archivos actuales.
+3. Esperar el despliegue y recargar con Ctrl+F5. En celular, cerrar la pestaña y volver a abrirla.
+
+PRUEBAS DE CERTIFICADOS
+A. Portal público:
+- Abrir Certificado de residencia.
+- Escribir RUT; debe formatearse XX.XXX.XXX-X y validarse.
+- Enviar. Debe asignar correlativo CR-00000, registrar en Administración > Certificados y abrir WhatsApp.
+B. Portal Socio:
+- Ingresar a Mi SIGVE > Certificado.
+- Los datos del socio deben aparecer automáticamente.
+- Enviar. Debe usar el mismo correlativo general y abrir WhatsApp.
+C. Administración:
+- Abrir Certificados; la solicitud debe figurar pendiente.
+- Editar y cambiar Estado de pago a Pagado, indicando medio/fondo.
+- Al guardar debe crear un único ingreso en Finanzas; editar nuevamente no debe duplicarlo.
+
+PRUEBAS DE RESERVAS
+A. Portal público:
+- Reservar desde Inicio. No debe consultar, mostrar ni aplicar beneficios.
+B. Portal Socio:
+- Mi SIGVE > Arrendar sede. Debe consultar y aplicar beneficios.
+- El SQL RC7 corrige la función que podía mostrar beneficio_id ambiguo.
+C. Cancelación:
+- Se mantiene el flujo instalado de cancelación y reversa del beneficio.
+
+ARCHIVOS PRINCIPALES MODIFICADOS
+- index.html
+- portal-socio.html
+- portal-socio.js
+- admin-v111.js
+- ACTUALIZAR_SUPABASE_SIGVE_V5_0_RC7_CERTIFICADOS_Y_BENEFICIOS.sql

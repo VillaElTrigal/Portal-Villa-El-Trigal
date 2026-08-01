@@ -42,7 +42,7 @@
   $('fechaNacimiento').max=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   $('fechaNacimiento').addEventListener('change',()=>{$('edad').value=calcAge($('fechaNacimiento').value)});
 
-  async function enter(){try{if(!vias.length)await loadVias();if(!viaPicker)viaPicker=bindViaPicker();const rows=await rpc('portal_socio_mis_datos',{p_token:token});const s=rows?.[0];if(!s)throw new Error();currentSocio=s;currentMemberNumber=normalizeMemberNumber(s.numero_socio);$('loginView').hidden=true;$('portalView').hidden=false;$('logout').hidden=false;$('welcomeName').textContent=s.nombre_completo;$('numero').textContent=s.numero_socio||'—';$('rutRead').textContent=formatRut(s.rut);$('fechaIngreso').textContent=fmtDate(s.fecha_ingreso);$('estado').textContent=s.estado;$('nombres').value=s.nombres||'';$('apellidoPaterno').value=s.apellido_paterno||'';$('apellidoMaterno').value=s.apellido_materno||'';$('fechaNacimiento').value=s.fecha_nacimiento||'';$('edad').value=calcAge(s.fecha_nacimiento);$('estadoCivil').value=s.estado_civil||'';$('ocupacion').value=s.ocupacion||'';$('ocupacionOtro').value=s.ocupacion_otro||'';syncOccupation();viaPicker.set(s.via_id,s.numero_domicilio,s.direccion);$('telefono').value=s.telefono||'';$('correo').value=s.correo||'';const pending=Number(s.cuotas_pendientes||0);$('duesStatus').textContent=pending?'Pendiente':'Al día';$('duesStatus').classList.toggle('pending',pending>0);$('lastPaid').textContent=s.ultima_cuota_pagada?fmtDate(s.ultima_cuota_pagada):'Sin pagos registrados';$('pendingCount').textContent=pending;$('pendingAmount').textContent=money(s.monto_adeudado);await loadChildren();await loadPortalQuotas();await loadPortalBenefits()}catch(e){console.error(e);sessionStorage.removeItem('sigve_portal_token');token=null;$('loginView').hidden=false;$('portalView').hidden=true;$('logout').hidden=true;msg('authMsg','Tu sesión venció o no fue posible cargar tus datos. Ingresa nuevamente.','error')}}
+  async function enter(){try{if(!vias.length)await loadVias();if(!viaPicker)viaPicker=bindViaPicker();const rows=await rpc('portal_socio_mis_datos',{p_token:token});const s=rows?.[0];if(!s)throw new Error();currentSocio=s;currentMemberNumber=normalizeMemberNumber(s.numero_socio);$('loginView').hidden=true;$('portalView').hidden=false;$('logout').hidden=false;$('welcomeName').textContent=s.nombre_completo;$('numero').textContent=s.numero_socio||'—';$('rutRead').textContent=formatRut(s.rut);$('fechaIngreso').textContent=fmtDate(s.fecha_ingreso);$('estado').textContent=s.estado;$('nombres').value=s.nombres||'';$('apellidoPaterno').value=s.apellido_paterno||'';$('apellidoMaterno').value=s.apellido_materno||'';$('fechaNacimiento').value=s.fecha_nacimiento||'';$('edad').value=calcAge(s.fecha_nacimiento);$('estadoCivil').value=s.estado_civil||'';$('ocupacion').value=s.ocupacion||'';$('ocupacionOtro').value=s.ocupacion_otro||'';syncOccupation();viaPicker.set(s.via_id,s.numero_domicilio,s.direccion);$('telefono').value=s.telefono||'';$('correo').value=s.correo||'';if($('portalCertName')){$('portalCertName').value=s.nombre_completo||'';$('portalCertRut').value=formatRut(s.rut);$('portalCertAddress').value=s.direccion||'';}const pending=Number(s.cuotas_pendientes||0);$('duesStatus').textContent=pending?'Pendiente':'Al día';$('duesStatus').classList.toggle('pending',pending>0);$('lastPaid').textContent=s.ultima_cuota_pagada?fmtDate(s.ultima_cuota_pagada):'Sin pagos registrados';$('pendingCount').textContent=pending;$('pendingAmount').textContent=money(s.monto_adeudado);await loadChildren();await loadPortalQuotas();await loadPortalBenefits()}catch(e){console.error(e);sessionStorage.removeItem('sigve_portal_token');token=null;$('loginView').hidden=false;$('portalView').hidden=true;$('logout').hidden=true;msg('authMsg','Tu sesión venció o no fue posible cargar tus datos. Ingresa nuevamente.','error')}}
   $('dataForm').addEventListener('submit',async(e)=>{e.preventDefault();const address=viaPicker.get();if(!address){msg('dataMsg','Selecciona una calle, pasaje o avenida válida e ingresa el número.','error');return}if($('ocupacion').value==='Otro'&&!$('ocupacionOtro').value.trim()){msg('dataMsg','Especifica tu ocupación.','error');return}msg('dataMsg','Guardando…');try{await rpc('portal_socio_actualizar_datos',{p_token:token,p_nombres:$('nombres').value.trim(),p_apellido_paterno:$('apellidoPaterno').value.trim(),p_apellido_materno:$('apellidoMaterno').value.trim(),p_fecha_nacimiento:$('fechaNacimiento').value,p_estado_civil:$('estadoCivil').value,p_ocupacion:$('ocupacion').value,p_ocupacion_otro:$('ocupacion').value==='Otro'?$('ocupacionOtro').value.trim():null,p_via_id:address.via_id,p_numero_domicilio:address.numero_domicilio,p_telefono:$('telefono').value,p_correo:$('correo').value});$('welcomeName').textContent=[$('nombres').value.trim(),$('apellidoPaterno').value.trim(),$('apellidoMaterno').value.trim()].filter(Boolean).join(' ');msg('dataMsg','Datos actualizados correctamente.','success')}catch(err){msg('dataMsg',err.message,'error')}});
   async function loadChildren(){children=await rpc('portal_socio_listar_ninos',{p_token:token})||[];const box=$('childrenList');if(!children.length){box.innerHTML='<div class="notice">No hay niños o niñas registrados actualmente.</div>';return}box.innerHTML=children.map(n=>`<article class="child-card"><div><h3>${escape(n.nombre_completo)}</h3><p>RUT: ${escape(formatRut(n.rut))} · Nacimiento: ${fmtDate(n.fecha_nacimiento)}</p><p>${escape(n.parentesco||'Hijo(a)')}${n.tiene_condicion_especial?' · Con consideración especial':''}</p></div><div class="child-actions"><button data-edit="${n.id}">Editar</button><button data-delete="${n.id}">Retirar</button></div></article>`).join('');box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openChild(children.find(n=>n.id===b.dataset.edit)));box.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removeChild(b.dataset.delete))}
 
@@ -118,6 +118,36 @@
       }).join('');
     }catch(err){box.innerHTML='<div class="notice">No fue posible revisar tus beneficios.</div>';msg('benefitsMsg',err.message,'error')}
   }
+
+
+
+  $('portalCertificateForm')?.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const purpose=$('portalCertPurpose').value.trim();
+    if(!purpose){msg('portalCertMsg','Indica la finalidad del certificado.','error');return}
+    const button=e.currentTarget.querySelector('button[type="submit"]'),original=button.textContent;
+    button.disabled=true;button.textContent='Registrando solicitud…';msg('portalCertMsg','');
+    try{
+      const rows=await rpc('solicitar_certificado_residencia',{p_nombre:$('portalCertName').value,p_rut:$('portalCertRut').value,p_nacionalidad:$('portalCertNationality').value.trim(),p_direccion:$('portalCertAddress').value,p_finalidad:purpose,p_telefono:currentSocio?.telefono||null,p_correo:currentSocio?.correo||null,p_origen:'portal_socio',p_token:token});
+      const row=rows?.[0]||rows,folio=String(row.folio).padStart(5,'0');
+      const text=`SOLICITUD DE CERTIFICADO DE RESIDENCIA
+
+N° CERTIFICADO: CR-${folio}
+ORIGEN: Portal Socio
+SOCIO: ${$('portalCertName').value}
+N° DE SOCIO: ${$('numero').textContent.trim()}
+RUT: ${row.rut_formateado||$('portalCertRut').value}
+DIRECCIÓN: ${$('portalCertAddress').value}
+FINALIDAD: ${purpose}
+ESTADO: Pendiente de pago
+VALOR: ${money(row.valor||1000)}
+
+La solicitud quedó registrada en SIGVE.`;
+      window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+      $('portalCertPurpose').value='';msg('portalCertMsg',`Solicitud registrada como CR-${folio}.`,'success');
+    }catch(err){msg('portalCertMsg',err.message,'error')}
+    finally{button.disabled=false;button.textContent=original}
+  });
 
   $('openRentalFromPortal')?.addEventListener('click',()=>{
     const context={

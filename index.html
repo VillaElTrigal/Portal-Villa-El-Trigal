@@ -204,7 +204,7 @@
           <form id="certificate-form" class="portal-form">
             <div class="form-grid">
               <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
-              <label>RUT<input id="cert-rut" type="text" placeholder="12.345.678-9" required></label>
+              <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
               <label>Nacionalidad<input id="cert-nationality" type="text" required></label>
               <label>Dirección<input id="cert-address" type="text" autocomplete="street-address" required></label>
             </div>
@@ -427,12 +427,29 @@
       const wa = window.PORTAL_WHATSAPP || '56974596793';
       window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(message), '_blank', 'noopener');
     }
-
-    document.getElementById('certificate-form').addEventListener('submit', function(event) {
+    const cleanRutValue = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
+    const formatRutValue = value => { const clean=cleanRutValue(value); if(clean.length<2)return clean; let body=clean.slice(0,-1),dv=clean.slice(-1),out=''; while(body.length>3){out='.'+body.slice(-3)+out;body=body.slice(0,-3)} return body+out+'-'+dv; };
+    const validRutValue = value => { const clean=cleanRutValue(value); if(clean.length<7)return false; const body=clean.slice(0,-1),dv=clean.slice(-1); let sum=0,m=2; for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*m;m=m===7?2:m+1} const r=11-(sum%11),expected=r===11?'0':r===10?'K':String(r); return dv===expected; };
+    const certRutInput=document.getElementById('cert-rut');
+    certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
+    document.getElementById('certificate-form').addEventListener('submit', async function(event) {
       event.preventDefault();
       if (!this.reportValidity()) return;
-      const message = `SOLICITUD DE CERTIFICADO DE RESIDENCIA\n\nNombre: ${document.getElementById('cert-name').value.trim()}\nRUT: ${document.getElementById('cert-rut').value.trim()}\nNacionalidad: ${document.getElementById('cert-nationality').value.trim()}\nDirección: ${document.getElementById('cert-address').value.trim()}\nFines del certificado: ${document.getElementById('cert-purpose').value.trim()}\n\nDeclaro que la información es verídica.\n\nAdjuntaré ahora un comprobante de domicilio en este chat. Entiendo que el valor es de $1.000 y se paga solo después de la aprobación.`;
-      openWhatsApp(message);
+      const rut=formatRutValue(certRutInput.value); certRutInput.value=rut;
+      if(!validRutValue(rut)){ alert('El RUT ingresado no es válido.'); certRutInput.focus(); return; }
+      const button=this.querySelector('button[type="submit"]'); const original=button.textContent; button.disabled=true; button.textContent='Registrando solicitud…';
+      try{
+        const cfg=window.PORTAL_CONFIG||{};
+        const client=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:document.getElementById('cert-purpose').value.trim(),p_telefono:null,p_correo:null,p_origen:'publico',p_token:null};
+        const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
+        const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
+        const message=`SOLICITUD DE CERTIFICADO DE RESIDENCIA\n\nN° CERTIFICADO: CR-${folio}\nORIGEN: Portal público\nNombre: ${args.p_nombre}\nRUT: ${row.rut_formateado||rut}\nNacionalidad: ${args.p_nacionalidad}\nDirección: ${args.p_direccion}\nFines del certificado: ${args.p_finalidad}\nEstado: Pendiente de pago\nValor: $${Number(row.valor||1000).toLocaleString('es-CL')}\n\nLa solicitud quedó registrada en SIGVE. Adjuntaré ahora un comprobante de domicilio en este chat.`;
+        openWhatsApp(message);
+        alert(`Solicitud registrada con el correlativo CR-${folio}.`);
+        this.reset();
+      }catch(error){alert('No fue posible registrar la solicitud: '+(error.message||error));}
+      finally{button.disabled=false;button.textContent=original;}
     });
 
     document.getElementById('improve-form').addEventListener('submit', function(event) {
@@ -448,7 +465,7 @@
   <script src="portal-config.js"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
-  <script src="portal-v7.js?v=5005"></script>
+  <script src="portal-v7.js?v=5070"></script>
   <script src="portal-modals.js?v=4004"></script>
 </body>
 </html>

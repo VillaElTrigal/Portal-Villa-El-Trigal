@@ -1,12 +1,12 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mi SIGVE · Portal del Socio</title><meta name="theme-color" content="#145e75">
-<link rel="stylesheet" href="portal-socio.css?v=5010"></head><body>
+<link rel="stylesheet" href="portal-socio.css?v=5070"></head><body>
 <header class="top"><a href="index.html" class="brand"><img src="assets/logo.svg" alt=""><span><b>Mi SIGVE</b><small>Portal del Socio · Villa El Trigal</small></span></a><button id="logout" class="ghost" hidden>Cerrar sesión</button></header>
 <main class="shell">
 <section id="loginView" class="auth-card"><div class="icon">👤</div><h1>Portal del Socio</h1><p>Ingresa tu RUT y número de socio para acceder a Mi SIGVE.</p>
 <form id="rutForm"><label>RUT<input id="rut" data-rut inputmode="text" maxlength="12" autocomplete="username" placeholder="12.345.678-9" required><small class="field-help">Escribe solo los números; los puntos y el guion se agregan automáticamente.</small></label><label>Número de socio<input id="memberNumber" inputmode="numeric" autocomplete="off" placeholder="Ej.: 28" required></label><button class="primary">Ingresar a Mi SIGVE</button></form><p id="authMsg" class="message" role="status"></p></section>
 <section id="portalView" hidden><div class="welcome"><div><p class="eyebrow">Portal del Socio</p><h1 id="welcomeName">Mi SIGVE</h1><p>Administra tus datos y tu grupo familiar de manera segura.</p></div><span id="statusPill" class="pill">Activo</span></div>
-<nav class="tabs"><button data-tab="datos" class="active">Mis datos</button><button data-tab="familia">Grupo familiar</button><button data-tab="pagos">Pago de cuotas</button><button data-tab="arriendoSocio">Arrendar sede</button><button data-tab="renuncia" class="danger-tab">Renuncia voluntaria</button></nav>
+<nav class="tabs"><button data-tab="datos" class="active">Mis datos</button><button data-tab="familia">Grupo familiar</button><button data-tab="pagos">Pago de cuotas</button><button data-tab="arriendoSocio">Arrendar sede</button><button data-tab="certificadoSocio">Certificado</button><button data-tab="renuncia" class="danger-tab">Renuncia voluntaria</button></nav>
 <div id="datos" class="panel tab-panel"><h2>Mis datos</h2><div class="readonly-grid"><div><small>Número de socio</small><b id="numero"></b></div><div><small>RUT</small><b id="rutRead"></b></div><div><small>Fecha de ingreso</small><b id="fechaIngreso"></b></div><div><small>Estado</small><b id="estado"></b></div></div>
 <section class="dues-card" aria-labelledby="duesTitle"><div><small id="duesTitle">Estado de cuotas</small><strong id="duesStatus">Cargando…</strong></div><div class="dues-details"><span>Última cuota pagada <b id="lastPaid">—</b></span><span>Cuotas pendientes <b id="pendingCount">0</b></span><span>Monto adeudado <b id="pendingAmount">$0</b></span></div><p>Información según los pagos registrados por la directiva.</p></section>
 <form id="dataForm" class="form-grid"><label>Nombres *<input id="nombres" required></label><label>Apellido paterno *<input id="apellidoPaterno" required></label><label>Apellido materno *<input id="apellidoMaterno" required></label><label>Fecha de nacimiento *<input id="fechaNacimiento" type="date" required></label><label>Edad<input id="edad" readonly></label><label>Estado civil *<select id="estadoCivil" required><option value="">Selecciona</option><option>Soltero(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option></select></label><label>Ocupación *<select id="ocupacion" required><option value="">Selecciona</option><option>Estudiante</option><option>Trabajador dependiente</option><option>Trabajador independiente</option><option>Dueño(a) de casa</option><option>Otro</option></select></label><label id="ocupacionOtroWrap" hidden>Otra ocupación *<input id="ocupacionOtro"></label><div class="wide portal-address-block"><label>Calle, pasaje o avenida *<div class="via-picker" data-via-picker><input id="viaSearch" autocomplete="off" required placeholder="Escribe una letra o el nombre de la vía" aria-expanded="false"><input id="viaId" type="hidden"><div class="via-suggestions" role="listbox" hidden></div></div></label><label>Número *<input id="numeroDomicilio" inputmode="numeric" maxlength="10" required></label><p id="addressPreview" class="address-preview">📍 Selecciona una vía e ingresa el número.</p></div><label>Teléfono<input id="telefono" inputmode="tel"></label><label>Correo electrónico<input id="correo" type="email" required></label><p class="hint wide">Puedes actualizar estos datos. El RUT, número de socio y fecha de ingreso están protegidos.</p><button class="primary wide">Guardar cambios</button></form><p id="dataMsg" class="message"></p></div>
@@ -31,6 +31,20 @@
   </div>
   <button id="openRentalFromPortal" class="primary wide" type="button">🏠 Ver calendario y solicitar arriendo</button>
   <p id="benefitsMsg" class="message"></p>
+</div>
+
+
+<div id="certificadoSocio" class="panel tab-panel" hidden>
+  <div class="panel-head"><div><h2>Certificado de residencia</h2><p>La solicitud quedará registrada con correlativo único y también se enviará por WhatsApp.</p></div></div>
+  <form id="portalCertificateForm" class="form-grid">
+    <label>Nombre completo<input id="portalCertName" readonly></label>
+    <label>RUT<input id="portalCertRut" readonly></label>
+    <label>Nacionalidad<input id="portalCertNationality" value="Chilena" required></label>
+    <label>Dirección<input id="portalCertAddress" readonly></label>
+    <label class="wide">Finalidad del certificado<textarea id="portalCertPurpose" rows="3" required></textarea></label>
+    <button class="primary wide" type="submit">📄 Solicitar y enviar por WhatsApp</button>
+  </form>
+  <p id="portalCertMsg" class="message"></p>
 </div>
 
 <div id="renuncia" class="panel tab-panel danger-panel" hidden><h2>Renuncia voluntaria</h2><p>Al confirmar, dejarás de aparecer como socio activo. Tu registro se conservará como antecedente histórico.</p><div class="warning"><b>Esta acción es seria.</b><span>Para confirmar, vuelve a escribir tu <strong>número de socio</strong>.</span></div><form id="resignForm"><label>Motivo (opcional)<textarea id="resignReason" rows="3"></textarea></label><label>Confirmación<input id="resignConfirm" autocomplete="off" placeholder="Tu número de socio" inputmode="numeric" required></label><label class="check"><input id="resignCheck" type="checkbox" required><span>Comprendo que mi estado cambiará a renunciado y se cerrará mi sesión.</span></label><button class="danger">Confirmar renuncia voluntaria</button></form><p id="resignMsg" class="message"></p></div>

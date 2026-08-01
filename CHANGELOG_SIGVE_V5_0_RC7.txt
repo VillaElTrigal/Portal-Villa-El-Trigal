@@ -1,0 +1,16 @@
+SIGVE v5.0 RC7
+
+NUEVO
+- Solicitudes de certificado registradas desde Portal público y Portal Socio.
+- Correlativo único compartido y automático.
+- Origen de solicitud visible en Administración.
+- RUT formateado y validado.
+- WhatsApp incluye correlativo, origen, estado y valor.
+
+INTEGRACIÓN
+- Solicitudes quedan pendientes en el módulo Certificados.
+- El pago se registra desde Administración usando el flujo existente y genera ingreso en Finanzas sin duplicación.
+
+CORRECCIONES
+- Función evaluar_beneficios_socio reescrita con alias explícitos para evitar beneficio_id ambiguo.
+- Se mantiene separación: reserva pública sin beneficios; Portal Socio con beneficios.
