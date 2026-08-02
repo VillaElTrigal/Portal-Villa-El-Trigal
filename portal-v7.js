@@ -326,7 +326,7 @@
         const benefitText = appliedBenefit ? ` Beneficio aplicado: ${appliedBenefit.nombre}. Total del arriendo: ${money(finalValue)}.` : '';
         const paymentText = finalValue === 0 ? ' No corresponde abono por tratarse de un arriendo gratuito.' : ' Adjuntaré el comprobante del abono de $10.000.';
         const whatsappText = `Hola, envié una solicitud de arriendo de la Sede Social Villa El Trigal para el día ${selectedRentalLabel}. Mi nombre es ${form.elements.nombre.value.trim()} y mi celular es ${formatPhone(dbPhone)}.${benefitText}${paymentText} Entiendo que la reserva queda confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp.`;
-        const whatsappUrl = `https://wa.me/56974596793?text=${encodeURIComponent(whatsappText)}`;
+        const whatsappUrl = window.SIGVEWhatsApp?.buildUrl('56974596793',whatsappText)||'';
         if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
         else window.location.href = whatsappUrl;
         close();

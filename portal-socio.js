@@ -107,7 +107,7 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
     const months=selected.map(q=>quotaMonthLabel(q.periodo)).join(', '),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
     const name=$('welcomeName').textContent.trim(),number=$('numero').textContent.trim(),rut=$('rutRead').textContent.trim();
     const text=`Hola. Adjunto el comprobante del pago de mi cuota social.\n\nSOCIO: ${name}\nN° DE SOCIO: ${number}\nRUT: ${rut}\nCUOTA(S): ${months}\nMONTO TOTAL: ${money(total)}\nMEDIO: Transferencia\n\nPor favor confirmar la recepción del comprobante.\nJunta de Vecinos Villa El Trigal.`;
-    window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+    window.SIGVEWhatsApp?.open('56974596793',text);
   });
 
 
@@ -154,7 +154,7 @@ ESTADO: Pendiente de pago
 VALOR: ${money(row.valor||1000)}
 
 La solicitud quedó registrada en SIGVE.`;
-      window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+      window.SIGVEWhatsApp?.open('56974596793',text);
       $('portalCertPurpose').value='';$('portalCertPurposeOther').value='';$('portalCertPurposeOtherWrap').hidden=true;msg('portalCertMsg',`Solicitud registrada como CR-${folio}.`,'success');
     }catch(err){msg('portalCertMsg',err.message,'error')}
     finally{button.disabled=false;button.textContent=original}

@@ -1,0 +1,9 @@
+SIGVE v5.2.2 - WhatsApp UTF-8
+
+Cambios:
+- Se agregó whatsapp-utils.js como generador único de enlaces de WhatsApp.
+- Los mensajes se codifican una sola vez con encodeURIComponent.
+- Se preservan emojis, tildes, eñes y saltos de línea.
+- Se actualizaron cumpleaños, certificados, reservas, cuotas, cobranzas y registro de niños.
+- El mensaje de cumpleaños usa escapes Unicode para evitar daños por codificación del archivo.
+- No requiere cambios en Supabase.
