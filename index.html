@@ -433,10 +433,10 @@
     const cleanRutValue = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
     const formatRutValue = value => { const clean=cleanRutValue(value); if(clean.length<2)return clean; let body=clean.slice(0,-1),dv=clean.slice(-1),out=''; while(body.length>3){out='.'+body.slice(-3)+out;body=body.slice(0,-3)} return body+out+'-'+dv; };
     const validRutValue = value => { const clean=cleanRutValue(value); if(clean.length<7)return false; const body=clean.slice(0,-1),dv=clean.slice(-1); let sum=0,m=2; for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*m;m=m===7?2:m+1} const r=11-(sum%11),expected=r===11?'0':r===10?'K':String(r); return dv===expected; };
-    const chilePhoneDigits=value=>{let d=String(value||'').replace(/\D/g,'');if(d.startsWith('569'))d=d.slice(3);else if(d.startsWith('56')){d=d.slice(2);if(d.startsWith('9'))d=d.slice(1)}else if(d.length===9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
+    const chilePhoneDigits=value=>{let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.length>=9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
     const formatChilePhone=value=>{const d=chilePhoneDigits(value);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
     const chilePhoneDb=value=>{const d=chilePhoneDigits(value);return d.length===8?`+569${d}`:null};
-    const certPhoneInput=document.getElementById('cert-phone');certPhoneInput.addEventListener('input',()=>certPhoneInput.value=formatChilePhone(certPhoneInput.value));
+    const certPhoneInput=document.getElementById('cert-phone');certPhoneInput.addEventListener('blur',()=>certPhoneInput.value=formatChilePhone(certPhoneInput.value));
     const certRutInput=document.getElementById('cert-rut');
     certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
     const certPurpose=document.getElementById('cert-purpose'),certPurposeOtherWrap=document.getElementById('cert-purpose-other-wrap'),certPurposeOther=document.getElementById('cert-purpose-other');

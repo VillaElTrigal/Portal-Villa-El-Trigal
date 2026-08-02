@@ -1,0 +1,7 @@
+SIGVE v5.1.3 - Corrección definitiva de digitación celular chileno
+
+- Se eliminó el formateo completo en cada pulsación para campos sin prefijo visual.
+- Los campos con prefijo fijo +56 9 aceptan 8 dígitos libres, incluso cuando el primero es 9.
+- Acepta +56991234567, 991234567 y 91234567.
+- Guarda siempre +569XXXXXXXX.
+- No requiere SQL.

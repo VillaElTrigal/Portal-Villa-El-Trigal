@@ -51,14 +51,13 @@
   }
   const phoneDigits = value => {
     let digits = String(value || '').replace(/\D/g, '');
-    if (digits.startsWith('569')) digits = digits.slice(3);
-    else if (digits.startsWith('56')) {
-      digits = digits.slice(2);
-      if (digits.startsWith('9')) digits = digits.slice(1);
-    } else if (digits.length === 9 && digits.startsWith('9')) {
-      digits = digits.slice(1);
-    }
+    if (digits.startsWith('56')) digits = digits.slice(2);
+    if (digits.length >= 9 && digits.startsWith('9')) digits = digits.slice(1);
     return digits.slice(0, 8);
+  };
+  const formatPhoneLocal = value => {
+    const digits = phoneDigits(value);
+    return digits ? `${digits.slice(0,4)}${digits.length > 4 ? ' ' + digits.slice(4) : ''}` : '';
   };
   const formatPhone = value => {
     const digits = phoneDigits(value);
@@ -239,7 +238,7 @@
         portalToken = context.portal_token;
         form.elements.nombre.value = context.nombre || '';
         rut.value = formatRut(context.rut || '');
-        phone.value = formatPhone(context.telefono || '');
+        phone.value = formatPhoneLocal(context.telefono || '');
       }
       // El contexto es de un solo uso. Una apertura normal del portal siempre es pública.
       sessionStorage.removeItem('sigve_reserva_context');
@@ -283,7 +282,7 @@
     };
     loadReservationBenefits();
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
-    phone.addEventListener('input', () => phone.value = formatPhone(phone.value));
+    phone.addEventListener('input', () => phone.value = formatPhoneLocal(phone.value));
 
     form.onsubmit = async event => {
       event.preventDefault();
@@ -398,7 +397,7 @@
     syncOtherOccupation();
     rut.dataset.rut = '1';
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
-    phone.addEventListener('input', () => phone.value = formatPhone(phone.value));
+    phone.addEventListener('input', () => phone.value = formatPhoneLocal(phone.value));
     form.onsubmit = async event => {
       event.preventDefault();
       const formattedRut = formatRut(rut.value);
