@@ -1,0 +1,7 @@
+SIGVE v5.2.1 - Corrección cumpleaños de hoy
+
+- La comparación se realiza solo por día y mes en la zona horaria de Chile.
+- Un cumpleaños de hoy aparece en “Cumpleaños de hoy”.
+- “Próximos cumpleaños” incluye únicamente fechas entre 1 y 7 días.
+- Se eliminó el error causado por comparar medianoche con mediodía.
+- No requiere cambios en Supabase.

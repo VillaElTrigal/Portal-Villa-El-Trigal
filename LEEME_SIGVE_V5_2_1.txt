@@ -1,0 +1,8 @@
+SIGVE v5.2.1
+
+1. Reemplazar los archivos del proyecto en GitHub.
+2. Esperar el despliegue.
+3. Recargar con Ctrl + F5.
+4. No ejecutar SQL.
+
+Prueba: un socio activo cuya fecha de nacimiento coincida con el día y mes actual debe aparecer solo en “Cumpleaños de hoy”.

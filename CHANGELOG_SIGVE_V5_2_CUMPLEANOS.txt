@@ -1,0 +1,18 @@
+SIGVE v5.2 - Cumpleaños de socios
+
+NUEVO
+- Tarjeta "Cumpleaños de hoy" en el Resumen de Administración.
+- Lista de próximos cumpleaños dentro de 7 días.
+- Botón WhatsApp con saludo precargado y editable.
+- Registro anual de saludo preparado para evitar duplicados.
+- Banner automático en Portal Socio durante el cumpleaños.
+- Solo se consideran socios activos con fecha de nacimiento.
+- Los nacidos el 29 de febrero se muestran el 28 de febrero en años no bisiestos.
+
+ARCHIVOS
+- admin.html
+- portal-socio.html
+- portal-socio.js
+- cumpleanos.js (nuevo)
+- cumpleanos.css (nuevo)
+- ACTUALIZAR_SUPABASE_SIGVE_V5_2_CUMPLEANOS.sql (nuevo)
