@@ -1,0 +1,8 @@
+SIGVE v5.2.3
+
+Esta actualización corrige la representación de emojis en mensajes abiertos desde SIGVE hacia WhatsApp Web.
+
+No requiere ejecutar SQL.
+
+Summary sugerido:
+SIGVE v5.2.3 - corregir emojis en WhatsApp Web

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="popup.css?v=630">
   <link rel="stylesheet" href="styles.css?v=631"><link rel="stylesheet" href="portal-v7.css?v=800">
   <link rel="stylesheet" href="portal-modals.css?v=4004">
-<script src="whatsapp-utils.js?v=520"></script></head>
+</head>
 <body>
   <header class="header">
     <div class="container nav">
@@ -428,7 +428,7 @@
 
     function openWhatsApp(message) {
       const wa = window.PORTAL_WHATSAPP || '56974596793';
-      window.SIGVEWhatsApp?.open(wa,message);
+      if(window.SIGVE_WHATSAPP?.open) window.SIGVE_WHATSAPP.open(wa,message); else window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(message), '_blank', 'noopener');
     }
     const cleanRutValue = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
     const formatRutValue = value => { const clean=cleanRutValue(value); if(clean.length<2)return clean; let body=clean.slice(0,-1),dv=clean.slice(-1),out=''; while(body.length>3){out='.'+body.slice(-3)+out;body=body.slice(0,-3)} return body+out+'-'+dv; };
@@ -490,7 +490,7 @@ La solicitud quedó registrada en SIGVE. Adjuntaré ahora un comprobante de domi
 
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="portal-config.js"></script>
+  <script src="portal-config.js"></script><script src="sigve-whatsapp.js?v=523"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
   <script src="portal-v7.js?v=5070"></script>

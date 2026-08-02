@@ -121,7 +121,7 @@
   function selectRentalDate(dateIso, readable) {
     const message = `Hola, me gustaría solicitar el arriendo de la Sede Social Villa El Trigal para el día ${readable}. Realizaré o adjuntaré el comprobante del abono de $10.000. Entiendo que la reserva quedará confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp. Muchas gracias.`;
     const link = document.getElementById('rental-whatsapp');
-    window.SIGVEWhatsApp?.setLink(link,'56974596793',message);
+    link.href = window.SIGVE_WHATSAPP?.url('56974596793',message)||`https://wa.me/56974596793?text=${encodeURIComponent(message)}`;
     document.getElementById('selected-date-text').innerHTML = `Fecha seleccionada: <strong>${readable}</strong>. Presiona el botón para enviar la solicitud.`;
     document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
     document.querySelector(`[data-date="${dateIso}"]`)?.classList.add('selected');

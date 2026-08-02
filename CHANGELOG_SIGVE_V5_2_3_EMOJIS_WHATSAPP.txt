@@ -1,0 +1,20 @@
+SIGVE v5.2.3 - Emojis compatibles con WhatsApp Web
+
+CAMBIOS
+- Se agregó sigve-whatsapp.js como módulo común para generar enlaces de WhatsApp.
+- Los emojis usados dentro de mensajes se generan mediante escapes Unicode.
+- Se centralizó la codificación del texto con encodeURIComponent una sola vez.
+- Se actualizó el saludo de cumpleaños y la bienvenida a nuevos socios.
+- Se conectaron al módulo común los mensajes de certificados, reservas, cuotas y registro de niños.
+- No se modificaron textos, reglas de negocio ni base de datos.
+
+INSTALACIÓN
+- Reemplazar los archivos del proyecto en GitHub.
+- No requiere SQL en Supabase.
+- Recargar con Ctrl + F5 en computador.
+
+PRUEBA RECOMENDADA
+1. Abrir SIGVE desde el computador.
+2. Preparar un saludo de cumpleaños.
+3. Verificar en WhatsApp Web que aparezcan celebración, torta y globo.
+4. Probar también una bienvenida de socio y un mensaje de reserva.
