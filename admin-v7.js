@@ -10,7 +10,7 @@ const age=d=>{if(!d)return'';const b=new Date(d+'T12:00:00'),t=new Date();let a=
 const rutClean=r=>String(r||'').replace(/[^0-9kK]/g,'').toUpperCase();
 const formatRut=r=>{const c=rutClean(r);if(c.length<2)return c;let b=c.slice(0,-1),dv=c.slice(-1),out='';while(b.length>3){out='.'+b.slice(-3)+out;b=b.slice(0,-3)}return b+out+'-'+dv};
 function validRut(r){r=rutClean(r);if(r.length<2)return false;let body=r.slice(0,-1),dv=r.slice(-1),sum=0,m=2;for(let i=body.length-1;i>=0;i--){sum+=+body[i]*m;m=m===7?2:m+1}const x=11-(sum%11),e=x===11?'0':x===10?'K':String(x);return dv===e}
-const phoneDigits=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
+const phoneDigits=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.length===9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
 const formatPhone=v=>{const d=phoneDigits(v);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
 const phoneDb=v=>{const d=phoneDigits(v);return d.length===8?`+569${d}`:null};
 const SIGVE_CONNECTORS=new Set(['de','del','la','las','los','y','e']);

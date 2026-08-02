@@ -1,0 +1,8 @@
+SIGVE v5.1.1
+
+CORREGIDO
+- La máscara de celular ya no elimina el primer dígito cuando el número de abonado comienza con 9.
+- Se mantiene el prefijo fijo +56 9 y se permiten 8 dígitos libres.
+- Corrección aplicada en portal público, Portal Socio y Administración.
+
+SQL: No requerido.

@@ -1,0 +1,19 @@
+SIGVE v5.1.1 - Hotfix celular chileno
+
+Corrección:
+- Ahora se permite que los 8 dígitos ingresados después del prefijo +56 9 comiencen con 9.
+- Ejemplo válido visible: +56 9 9123 4567
+- Formato almacenado: +56991234567
+- También se aceptan entradas completas como 991234567 o +56991234567.
+
+Archivos modificados:
+- admin-v7.js
+- admin-v111.js
+- portal-v7.js
+- portal-socio.js
+- index.html
+
+Instalación:
+1. Reemplazar los archivos en GitHub con esta versión.
+2. No ejecutar SQL en Supabase.
+3. Esperar el despliegue y recargar con Ctrl + F5.

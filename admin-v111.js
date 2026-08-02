@@ -11,7 +11,7 @@ const today=()=>new Date().toISOString().slice(0,10);
 const cleanRut=v=>String(v||'').replace(/[^0-9kK]/g,'').toUpperCase();
 const formatRut=v=>{const c=cleanRut(v);if(c.length<2)return c;let b=c.slice(0,-1),dv=c.slice(-1),o='';while(b.length>3){o='.'+b.slice(-3)+o;b=b.slice(0,-3)}return b+o+'-'+dv};
 const validRut=v=>{const c=cleanRut(v);if(c.length<7)return false;const b=c.slice(0,-1),dv=c.slice(-1);let sum=0,m=2;for(let i=b.length-1;i>=0;i--){sum+=Number(b[i])*m;m=m===7?2:m+1}const r=11-(sum%11),e=r===11?'0':r===10?'K':String(r);return dv===e};
-const phoneDigits111=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
+const phoneDigits111=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.length===9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
 const formatPhone111=v=>{const d=phoneDigits111(v);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
 const phoneDb111=v=>{const d=phoneDigits111(v);return d.length===8?`+569${d}`:null};
 
