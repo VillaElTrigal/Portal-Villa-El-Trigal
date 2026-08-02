@@ -1,0 +1,12 @@
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_2_CUMPLEANOS.sql en Supabase > SQL Editor.
+2. Subir todos los archivos del proyecto a GitHub reemplazando los actuales.
+3. Esperar el despliegue de GitHub Pages.
+4. Recargar con Ctrl + F5.
+
+PRUEBAS
+- Asignar temporalmente a un socio activo la fecha de nacimiento de hoy.
+- Abrir Administración > Resumen y comprobar que aparece.
+- Presionar Enviar WhatsApp y verificar el texto precargado.
+- Volver al resumen y comprobar la marca "Saludo preparado".
+- Ingresar al Portal Socio de esa persona y revisar el banner de felicitación.
