@@ -1,0 +1,19 @@
+SIGVE v5.2.5 - CORRECCIÓN DE PRIMERA CUOTA
+
+1. En Supabase abre SQL Editor.
+2. Ejecuta completo:
+   ACTUALIZAR_SUPABASE_SIGVE_V5_2_5_PRIMERA_CUOTA.sql
+3. No se eliminan pagos ni se duplican cuotas.
+4. Luego reemplaza los archivos del proyecto en GitHub.
+5. Recarga SIGVE con Ctrl + F5.
+
+REGLA APLICADA
+- Aprobado entre los días 1 y 10: cobra el mismo mes.
+- Aprobado desde el día 11: cobra desde el mes siguiente.
+
+EJEMPLO
+- Fecha de aprobación: 27/07/2026
+- Primera cuota: agosto de 2026
+
+La migración también revisa socios activos existentes y crea solamente los
+meses faltantes hasta el mes actual. Las cuotas pagadas no se modifican.

@@ -1,0 +1,15 @@
+SIGVE v5.2.5 - Primera cuota de socios
+
+CORRECCIONES
+- Centraliza el cálculo del primer mes de cobro.
+- Día 1 al 10: mismo mes.
+- Día 11 en adelante: mes siguiente.
+- Al aprobar un socio, genera de inmediato la cuota que ya corresponda.
+- Corrige el caso de socios aprobados después de preparar el mes.
+- Repara cuotas faltantes de socios activos sin duplicar registros.
+- Mantiene intactos todos los pagos existentes.
+
+ARCHIVOS
+- ACTUALIZAR_SUPABASE_SIGVE_V5_2_5_PRIMERA_CUOTA.sql
+- ACTUALIZAR_SUPABASE_SIGVE_V1_1_0.sql (instalaciones nuevas)
+- LEEME_SIGVE_V5_2_5_PRIMERA_CUOTA.txt
