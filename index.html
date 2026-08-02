@@ -207,7 +207,7 @@
               <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
               <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
               <label>Dirección<input id="cert-address" type="text" autocomplete="street-address" required></label>
-              <label>Teléfono<input id="cert-phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+              <label>Teléfono<input id="cert-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength="16" required></label>
               <label>Correo electrónico<input id="cert-email" type="email" autocomplete="email" required></label>
               <label>Finalidad<select id="cert-purpose" required><option value="">Selecciona</option><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
               <label id="cert-purpose-other-wrap" hidden>Especificar otra finalidad<input id="cert-purpose-other" maxlength="160"></label>
@@ -433,6 +433,10 @@
     const cleanRutValue = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
     const formatRutValue = value => { const clean=cleanRutValue(value); if(clean.length<2)return clean; let body=clean.slice(0,-1),dv=clean.slice(-1),out=''; while(body.length>3){out='.'+body.slice(-3)+out;body=body.slice(0,-3)} return body+out+'-'+dv; };
     const validRutValue = value => { const clean=cleanRutValue(value); if(clean.length<7)return false; const body=clean.slice(0,-1),dv=clean.slice(-1); let sum=0,m=2; for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*m;m=m===7?2:m+1} const r=11-(sum%11),expected=r===11?'0':r===10?'K':String(r); return dv===expected; };
+    const chilePhoneDigits=value=>{let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
+    const formatChilePhone=value=>{const d=chilePhoneDigits(value);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
+    const chilePhoneDb=value=>{const d=chilePhoneDigits(value);return d.length===8?`+569${d}`:null};
+    const certPhoneInput=document.getElementById('cert-phone');certPhoneInput.addEventListener('input',()=>certPhoneInput.value=formatChilePhone(certPhoneInput.value));
     const certRutInput=document.getElementById('cert-rut');
     certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
     const certPurpose=document.getElementById('cert-purpose'),certPurposeOtherWrap=document.getElementById('cert-purpose-other-wrap'),certPurposeOther=document.getElementById('cert-purpose-other');
@@ -442,6 +446,7 @@
       if (!this.reportValidity()) return;
       const rut=formatRutValue(certRutInput.value); certRutInput.value=rut;
       if(!validRutValue(rut)){ alert('El RUT ingresado no es válido.'); certRutInput.focus(); return; }
+      const certPhone=chilePhoneDb(certPhoneInput.value);if(!certPhone){alert('Ingresa un celular chileno válido: +56 9 1234 5678.');certPhoneInput.focus();return;}certPhoneInput.value=formatChilePhone(certPhone);
       const button=this.querySelector('button[type="submit"]'); const original=button.textContent; button.disabled=true; button.textContent='Registrando solicitud…';
       try{
         const cfg=window.PORTAL_CONFIG||{};
@@ -449,7 +454,7 @@
         const purpose=document.getElementById('cert-purpose').value;
         const purposeOther=document.getElementById('cert-purpose-other').value.trim();
         if(purpose==='otro'&&!purposeOther){alert('Especifica la otra finalidad.');document.getElementById('cert-purpose-other').focus();return;}
-        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:document.getElementById('cert-phone').value.trim(),p_correo:document.getElementById('cert-email').value.trim(),p_origen:'publico',p_token:null};
+        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:chilePhoneDb(document.getElementById('cert-phone').value),p_correo:document.getElementById('cert-email').value.trim(),p_origen:'publico',p_token:null};
         const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
         const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
         const purposeLabel=purpose==='otro'?purposeOther:({laboral:'Laboral',estudiantil:'Estudiantil',transporte:'Transporte'}[purpose]||purpose);

@@ -1,0 +1,8 @@
+SIGVE v5.1
+- Respaldos financieros privados en Supabase Storage.
+- Rutas organizadas por año/mes/ingresos-gastos.
+- Acciones Ver, Descargar, Reemplazar, Adjuntar y Quitar respaldo.
+- Eliminación del archivo al eliminar el movimiento.
+- Resumen de Sede cuenta únicamente reservas tipo arriendo.
+- Formato chileno de celular reforzado en certificados, Portal Socio y Administración.
+- Valores de Gestión no fue modificado.

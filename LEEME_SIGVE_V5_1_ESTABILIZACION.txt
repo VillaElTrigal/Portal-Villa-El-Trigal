@@ -1,0 +1,13 @@
+SIGVE v5.1 - Estabilización
+
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_1_ESTABILIZACION.sql en Supabase > SQL Editor.
+2. Sube el contenido completo del proyecto a GitHub.
+3. Espera GitHub Pages y recarga con Ctrl + F5.
+
+PRUEBAS
+- Finanzas: crear ingreso/gasto con JPG o PDF.
+- Ver, descargar, reemplazar y quitar respaldo.
+- Confirmar que quitar respaldo no elimina el movimiento.
+- Administración > Resumen: Sede debe contar solo registros tipo arriendo, sin Zumba.
+- Certificado público: teléfono debe quedar como +56 9 1234 5678 y guardarse +56912345678.
+- Portal Socio y formulario manual: comprobar el mismo formato.
