@@ -9,27 +9,45 @@
     return /^569\d{8}$/.test(number) ? number : '';
   }
 
+  function isMobileDevice() {
+    const ua = String(navigator.userAgent || '');
+    return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile/i.test(ua)
+      || (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua));
+  }
+
   function buildUrl(phone, message = '') {
     const number = normalizeNumber(phone);
     if (!number) return '';
-    // encodeURIComponent codifica el texto UTF-8 una sola vez y conserva
-    // correctamente emojis, tildes, eñes y saltos de línea en WhatsApp.
-    return `https://wa.me/${number}?text=${encodeURIComponent(String(message ?? ''))}`;
+    const text = encodeURIComponent(String(message ?? ''));
+    return isMobileDevice()
+      ? `https://wa.me/${number}${text ? `?text=${text}` : ''}`
+      : `https://web.whatsapp.com/send?phone=${number}${text ? `&text=${text}` : ''}`;
   }
 
   function open(phone, message = '', target = '_blank') {
-    const url = buildUrl(phone, message);
-    if (!url) return null;
-    return window.open(url, target, 'noopener,noreferrer');
+    const href = buildUrl(phone, message);
+    if (!href) return null;
+    return window.open(href, target, 'noopener,noreferrer');
   }
 
   function setLink(element, phone, message = '') {
     if (!element) return '';
-    const url = buildUrl(phone, message);
-    if (url) element.href = url;
-    else element.removeAttribute('href');
-    return url;
+    const href = buildUrl(phone, message);
+    if (href) {
+      element.href = href;
+      element.target = '_blank';
+      element.rel = 'noopener noreferrer';
+    } else {
+      element.removeAttribute('href');
+    }
+    return href;
   }
 
-  window.SIGVEWhatsApp = Object.freeze({ normalizeNumber, buildUrl, open, setLink });
+  window.SIGVEWhatsApp = Object.freeze({
+    normalizeNumber,
+    isMobileDevice,
+    buildUrl,
+    open,
+    setLink
+  });
 })();

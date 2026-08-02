@@ -1,0 +1,18 @@
+SIGVE v5.2.4 - WhatsApp según dispositivo
+
+CAMBIO
+- En celular, SIGVE abre wa.me.
+- En computador, SIGVE abre directamente web.whatsapp.com/send.
+- El mensaje se codifica una sola vez con encodeURIComponent.
+- Se conservan emojis, tildes, ñ y saltos de línea.
+- Se actualizó la versión del script para evitar que el navegador use la copia antigua en caché.
+
+INSTALACIÓN
+1. Reemplazar en GitHub los archivos de esta carpeta.
+2. Esperar el despliegue de GitHub Pages.
+3. En el computador, recargar SIGVE con Ctrl + F5.
+4. Recargar WhatsApp Web con Ctrl + F5.
+5. Probar un mensaje de cumpleaños desde SIGVE abierto en el computador.
+
+SUPABASE
+- No requiere SQL.

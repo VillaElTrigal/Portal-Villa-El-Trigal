@@ -1,0 +1,19 @@
+SIGVE v5.2.4
+
+CORRECCIONES
+- La función oficial de WhatsApp detecta celular o computador.
+- En computador usa https://web.whatsapp.com/send.
+- En celular usa https://wa.me.
+- Se evita la redirección intermedia de wa.me en escritorio.
+- Se mantiene una sola codificación UTF-8 del texto.
+
+ARCHIVOS MODIFICADOS
+- sigve-whatsapp.js
+- whatsapp-utils.js
+- admin.html
+- index.html
+- portal-socio.html
+- registro-ninos.html
+
+SQL
+- No requiere.

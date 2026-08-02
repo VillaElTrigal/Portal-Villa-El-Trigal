@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  // Emojis definidos con escapes Unicode para evitar problemas de codificacion
-  // al abrir mensajes desde navegadores de escritorio o WhatsApp Web.
+  // Emojis definidos con escapes Unicode para evitar problemas de codificación
+  // al construir mensajes desde cualquier sistema operativo o editor.
   const EMOJI = Object.freeze({
     saludo: '\u{1F44B}',
     celebracion: '\u{1F389}',
@@ -30,18 +30,52 @@
     return /^569\d{8}$/.test(number) ? number : '';
   }
 
-  function url(phone, message) {
-    const number = normalizePhone(phone);
-    if (!number) return '';
-    return `https://wa.me/${number}?text=${encodeURIComponent(String(message || ''))}`;
+  function isMobileDevice() {
+    const ua = String(navigator.userAgent || '');
+    const mobileUa = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile/i.test(ua);
+    const touchOnly = navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua); // iPadOS
+    return mobileUa || touchOnly;
   }
 
-  function open(phone, message, target = '_blank') {
+  function url(phone, message = '') {
+    const number = normalizePhone(phone);
+    if (!number) return '';
+
+    const text = encodeURIComponent(String(message ?? ''));
+    if (isMobileDevice()) {
+      return `https://wa.me/${number}${text ? `?text=${text}` : ''}`;
+    }
+
+    // En computador se abre WhatsApp Web directamente. Esto evita que la
+    // redirección intermedia de wa.me altere el texto precargado o sus emojis.
+    return `https://web.whatsapp.com/send?phone=${number}${text ? `&text=${text}` : ''}`;
+  }
+
+  function open(phone, message = '', target = '_blank') {
     const href = url(phone, message);
     if (!href) return null;
     return window.open(href, target, 'noopener,noreferrer');
   }
 
+  function setLink(element, phone, message = '') {
+    if (!element) return '';
+    const href = url(phone, message);
+    if (href) {
+      element.href = href;
+      element.target = '_blank';
+      element.rel = 'noopener noreferrer';
+    } else {
+      element.removeAttribute('href');
+    }
+    return href;
+  }
+
   window.SIGVE_EMOJI = EMOJI;
-  window.SIGVE_WHATSAPP = Object.freeze({ normalizePhone, url, open });
+  window.SIGVE_WHATSAPP = Object.freeze({
+    normalizePhone,
+    isMobileDevice,
+    url,
+    open,
+    setLink
+  });
 })();
