@@ -11,7 +11,7 @@
   const normalizeMemberNumber=(value)=>{const digits=String(value??'').replace(/\D/g,'');if(!digits)return null;const number=Number.parseInt(digits,10);return Number.isSafeInteger(number)?number:null};
   const rutClean=(value)=>String(value||'').replace(/[^0-9kK]/g,'').toUpperCase();
   const formatRut=(value)=>{const clean=rutClean(value);if(clean.length<2)return clean;let body=clean.slice(0,-1),dv=clean.slice(-1),formatted='';while(body.length>3){formatted='.'+body.slice(-3)+formatted;body=body.slice(0,-3)}return body+formatted+'-'+dv};
-    const phoneDigitsPortal=value=>{let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56'))d=d.slice(2);if(d.length===9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
+    const phoneDigitsPortal=value=>{let d=String(value||'').replace(/\D/g,'');if(d.startsWith('569'))d=d.slice(3);else if(d.startsWith('56')){d=d.slice(2);if(d.startsWith('9'))d=d.slice(1)}else if(d.length===9&&d.startsWith('9'))d=d.slice(1);return d.slice(0,8)};
   const formatPhonePortal=value=>{const d=phoneDigitsPortal(value);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
   const phoneDbPortal=value=>{const d=phoneDigitsPortal(value);return d.length===8?`+569${d}`:null};
 const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return false;const body=clean.slice(0,-1),dv=clean.slice(-1);let sum=0,multiplier=2;for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*multiplier;multiplier=multiplier===7?2:multiplier+1}const result=11-(sum%11),expected=result===11?'0':result===10?'K':String(result);return dv===expected};

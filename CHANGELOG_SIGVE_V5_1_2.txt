@@ -1,0 +1,9 @@
+SIGVE v5.1.2 - Hotfix celular chileno
+
+Corrección:
+- Se corrigió la lectura del prefijo +569 durante la escritura.
+- Ahora permite números como +56 9 9123 4567.
+- Evita que el 9 inicial del abonado sea eliminado o duplicado.
+- Aplicado en Portal inicial, Portal Socio, Administración, Reservas y Certificados.
+
+SQL: No requiere.

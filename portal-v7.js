@@ -51,10 +51,13 @@
   }
   const phoneDigits = value => {
     let digits = String(value || '').replace(/\D/g, '');
-    if (digits.startsWith('56')) digits = digits.slice(2);
-    // Solo quitar el 9 de prefijo cuando se ingresan los 9 dígitos nacionales completos.
-    // Si el usuario está escribiendo los 8 dígitos después de +56 9, el primer dígito puede ser 9.
-    if (digits.length === 9 && digits.startsWith('9')) digits = digits.slice(1);
+    if (digits.startsWith('569')) digits = digits.slice(3);
+    else if (digits.startsWith('56')) {
+      digits = digits.slice(2);
+      if (digits.startsWith('9')) digits = digits.slice(1);
+    } else if (digits.length === 9 && digits.startsWith('9')) {
+      digits = digits.slice(1);
+    }
     return digits.slice(0, 8);
   };
   const formatPhone = value => {
