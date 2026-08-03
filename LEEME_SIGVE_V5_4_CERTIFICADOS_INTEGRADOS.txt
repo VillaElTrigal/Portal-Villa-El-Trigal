@@ -1,0 +1,16 @@
+SIGVE v5.4 · Certificados integrados
+
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_4_CERTIFICADOS_INTEGRADOS.sql en Supabase > SQL Editor.
+2. Reemplazar los archivos del proyecto en GitHub.
+3. Esperar el despliegue y recargar con Ctrl + F5.
+
+CAMBIOS
+- Las solicitudes del portal público y del Portal Socio quedan registradas en Administración > Certificados.
+- El Portal Socio permite solicitar para el titular o para otra persona del hogar.
+- Para otra persona: nombre, RUT, nacionalidad y finalidad son editables.
+- Dirección, celular y correo se heredan del socio titular y quedan bloqueados.
+- Nacionalidad del titular también puede completarse o corregirse en la solicitud.
+- Portal público: prefijo fijo +56 9 y ocho dígitos libres.
+- Administración identifica al socio solicitante cuando el certificado es para otra persona.
+- Se mantiene el correlativo único, WhatsApp y el flujo de pago hacia Finanzas.
