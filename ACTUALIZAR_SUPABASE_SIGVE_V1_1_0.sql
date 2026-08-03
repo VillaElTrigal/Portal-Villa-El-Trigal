@@ -119,21 +119,6 @@ select setval(
 );
 alter table public.certificados_emitidos alter column folio set default nextval('public.certificados_folio_seq');
 
--- Determina el primer mes que corresponde cobrar según la fecha de aprobación.
--- Días 1 al límite: mismo mes. Desde el día siguiente: mes siguiente.
-create or replace function public.primer_periodo_cobro(p_fecha_ingreso date)
-returns date
-language sql stable set search_path=public
-as $$
-  select case
-    when p_fecha_ingreso is null then null
-    when extract(day from p_fecha_ingreso)::integer <=
-         coalesce((select dia_limite_cobro_mes from public.configuracion_gestion where id=1),10)
-      then date_trunc('month',p_fecha_ingreso)::date
-    else (date_trunc('month',p_fecha_ingreso) + interval '1 month')::date
-  end;
-$$;
-
 -- Genera el calendario de cuotas del mes para todos los socios activos.
 create or replace function public.generar_cuotas_mes(p_periodo date)
 returns integer
@@ -142,17 +127,27 @@ as $$
 declare
   v_periodo date := date_trunc('month',p_periodo)::date;
   v_valor numeric(12,0);
+  v_limite integer;
   v_count integer;
 begin
   if not public.es_admin() then raise exception 'Acceso denegado'; end if;
-  select valor_cuota into v_valor
+  select valor_cuota,dia_limite_cobro_mes into v_valor,v_limite
   from public.configuracion_gestion where id=1;
 
   insert into public.cuotas_socios(socio_id,periodo,estado,monto,creado_por)
-  select s.id,v_periodo,'pendiente',v_valor,auth.uid()
+  select s.id,v_periodo,
+    case
+      when date_trunc('month',s.fecha_ingreso)::date=v_periodo
+       and extract(day from s.fecha_ingreso)::integer>v_limite
+      then 'exento_incorporacion' else 'pendiente' end,
+    case
+      when date_trunc('month',s.fecha_ingreso)::date=v_periodo
+       and extract(day from s.fecha_ingreso)::integer>v_limite
+      then 0 else v_valor end,
+    auth.uid()
   from public.socios s
   where s.estado='activo'
-    and public.primer_periodo_cobro(s.fecha_ingreso) <= v_periodo
+    and s.fecha_ingreso <= (v_periodo + interval '1 month - 1 day')::date
   on conflict(socio_id,periodo) do nothing;
   get diagnostics v_count=row_count;
   return v_count;

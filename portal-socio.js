@@ -93,14 +93,16 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
   async function loadPortalQuotas(){
     const box=$('portalQuotaList'); if(!box)return;
     try{
-      portalPendingQuotas=await rpc('portal_socio_mis_cuotas',{p_token:token})||[];
-      if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;return}
+      const allPendingQuotas=await rpc('portal_socio_mis_cuotas',{p_token:token})||[];
+      const currentPeriod=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit'}).format(new Date());
+      portalPendingQuotas=allPendingQuotas.filter(q=>String(q.periodo||'').slice(0,7)<=currentPeriod);
+      if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas exigibles pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;return}
       box.innerHTML=portalPendingQuotas.map(q=>`<label class="portal-quota-row"><input type="checkbox" data-portal-quota="${q.id}" value="${Number(q.monto)||0}"><span><b>${escape(quotaMonthLabel(q.periodo))}</b><small>Cuota pendiente</small></span><strong>${money(q.monto)}</strong></label>`).join('');
       box.querySelectorAll('[data-portal-quota]').forEach(c=>c.addEventListener('change',updatePortalQuotaTotal));
       updatePortalQuotaTotal();
     }catch(err){box.innerHTML='<div class="notice">No fue posible cargar el detalle de cuotas.</div>';msg('paymentMsg',err.message,'error')}
   }
-  function selectedPortalQuotas(){return portalPendingQuotas.filter(q=>$(`input[data-portal-quota="${q.id}"]`)?.checked)}
+  function selectedPortalQuotas(){return portalPendingQuotas.filter(q=>document.querySelector(`input[data-portal-quota="${CSS.escape(String(q.id))}"]`)?.checked)}
   function updatePortalQuotaTotal(){const selected=selectedPortalQuotas(),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);$('portalQuotaTotal').textContent=money(total);$('sendQuotaWhatsapp').disabled=!selected.length}
   $('sendQuotaWhatsapp')?.addEventListener('click',()=>{
     const selected=selectedPortalQuotas();if(!selected.length)return;
