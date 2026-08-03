@@ -1,0 +1,10 @@
+SIGVE v5.2.7 - Resumen de cuotas y fecha Chile
+
+Correcciones
+- Portal Socio: el resumen de cuotas cuenta y suma solo cuotas exigibles hasta el mes actual.
+- Portal Socio: las cuotas futuras ya no aumentan el contador ni el monto adeudado.
+- Administración: la fecha predeterminada al registrar pagos usa America/Santiago.
+- Caja de Cuotas y Certificados: se unificó la fecha predeterminada con la zona horaria de Chile.
+
+SQL
+- No requiere cambios en Supabase.

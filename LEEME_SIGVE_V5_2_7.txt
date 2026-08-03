@@ -1,0 +1,9 @@
+INSTALACIÓN SIGVE v5.2.7
+
+1. Reemplaza en GitHub los archivos del proyecto por los de esta carpeta.
+2. No ejecutes SQL en Supabase.
+3. Espera el despliegue y recarga con Ctrl + F5.
+
+PRUEBAS
+- Portal Socio > Mis datos: debe mostrar 1 cuota pendiente y $2.000 si agosto es la única cuota exigible.
+- Administración > Cuotas > Registrar pago: la fecha debe ser la fecha actual de Chile.

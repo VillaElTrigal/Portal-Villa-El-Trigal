@@ -7,7 +7,7 @@ const v110sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const money=v=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(v)||0);
 const dateCL=v=>v?new Date(v+'T12:00:00').toLocaleDateString('es-CL'):'—';
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),v=Object.fromEntries(parts.map(x=>[x.type,x.value]));return `${v.year}-${v.month}-${v.day}`};
 const monthBounds=m=>({from:m+'-01',to:new Date(+m.slice(0,4),+m.slice(5,7),0).toISOString().slice(0,10)});
 const monthMove=(m,n)=>{const d=new Date(+m.slice(0,4),+m.slice(5,7)-1+n,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
 function client(){return v110sb}

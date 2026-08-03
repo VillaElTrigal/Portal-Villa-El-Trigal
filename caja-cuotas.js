@@ -6,7 +6,7 @@ const cfg=window.PORTAL_CONFIG||{};
 const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const money=v=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(v)||0);
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),v=Object.fromEntries(parts.map(x=>[x.type,x.value]));return `${v.year}-${v.month}-${v.day}`};
 const month=v=>{if(!v)return '';const [y,m]=v.slice(0,7).split('-');return new Date(+y,+m-1,1).toLocaleDateString('es-CL',{month:'long',year:'numeric'})};
 let rows=[];
 function toast(text,error=false){const el=$('#global-message');if(el){el.textContent=text;el.classList.toggle('error',error);setTimeout(()=>{if(el.textContent===text)el.textContent=''},5000)}else alert(text)}

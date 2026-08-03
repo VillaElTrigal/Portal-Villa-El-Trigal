@@ -96,6 +96,14 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
       const allPendingQuotas=await rpc('portal_socio_mis_cuotas',{p_token:token})||[];
       const currentPeriod=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit'}).format(new Date());
       portalPendingQuotas=allPendingQuotas.filter(q=>String(q.periodo||'').slice(0,7)<=currentPeriod);
+      // El resumen de "Mis datos" debe usar la misma regla que Pago de cuotas:
+      // solo meses vencidos o el mes actual, nunca cuotas futuras.
+      const exigibleTotal=portalPendingQuotas.reduce((sum,q)=>sum+Number(q.monto||0),0);
+      const exigibleCount=portalPendingQuotas.length;
+      $('duesStatus').textContent=exigibleCount?'Pendiente':'Al día';
+      $('duesStatus').classList.toggle('pending',exigibleCount>0);
+      $('pendingCount').textContent=exigibleCount;
+      $('pendingAmount').textContent=money(exigibleTotal);
       if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas exigibles pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;return}
       box.innerHTML=portalPendingQuotas.map(q=>`<label class="portal-quota-row"><input type="checkbox" data-portal-quota="${q.id}" value="${Number(q.monto)||0}"><span><b>${escape(quotaMonthLabel(q.periodo))}</b><small>Cuota pendiente</small></span><strong>${money(q.monto)}</strong></label>`).join('');
       box.querySelectorAll('[data-portal-quota]').forEach(c=>c.addEventListener('change',updatePortalQuotaTotal));

@@ -7,7 +7,7 @@ const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const money=v=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Number(v)||0);
 const dateCL=v=>v?new Date(v+'T12:00:00').toLocaleDateString('es-CL'):'—';
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),v=Object.fromEntries(parts.map(x=>[x.type,x.value]));return `${v.year}-${v.month}-${v.day}`};
 const cleanRut=v=>String(v||'').replace(/[^0-9kK]/g,'').toUpperCase();
 const formatRut=v=>{const c=cleanRut(v);if(c.length<2)return c;let b=c.slice(0,-1),dv=c.slice(-1),o='';while(b.length>3){o='.'+b.slice(-3)+o;b=b.slice(0,-3)}return b+o+'-'+dv};
 const validRut=v=>{const c=cleanRut(v);if(c.length<7)return false;const b=c.slice(0,-1),dv=c.slice(-1);let sum=0,m=2;for(let i=b.length-1;i>=0;i--){sum+=Number(b[i])*m;m=m===7?2:m+1}const r=11-(sum%11),e=r===11?'0':r===10?'K':String(r);return dv===e};
