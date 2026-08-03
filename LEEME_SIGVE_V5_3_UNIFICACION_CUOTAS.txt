@@ -1,0 +1,12 @@
+SIGVE v5.3 - UNIFICACIÓN DEL MÓDULO CUOTAS
+
+1. Reemplaza en GitHub los archivos del proyecto por los de esta carpeta.
+2. No ejecutes SQL en Supabase.
+3. Espera el despliegue y recarga con Ctrl + F5.
+
+PRUEBAS RECOMENDADAS
+- Confirmar que Caja de Cuotas ya no aparece en el menú.
+- Abrir Administración > Cuotas.
+- Registrar un pago en efectivo y verificar su ingreso en Finanzas.
+- Registrar una transferencia y verificar su ingreso en Finanzas.
+- Confirmar que Portal Socio sigue mostrando correctamente las cuotas exigibles.

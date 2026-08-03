@@ -1,0 +1,18 @@
+SIGVE v5.3 - Unificación del módulo Cuotas
+
+CAMBIOS
+- Se eliminó Caja de Cuotas del panel de Administración.
+- Se eliminó su vista, navegación, JavaScript y CSS operativo.
+- El módulo Cuotas queda como único lugar para registrar pagos de cuotas.
+- Se mantienen intactos los datos históricos y las funciones existentes en Supabase.
+- No se modifica Finanzas, Portal Socio, Beneficios, Reservas, Certificados, Cumpleaños ni WhatsApp.
+
+SQL
+- No requiere ejecutar SQL.
+
+ARCHIVOS MODIFICADOS
+- admin.html
+
+ARCHIVOS ELIMINADOS
+- caja-cuotas.js
+- caja-cuotas.css
