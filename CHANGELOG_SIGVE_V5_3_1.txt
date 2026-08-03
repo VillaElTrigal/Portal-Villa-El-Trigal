@@ -1,0 +1,7 @@
+SIGVE v5.3.1
+
+Modificado:
+- admin-v7.js
+- admin.html
+
+Sin cambios en Supabase.

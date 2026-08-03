@@ -223,7 +223,7 @@ function markNotificationsRead(){
 function markNotificationRead(id){
   const read=getReadNotifications();read[id]=Date.now();saveReadNotifications(read);
 }
-function notificationIcon(type){return({reserva:'🏠',socio:'👥',finanzas:'🧾',periodo:'🏛️',sistema:'✅'})[type]||'🔔'}
+function notificationIcon(type){return({reserva:'🏠',cuota:'💰',certificado:'📄'})[type]||'🔔'}
 function renderNotificationCenter(items){
   const read=getReadNotifications(),unread=items.filter(x=>!read[x.id]),b=$('#notification-count'),list=$('#notification-list'),panel=$('#notification-panel');
   if(b){b.textContent=unread.length;b.hidden=!unread.length;b.classList.toggle('ringing',unread.some(x=>x.priority==='alta'))}
@@ -239,22 +239,54 @@ function renderNotificationCenter(items){
   list.querySelectorAll('[data-notification-section]').forEach(el=>el.onclick=()=>{markNotificationRead(el.dataset.notificationId);const key=el.dataset.notificationSection;if(key)document.querySelector(`[data-section="${key}"]`)?.click();$('#notification-panel')?.classList.remove('open');renderNotificationCenter(window.v7NotificationItems||[])});
 }
 async function loadNotifications(){
-  const now=today(),future7=new Date(Date.now()+7*864e5).toISOString().slice(0,10),future30=new Date(Date.now()+30*864e5).toISOString().slice(0,10);
-  const [s,a,r,m,p]=await Promise.all([
-    sb.from('solicitudes_socios').select('id,nombre_completo').eq('estado','pendiente'),
-    sb.from('reservas_sede').select('id,fecha_evento,nombre_arrendatario,creado_en').eq('tipo','arriendo').eq('estado','pendiente').order('creado_en',{ascending:false}),
-    sb.from('reservas_sede').select('id,fecha_evento,nombre_arrendatario,descripcion,tipo,estado').neq('tipo','arriendo').gte('fecha_evento',now).lte('fecha_evento',future7).not('estado','in','("cancelado","archivado")'),
-    sb.from('movimientos_financieros').select('id,concepto,fecha').eq('tipo','gasto').eq('sin_respaldo',true),
-    sb.from('periodos_administrativos').select('id,nombre,fecha_termino').eq('estado','activo').maybeSingle()
+  // El centro funciona como una bandeja de asuntos útiles para la directiva.
+  // Solo muestra: arriendos pendientes, pagos de cuotas recientes y certificados pendientes.
+  const now=new Date();
+  const since=new Date(now.getTime()-7*864e5).toISOString();
+  const [reservas,pagos,certificados]=await Promise.all([
+    sb.from('reservas_sede')
+      .select('id,fecha_evento,nombre_arrendatario,creado_en')
+      .eq('tipo','arriendo')
+      .eq('estado','pendiente')
+      .order('creado_en',{ascending:false}),
+    sb.from('cuotas_socios')
+      .select('id,periodo,monto,fecha_pago,actualizado_en,socios(nombre_completo,numero_socio)')
+      .eq('estado','pagado')
+      .gte('actualizado_en',since)
+      .order('actualizado_en',{ascending:false}),
+    sb.from('certificados_emitidos')
+      .select('id,folio,nombre,fecha,estado_pago,estado_documento,creado_en')
+      .eq('estado_pago','pendiente')
+      .order('creado_en',{ascending:false})
   ]);
+
   const items=[];
-  for(const x of a.data||[])items.push({id:`arriendo-pendiente:${x.id}`,type:'reserva',priority:'alta',title:'Solicitud de arriendo pendiente',text:`${x.nombre_arrendatario||'Sin nombre'} · ${dateCL(x.fecha_evento)}`,label:'Requiere revisión',section:'reservas-v7',date:x.fecha_evento});
-  for(const x of s.data||[])items.push({id:`solicitud:${x.id}`,type:'socio',priority:'media',title:'Solicitud de socio pendiente',text:x.nombre_completo||'Sin nombre',label:'Revisar solicitud',section:'socios'});
-  for(const x of r.data||[])items.push({id:`reserva:${x.id}:${x.fecha_evento}:${x.estado||''}`,type:'reserva',priority:'media',title:'Actividad próxima',text:`${dateCL(x.fecha_evento)} · ${x.nombre_arrendatario||x.descripcion||x.tipo}`,label:'Dentro de 7 días',section:x.tipo==='zumba'?'zumba':'reservas-v7',date:x.fecha_evento});
-  for(const x of m.data||[])items.push({id:`gasto-sin-respaldo:${x.id}`,type:'finanzas',priority:'alta',title:'Gasto sin respaldo',text:x.concepto||'Sin concepto',label:'Adjuntar comprobante',section:'finanzas',date:x.fecha});
-  if(p.data?.fecha_termino&&p.data.fecha_termino<=future30){const days=Math.ceil((new Date(`${p.data.fecha_termino}T23:59:59`)-Date.now())/86400000);items.push({id:`periodo-fin:${p.data.id}:${p.data.fecha_termino}`,type:'periodo',priority:days<=7?'alta':'media',title:days<0?'Período administrativo vencido':'Período próximo a finalizar',text:days<0?`${p.data.nombre} venció hace ${Math.abs(days)} días`:`${p.data.nombre} termina en ${days} días`,label:'Revisar cierre administrativo',section:'periodos',date:p.data.fecha_termino})}
-  if(!items.length)items.push({id:`sistema-ok:${now}`,type:'sistema',priority:'baja',title:'Todo está al día',text:'No existen pendientes críticos en los módulos supervisados.',label:'Estado general',section:'dashboard'});
-  window.v7NotificationItems=items;renderNotificationCenter(items);
+  for(const x of reservas.data||[])items.push({
+    id:`arriendo-pendiente:${x.id}`,
+    type:'reserva',priority:'alta',
+    title:'Arriendo pendiente de aprobar',
+    text:`${x.nombre_arrendatario||'Sin nombre'} · ${dateCL(x.fecha_evento)}`,
+    label:'Revisar solicitud',section:'reservas-v7',date:x.creado_en||x.fecha_evento
+  });
+  for(const x of pagos.data||[])items.push({
+    id:`pago-cuota:${x.id}:${x.actualizado_en||x.fecha_pago||''}`,
+    type:'cuota',priority:'media',
+    title:'Nuevo pago de cuota',
+    text:`${x.socios?.nombre_completo||'Socio'}${x.socios?.numero_socio?` · N° ${x.socios.numero_socio}`:''} · ${money(x.monto)}`,
+    label:`Cuota ${dateCL(x.periodo)}`,section:'cuotas',date:x.actualizado_en||x.fecha_pago
+  });
+  for(const x of (certificados.data||[]).filter(x=>!['anulado','entregado'].includes(x.estado_documento)))items.push({
+    id:`certificado-pendiente:${x.id}`,
+    type:'certificado',priority:'alta',
+    title:'Certificado de residencia pendiente',
+    text:`CR-${String(x.folio||0).padStart(5,'0')} · ${x.nombre||'Sin nombre'}`,
+    label:'Pendiente de pago o gestión',section:'certificados',date:x.creado_en||x.fecha
+  });
+
+  // Los errores de una consulta no deben ocultar las demás notificaciones.
+  [reservas,pagos,certificados].forEach(r=>{if(r.error)console.warn('Centro de notificaciones:',r.error.message)});
+  window.v7NotificationItems=items;
+  renderNotificationCenter(items);
 }
 async function loadDashboardV7(){try{const [s,r,b]=await Promise.all([sb.from('socios').select('id',{count:'exact',head:true}).eq('estado','activo'),sb.from('reservas_sede').select('id',{count:'exact',head:true}).eq('tipo','arriendo').gte('fecha_evento',today()).not('estado','in','("cancelado","archivado")'),balances()]);$('#stat-socios').textContent=s.count||0;$('#stat-reservas').textContent=r.count||0;$('#stat-caja').textContent=money(b.caja);$('#stat-banco').textContent=money(b.banco)}catch(e){console.error(e)}}
 async function loadGestion(){const c=await settings(),f=$('#gestion-form');if(!f)return;Object.keys(c).forEach(k=>{if(f.elements[k])f.elements[k].value=c[k]??''})}

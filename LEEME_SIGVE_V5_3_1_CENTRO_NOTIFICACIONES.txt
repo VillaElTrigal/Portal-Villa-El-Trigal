@@ -1,0 +1,20 @@
+SIGVE v5.3.1 - Centro de notificaciones simplificado
+
+CAMBIOS
+- Muestra solamente solicitudes de arriendo pendientes de aprobar.
+- Muestra pagos de cuotas registrados durante los últimos 7 días.
+- Muestra certificados de residencia con pago pendiente.
+- Deja de mostrar movimientos de Finanzas, gastos sin respaldo, Zumba,
+  actividades próximas, solicitudes de socio y avisos de cierre de período.
+- Al pulsar una notificación abre directamente el módulo correspondiente.
+
+INSTALACIÓN
+1. Reemplazar los archivos del proyecto en GitHub.
+2. No ejecutar SQL en Supabase.
+3. Esperar el despliegue y recargar Administración con Ctrl + F5.
+
+PRUEBAS
+- Una reserva de tipo arriendo y estado pendiente debe aparecer.
+- Un pago de cuota recién registrado debe aparecer y abrir Cuotas.
+- Un certificado con estado de pago pendiente debe aparecer y abrir Certificados.
+- Zumba y movimientos de Finanzas no deben aparecer.
