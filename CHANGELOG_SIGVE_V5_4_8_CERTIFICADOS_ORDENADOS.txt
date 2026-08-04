@@ -1,0 +1,12 @@
+SIGVE v5.4.8 · Certificados visualmente ordenados
+
+- Rediseño visual real del formulario de certificado en Portal Inicial.
+- Rediseño visual real del registro manual en Portal Administración.
+- Nombre completo y RUT quedan alineados en una misma fila en escritorio.
+- Nacionalidad y Dirección utilizan el ancho completo para evitar casillas desordenadas.
+- Finalidad conserva exactamente las opciones funcionales del Portal Socio:
+  Laboral, Estudiantil, Transporte y Otro.
+- Al seleccionar Otro se mantiene el campo para especificar la finalidad.
+- Se mejoraron proporciones, márgenes, alturas, bordes, enfoque de campos y adaptación móvil.
+- Portal Socio no fue modificado.
+- No requiere SQL en Supabase.

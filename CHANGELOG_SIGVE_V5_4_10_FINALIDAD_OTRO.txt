@@ -1,0 +1,7 @@
+SIGVE v5.4.10 - Corrección campo Otra finalidad
+
+- Portal Inicial: el campo "Especificar otra finalidad" queda oculto al abrir el formulario.
+- Portal Administración: se aplica el mismo comportamiento.
+- El campo aparece únicamente cuando se selecciona "Otro" en Finalidad.
+- Al cambiar desde "Otro" a otra opción, el campo se oculta, se limpia y deja de ser obligatorio.
+- No requiere SQL en Supabase.

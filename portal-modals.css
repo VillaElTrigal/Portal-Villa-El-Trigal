@@ -354,3 +354,26 @@ body.portal-modal-lock .portal-modal-active {
     padding-bottom: calc(30px + env(safe-area-inset-bottom, 0));
   }
 }
+
+/* SIGVE v5.4.9 · Ajustes solicitados al formulario de certificado */
+/* El encabezado forma parte del contenido y se desplaza junto con el formulario. */
+.portal-modal-ready #certificate-form-panel.portal-modal-active .form-panel-header,
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .form-panel-header {
+  position: relative;
+  top: auto;
+  z-index: 1;
+}
+
+/* Formulario en una sola columna para mantener orden y uniformidad. */
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .certificate-person-grid,
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .certificate-purpose-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .certificate-person-grid > label,
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .certificate-purpose-grid > label,
+.portal-modal-ready #certificate-modal-root #certificate-form-panel .certificate-wide-field {
+  grid-column: 1 / -1;
+  width: 100%;
+}

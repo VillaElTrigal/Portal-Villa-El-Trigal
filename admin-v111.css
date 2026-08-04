@@ -39,3 +39,56 @@
 .cert-recipient-box legend{font-weight:700;padding:0 6px}
 .cert-recipient-box .check{display:inline-flex;margin-right:18px;margin-top:8px}
 @media(max-width:720px){.cert-recipient-box .check{display:flex;margin-right:0}}
+
+/* SIGVE v5.4.8 · Rediseño ordenado del certificado en Administración */
+.v7-modal-card:has(.certificate-admin-form){max-width:1040px;width:min(1040px,calc(100vw - 32px));padding:26px}
+.certificate-admin-head{padding-bottom:17px;border-bottom:1px solid #e5ece9;margin-bottom:4px}
+.certificate-admin-head h2{font-size:clamp(1.55rem,2.8vw,2rem);color:#123d4c}
+.certificate-admin-form{gap:20px}
+.certificate-admin-form .certificate-form-section{padding:22px;border-radius:18px;border-color:#dce6e2;box-shadow:0 7px 20px rgba(31,74,67,.055)}
+.certificate-admin-form .certificate-section-heading{margin-bottom:20px}
+.certificate-admin-form .certificate-section-heading>span{width:36px;height:36px;background:#167346;color:#fff;font-size:1rem}
+.certificate-admin-form .certificate-section-heading h3{margin:0;font-size:1.08rem;color:#142d36}
+.certificate-admin-form .certificate-section-heading p{font-size:.92rem}
+.certificate-admin-form .certificate-person-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px}
+.certificate-admin-form>section:first-of-type .certificate-person-grid>label:nth-child(3),
+.certificate-admin-form>section:first-of-type .certificate-person-grid>label:nth-child(4){grid-column:1/-1}
+.certificate-admin-form .certificate-purpose-grid{grid-template-columns:1fr;gap:14px}
+.certificate-admin-form .certificate-purpose-grid>label{grid-column:1/-1}
+.certificate-admin-form label{gap:8px;color:#19343d;font-weight:750}
+.certificate-admin-form input,.certificate-admin-form select{min-height:48px;padding:11px 13px;border-radius:10px;border-color:#cfdcd8;background:#fff}
+.certificate-admin-form input:focus,.certificate-admin-form select:focus{border-color:#167346;box-shadow:0 0 0 3px rgba(22,115,70,.12);outline:0}
+.certificate-admin-form .certificate-admin-management{background:#f5faf8}
+.certificate-admin-form .certificate-form-actions{padding-top:2px}
+.certificate-admin-form .certificate-form-actions .button{min-height:46px;border-radius:10px}
+@media(max-width:720px){
+ .v7-modal-card:has(.certificate-admin-form){width:calc(100vw - 20px);padding:16px}
+ .certificate-admin-form .certificate-form-section{padding:17px}
+ .certificate-admin-form .certificate-person-grid{grid-template-columns:1fr;gap:15px}
+ .certificate-admin-form>section:first-of-type .certificate-person-grid>label:nth-child(3),.certificate-admin-form>section:first-of-type .certificate-person-grid>label:nth-child(4){grid-column:auto}
+}
+
+/* SIGVE v5.4.9 · Certificado administrativo en lista vertical */
+.v7-modal-card:has(.certificate-admin-form) .certificate-admin-head {
+  position: relative;
+  top: auto;
+}
+.certificate-admin-form .certificate-person-grid,
+.certificate-admin-form .certificate-purpose-grid,
+.certificate-admin-form .certificate-admin-management .certificate-person-grid,
+.certificate-admin-form .certificate-admin-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.certificate-admin-form .certificate-person-grid > label,
+.certificate-admin-form .certificate-purpose-grid > label,
+.certificate-admin-form .certificate-admin-management .certificate-person-grid > label,
+.certificate-admin-form .certificate-admin-grid > label,
+.certificate-admin-form .certificate-wide-field {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+}
+
+/* SIGVE v5.4.10 · Ocultar "Otra finalidad" hasta seleccionar Otro */
+.certificate-admin-form [data-purpose-other][hidden]{display:none!important}

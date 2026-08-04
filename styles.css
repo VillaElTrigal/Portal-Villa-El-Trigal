@@ -112,3 +112,36 @@ nav a{white-space:nowrap}
 .cert-recipient-box legend{font-weight:700;padding:0 6px}
 .cert-recipient-box .check{display:inline-flex;margin-right:18px;margin-top:8px}
 @media(max-width:720px){.cert-recipient-box .check{display:flex;margin-right:0}}
+
+/* SIGVE v5.4.8 · Rediseño ordenado del certificado público */
+#certificate-form-panel{max-width:1040px;margin-left:auto;margin-right:auto;padding:28px}
+#certificate-form-panel .form-panel-header{padding-bottom:18px;border-bottom:1px solid #e5ece9;margin-bottom:18px}
+#certificate-form-panel .form-panel-header h3{font-size:clamp(1.8rem,3vw,2.35rem);line-height:1.1;color:#123d4c}
+#certificate-form-panel .notice-box{margin:0 0 20px;background:#f2faf6;border-color:#bfe2cd;color:#164b32}
+#certificate-form.certificate-unified-form{gap:20px}
+#certificate-form .certificate-form-section{padding:22px;border-radius:18px;border-color:#dce6e2;box-shadow:0 7px 20px rgba(31,74,67,.055)}
+#certificate-form .certificate-section-heading{margin-bottom:20px}
+#certificate-form .certificate-section-heading>span{width:36px;height:36px;background:#167346;color:#fff;font-size:1rem}
+#certificate-form .certificate-section-heading h3{font-size:1.08rem;color:#142d36}
+#certificate-form .certificate-section-heading p{font-size:.92rem}
+#certificate-form .certificate-person-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px}
+#certificate-form .certificate-person-grid>label:nth-child(3),
+#certificate-form .certificate-person-grid>label:nth-child(4){grid-column:1/-1}
+#certificate-form label{gap:8px;color:#19343d;font-weight:750}
+#certificate-form input,#certificate-form select{min-height:50px;padding:12px 14px;border-radius:10px;border-color:#cfdcd8;background:#fff}
+#certificate-form input:focus,#certificate-form select:focus{border-color:#167346;box-shadow:0 0 0 3px rgba(22,115,70,.12);outline:0}
+#certificate-form .field-help{font-weight:500;color:#657b82;line-height:1.35}
+#certificate-form .certificate-purpose-grid{grid-template-columns:1fr;gap:14px}
+#certificate-form .certificate-purpose-grid>label{grid-column:1/-1}
+#certificate-form .certificate-declaration{padding:17px 18px;border-color:#bfe2cd;background:#f2faf6;border-radius:14px;color:#164b32}
+#certificate-form .certificate-form-actions{padding-top:2px}
+#certificate-form .certificate-form-actions .large-button{min-height:50px;border-radius:11px}
+@media(max-width:720px){
+  #certificate-form-panel{padding:18px}
+  #certificate-form .certificate-form-section{padding:17px}
+  #certificate-form .certificate-person-grid{grid-template-columns:1fr;gap:15px}
+  #certificate-form .certificate-person-grid>label:nth-child(3),#certificate-form .certificate-person-grid>label:nth-child(4){grid-column:auto}
+}
+
+/* SIGVE v5.4.10 · Ocultar "Otra finalidad" hasta seleccionar Otro */
+#certificate-form #cert-purpose-other-wrap[hidden]{display:none!important}

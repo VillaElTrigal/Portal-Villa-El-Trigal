@@ -1,0 +1,10 @@
+SIGVE v5.4.9 - Certificado en lista vertical
+
+Cambios:
+- El encabezado "Certificado de Residencia" deja de ser fijo y se desplaza junto al formulario.
+- Portal Inicial: Nombre, RUT, Nacionalidad y Dirección quedan en una sola columna vertical.
+- Portal Administración: todos los campos del certificado y de Gestión administrativa quedan en una sola columna vertical.
+- Finalidad mantiene su lista de opciones.
+- "Especificar otra finalidad" permanece oculto y solo aparece al seleccionar "Otro".
+- Se actualizaron versiones de caché de los archivos modificados.
+- No requiere SQL.
