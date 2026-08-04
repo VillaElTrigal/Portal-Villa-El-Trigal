@@ -22,9 +22,28 @@ function modal(html){const d=document.createElement('dialog');d.className='v7-mo
 let certs=[];
 async function loadCerts111(){const{data,error}=await sb.from('certificados_emitidos').select('*').order('folio',{ascending:false}).limit(500);if(error)return toast('Certificados: '+error.message,true);certs=data||[];renderCerts111()}
 function renderCerts111(){const q=($('#cert-search')?.value||'').toLowerCase();const rows=certs.filter(x=>`${x.folio||''} ${x.nombre||''} ${x.rut||''}`.toLowerCase().includes(q));const paid=certs.filter(x=>x.estado_pago==='pagado');$('#cert-summary').innerHTML=`<div class="stat"><span>Registrados</span><strong>${certs.length}</strong></div><div class="stat"><span>Pagados</span><strong>${paid.length}</strong></div><div class="stat"><span>Pendientes</span><strong>${certs.filter(x=>x.estado_pago==='pendiente').length}</strong></div><div class="stat"><span>Recaudado</span><strong>${money(paid.reduce((a,x)=>a+Number(x.valor),0))}</strong></div>`;
-$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_pago)}">${esc(x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button></div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
+$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_pago)}">${esc(x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button>${x.estado_documento==='anulado'&&!x.movimiento_id?`<button class="button danger" data-reorder-cert="${x.id}">Reorganizar correlativos</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
 $$('[data-edit-cert]').forEach(b=>b.onclick=()=>openCert(certs.find(x=>x.id===b.dataset.editCert)));
 $$('[data-print-cert111]').forEach(b=>b.onclick=()=>printCert111(certs.find(x=>x.id===b.dataset.printCert111)));
+$$('[data-reorder-cert]').forEach(b=>b.onclick=()=>reorderCertificate(certs.find(x=>x.id===b.dataset.reorderCert)));
+}
+async function reorderCertificate(x){
+  if(!x)return;
+  const folio=String(x.folio||0).padStart(5,'0');
+  const posteriores=certs.filter(c=>Number(c.folio)>Number(x.folio));
+  const emitidos=posteriores.filter(c=>['emitido','entregado'].includes(c.estado_documento));
+  if(emitidos.length)return toast(`No se puede reorganizar: existen ${emitidos.length} certificado(s) posterior(es) ya emitido(s).`,true);
+  const detalle=posteriores.length?` Los ${posteriores.length} folio(s) posteriores disminuirán en 1.`:' El folio quedará disponible para la próxima solicitud.';
+  if(!confirm(`¿Reorganizar desde el folio ${folio}?
+
+Se eliminará este registro anulado.${detalle}
+
+Esta acción no se puede deshacer.`))return;
+  const{data,error}=await sb.rpc('reorganizar_correlativos_certificados',{p_certificado_id:x.id});
+  if(error)return toast(error.message,true);
+  const r=Array.isArray(data)?data[0]:data;
+  toast(`Correlativos reorganizados. ${Number(r?.registros_desplazados||0)} registro(s) actualizado(s).`);
+  await loadCerts111();
 }
 async function openCert(x=null){
   const [st,so,folioRes]=await Promise.all([
@@ -35,24 +54,45 @@ async function openCert(x=null){
   if(st.error)return toast(st.error.message,true);
   const nextFolio=x?.folio||Number(folioRes.data?.folio||0)+1;
   const opts=(so.data||[]).map(s=>`<option value="${s.id}" ${x?.socio_id===s.id?'selected':''}>${esc(s.nombre_completo)} · N° ${s.numero_socio||'—'}</option>`).join('');
-  const d=modal(`<h3>Emitir certificado de residencia</h3><form><div class="v7-grid">
-    <label>Vincular socio<select name="socio"><option value="">No es socio / ingreso manual</option>${opts}</select></label>
-    <label>Fecha<input name="fecha" type="date" value="${x?.fecha||today()}" required></label>
-    <label>Número correlativo<input name="folioView" value="CR-${String(nextFolio).padStart(5,'0')}" readonly><input name="folio" type="hidden" value="${nextFolio}"></label>
-    <label>Nombre completo<input name="nombre" value="${esc(x?.nombre||'')}" required></label>
-    <label>Nacionalidad<input name="nacionalidad" value="${esc(x?.nacionalidad||'')}" required></label>
-    <label>RUT<input name="rut" inputmode="text" maxlength="12" placeholder="12.345.678-9" value="${esc(x?.rut||'')}" required></label>
-    <label>Dirección<input name="direccion" value="${esc(x?.direccion||'')}" required></label>
-    <label>Teléfono<input name="telefono" inputmode="numeric" maxlength="16" placeholder="+56 9 1234 5678" value="${esc(formatPhone111(x?.telefono||''))}"></label>
-    <label>Correo electrónico<input name="correo" type="email" value="${esc(x?.correo||'')}"></label>
-    <label>Finalidad<select name="finalidad"><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
-    <label data-purpose-other hidden>Especificar otra finalidad<input name="finalidad_otro" maxlength="160" value="${esc(x?.finalidad_otro||'')}"></label>
-    <label>Estado documental<select name="estado_documento"><option value="pendiente_emision">Pendiente de emisión</option><option value="emitido">Emitido</option><option value="anulado">Anulado</option></select></label>
-    <label>Estado de pago<select name="estado_pago"><option value="pendiente">Pendiente</option><option value="pagado">Pagado</option><option value="exento">Exento</option><option value="anulado">Anulado</option></select></label>
-    <label>Valor<input name="valor" type="number" min="0" value="${x?.valor??st.data.valor_certificado}" required></label>
-    <label>Medio<select name="medio"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select></label>
-    <label>Fondo<select name="fondo"><option value="caja">Caja chica</option><option value="banco">Cuenta bancaria</option></select></label>
-  </div><div class="actions"><button class="button primary">Guardar</button><button type="button" class="button secondary" data-close>Cancelar</button></div></form>`);
+  const d=modal(`<div class="certificate-admin-head"><p class="certificate-admin-eyebrow">Gestión de certificados</p><h3>${x?'Editar':'Registrar'} certificado de residencia</h3><p>Completa los datos y administra el estado documental y el pago desde un solo formulario.</p></div><form class="certificate-unified-form certificate-admin-form">
+    <section class="certificate-form-section">
+      <div class="certificate-section-heading"><span>1</span><div><h4>Identificación del registro</h4><p>Vincula un socio o utiliza ingreso manual.</p></div></div>
+      <div class="v7-grid certificate-admin-grid">
+        <label>Vincular socio<select name="socio"><option value="">No es socio / ingreso manual</option>${opts}</select></label>
+        <label>Fecha<input name="fecha" type="date" value="${x?.fecha||today()}" required></label>
+        <label class="certificate-wide-field">Número correlativo<input name="folioView" value="CR-${String(nextFolio).padStart(5,'0')}" readonly><input name="folio" type="hidden" value="${nextFolio}"></label>
+      </div>
+    </section>
+    <section class="certificate-form-section">
+      <div class="certificate-section-heading"><span>2</span><div><h4>Datos de la persona</h4><p>Información que aparecerá en el certificado.</p></div></div>
+      <div class="v7-grid certificate-admin-grid">
+        <label>Nombre completo<input name="nombre" value="${esc(x?.nombre||'')}" required></label>
+        <label>Nacionalidad<input name="nacionalidad" value="${esc(x?.nacionalidad||'')}" required></label>
+        <label>RUT<input name="rut" inputmode="text" maxlength="12" placeholder="12.345.678-9" value="${esc(x?.rut||'')}" required></label>
+        <label>Teléfono<input name="telefono" inputmode="numeric" maxlength="16" placeholder="+56 9 1234 5678" value="${esc(formatPhone111(x?.telefono||''))}"></label>
+        <label class="certificate-wide-field">Dirección<input name="direccion" value="${esc(x?.direccion||'')}" required></label>
+        <label class="certificate-wide-field">Correo electrónico<input name="correo" type="email" value="${esc(x?.correo||'')}"></label>
+      </div>
+    </section>
+    <section class="certificate-form-section">
+      <div class="certificate-section-heading"><span>3</span><div><h4>Finalidad</h4><p>Selecciona el uso del documento.</p></div></div>
+      <div class="v7-grid certificate-admin-grid">
+        <label>Finalidad<select name="finalidad"><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
+        <label data-purpose-other hidden>Especificar otra finalidad<input name="finalidad_otro" maxlength="160" value="${esc(x?.finalidad_otro||'')}"></label>
+      </div>
+    </section>
+    <section class="certificate-form-section certificate-admin-management">
+      <div class="certificate-section-heading"><span>4</span><div><h4>Gestión administrativa</h4><p>Define el estado documental y los datos del pago.</p></div></div>
+      <div class="v7-grid certificate-admin-grid">
+        <label>Estado documental<select name="estado_documento"><option value="pendiente_emision">Pendiente de emisión</option><option value="emitido">Emitido</option><option value="anulado">Anulado</option></select></label>
+        <label>Estado de pago<select name="estado_pago"><option value="pendiente">Pendiente</option><option value="pagado">Pagado</option><option value="exento">Exento</option><option value="anulado">Anulado</option></select></label>
+        <label>Valor<input name="valor" type="number" min="0" value="${x?.valor??st.data.valor_certificado}" required></label>
+        <label>Medio<select name="medio"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select></label>
+        <label class="certificate-wide-field">Fondo<select name="fondo"><option value="caja">Caja chica</option><option value="banco">Cuenta bancaria</option></select></label>
+      </div>
+    </section>
+    <div class="actions certificate-form-actions"><button class="button primary">Guardar</button><button type="button" class="button secondary" data-close>Cancelar</button></div>
+  </form>`);
   const f=d.querySelector('form'),otherWrap=d.querySelector('[data-purpose-other]');f.telefono.addEventListener('blur',()=>f.telefono.value=formatPhone111(f.telefono.value));
   f.finalidad.value=x?.finalidad||'laboral';f.estado_documento.value=x?.estado_documento||'emitido';f.estado_pago.value=x?.estado_pago||'pendiente';f.medio.value=x?.medio_pago||'efectivo';f.fondo.value=x?.fondo||'caja';
   const toggleOther=()=>{const show=f.finalidad.value==='otro';otherWrap.hidden=!show;f.finalidad_otro.required=show;if(!show)f.finalidad_otro.value=''};toggleOther();f.finalidad.onchange=toggleOther;

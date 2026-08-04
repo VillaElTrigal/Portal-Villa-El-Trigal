@@ -1,0 +1,11 @@
+SIGVE v5.4.2 - Certificados con vista unificada
+
+1. Reemplaza los archivos del proyecto en GitHub.
+2. Espera el despliegue.
+3. Recarga con Ctrl + F5.
+4. Revisa:
+   - Portal inicial > Solicitar certificado.
+   - Portal Socio > Certificado.
+   - Administración > Certificados > Emitir certificado.
+
+Esta actualización es visual y no requiere ejecutar SQL.

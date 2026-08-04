@@ -1,0 +1,11 @@
+SIGVE v5.4.2 - Vista unificada de certificados
+
+Cambios visuales:
+- Portal inicial: formulario reorganizado en Datos de la persona, Finalidad y Comprobante de domicilio.
+- Portal Socio: mismo formato visual por secciones, conservando solicitud para titular u otra persona del hogar.
+- Administración: registro manual organizado en Identificación, Datos de la persona, Finalidad y Gestión administrativa.
+- Dirección y correo ocupan el ancho completo para mejorar lectura.
+- Diseño responsive mejorado para celular.
+- No se modificó la lógica de correlativos, pagos, Finanzas, WhatsApp ni solicitudes.
+
+SQL: No requiere.
