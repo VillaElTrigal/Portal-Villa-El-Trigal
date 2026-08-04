@@ -1,0 +1,13 @@
+SIGVE v5.4.7 - Certificados sin Persona destinataria
+
+Cambios realizados:
+- Portal Inicial mantiene el formulario de certificado sin la sección Persona destinataria.
+- Portal Administración mantiene el formulario de certificado sin la sección Persona destinataria.
+- La numeración queda: 1 Datos de la persona, 2 Finalidad.
+- En Administración, Gestión administrativa queda como sección 3.
+- Finalidad conserva el mismo listado del Portal Socio y muestra el campo para escribir al seleccionar Otro.
+- Todos los campos de Portal Inicial y Administración permanecen editables.
+- Portal Socio no fue modificado y conserva su funcionamiento actual.
+- Se actualizaron las versiones de caché de los archivos de Administración.
+
+No requiere ejecutar SQL en Supabase.
