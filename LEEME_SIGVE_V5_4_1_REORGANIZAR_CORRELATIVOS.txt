@@ -1,0 +1,13 @@
+SIGVE v5.4.1 · Reorganización de correlativos de certificados
+
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_4_1_REORGANIZAR_CORRELATIVOS.sql en Supabase > SQL Editor.
+2. Publica los archivos del proyecto en GitHub.
+3. Recarga Administración con Ctrl + F5.
+
+Uso:
+- En Administración > Certificados, el botón “Reorganizar correlativos” aparece en registros anulados sin movimiento financiero.
+- La operación elimina el registro anulado y resta 1 a los folios posteriores.
+- Se bloquea si existe un certificado posterior ya emitido o entregado.
+- Los pagos de certificados posteriores mantienen su vínculo y se actualiza el texto del folio en Finanzas.
+
+Ejemplo: 00212 anulado + 00213 pendiente -> el registro 00213 pasa a 00212.

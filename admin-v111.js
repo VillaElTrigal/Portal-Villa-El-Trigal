@@ -22,9 +22,28 @@ function modal(html){const d=document.createElement('dialog');d.className='v7-mo
 let certs=[];
 async function loadCerts111(){const{data,error}=await sb.from('certificados_emitidos').select('*').order('folio',{ascending:false}).limit(500);if(error)return toast('Certificados: '+error.message,true);certs=data||[];renderCerts111()}
 function renderCerts111(){const q=($('#cert-search')?.value||'').toLowerCase();const rows=certs.filter(x=>`${x.folio||''} ${x.nombre||''} ${x.rut||''}`.toLowerCase().includes(q));const paid=certs.filter(x=>x.estado_pago==='pagado');$('#cert-summary').innerHTML=`<div class="stat"><span>Registrados</span><strong>${certs.length}</strong></div><div class="stat"><span>Pagados</span><strong>${paid.length}</strong></div><div class="stat"><span>Pendientes</span><strong>${certs.filter(x=>x.estado_pago==='pendiente').length}</strong></div><div class="stat"><span>Recaudado</span><strong>${money(paid.reduce((a,x)=>a+Number(x.valor),0))}</strong></div>`;
-$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_pago)}">${esc(x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button></div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
+$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_pago)}">${esc(x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button>${x.estado_documento==='anulado'&&!x.movimiento_id?`<button class="button danger" data-reorder-cert="${x.id}">Reorganizar correlativos</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
 $$('[data-edit-cert]').forEach(b=>b.onclick=()=>openCert(certs.find(x=>x.id===b.dataset.editCert)));
 $$('[data-print-cert111]').forEach(b=>b.onclick=()=>printCert111(certs.find(x=>x.id===b.dataset.printCert111)));
+$$('[data-reorder-cert]').forEach(b=>b.onclick=()=>reorderCertificate(certs.find(x=>x.id===b.dataset.reorderCert)));
+}
+async function reorderCertificate(x){
+  if(!x)return;
+  const folio=String(x.folio||0).padStart(5,'0');
+  const posteriores=certs.filter(c=>Number(c.folio)>Number(x.folio));
+  const emitidos=posteriores.filter(c=>['emitido','entregado'].includes(c.estado_documento));
+  if(emitidos.length)return toast(`No se puede reorganizar: existen ${emitidos.length} certificado(s) posterior(es) ya emitido(s).`,true);
+  const detalle=posteriores.length?` Los ${posteriores.length} folio(s) posteriores disminuirán en 1.`:' El folio quedará disponible para la próxima solicitud.';
+  if(!confirm(`¿Reorganizar desde el folio ${folio}?
+
+Se eliminará este registro anulado.${detalle}
+
+Esta acción no se puede deshacer.`))return;
+  const{data,error}=await sb.rpc('reorganizar_correlativos_certificados',{p_certificado_id:x.id});
+  if(error)return toast(error.message,true);
+  const r=Array.isArray(data)?data[0]:data;
+  toast(`Correlativos reorganizados. ${Number(r?.registros_desplazados||0)} registro(s) actualizado(s).`);
+  await loadCerts111();
 }
 async function openCert(x=null){
   const [st,so,folioRes]=await Promise.all([
