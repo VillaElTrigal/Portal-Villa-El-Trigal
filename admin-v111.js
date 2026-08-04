@@ -54,18 +54,18 @@ async function openCert(x=null){
   if(st.error)return toast(st.error.message,true);
   const nextFolio=x?.folio||Number(folioRes.data?.folio||0)+1;
   const opts=(so.data||[]).map(s=>`<option value="${s.id}" ${x?.socio_id===s.id?'selected':''}>${esc(s.nombre_completo)} · N° ${s.numero_socio||'—'}</option>`).join('');
-  const d=modal(`<div class="certificate-admin-head"><p class="certificate-admin-eyebrow">Gestión de certificados</p><h3>${x?'Editar':'Registrar'} certificado de residencia</h3><p>Completa los datos y administra el estado documental y el pago desde un solo formulario.</p></div><form class="certificate-unified-form certificate-admin-form">
+  const d=modal(`<div class="panel-head certificate-admin-head"><div><h2>${x?'Editar':'Registrar'} certificado de residencia</h2><p>La información quedará registrada con correlativo único y vinculada a la gestión administrativa.</p></div></div><form class="certificate-unified-form certificate-admin-form">
     <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>1</span><div><h4>Identificación del registro</h4><p>Vincula un socio o utiliza ingreso manual.</p></div></div>
-      <div class="v7-grid certificate-admin-grid">
+      <div class="certificate-section-heading"><span>1</span><div><h3>Persona destinataria</h3><p>Selecciona un socio o registra manualmente a la persona destinataria.</p></div></div>
+      <div class="form-grid certificate-person-grid">
         <label>Vincular socio<select name="socio"><option value="">No es socio / ingreso manual</option>${opts}</select></label>
         <label>Fecha<input name="fecha" type="date" value="${x?.fecha||today()}" required></label>
         <label class="certificate-wide-field">Número correlativo<input name="folioView" value="CR-${String(nextFolio).padStart(5,'0')}" readonly><input name="folio" type="hidden" value="${nextFolio}"></label>
       </div>
     </section>
     <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>2</span><div><h4>Datos de la persona</h4><p>Información que aparecerá en el certificado.</p></div></div>
-      <div class="v7-grid certificate-admin-grid">
+      <div class="certificate-section-heading"><span>2</span><div><h3>Datos de la persona</h3><p>La dirección y los datos de contacto se utilizarán para la emisión del certificado.</p></div></div>
+      <div class="form-grid certificate-person-grid">
         <label>Nombre completo<input name="nombre" value="${esc(x?.nombre||'')}" required></label>
         <label>Nacionalidad<input name="nacionalidad" value="${esc(x?.nacionalidad||'')}" required></label>
         <label>RUT<input name="rut" inputmode="text" maxlength="12" placeholder="12.345.678-9" value="${esc(x?.rut||'')}" required></label>
@@ -75,15 +75,15 @@ async function openCert(x=null){
       </div>
     </section>
     <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>3</span><div><h4>Finalidad</h4><p>Selecciona el uso del documento.</p></div></div>
-      <div class="v7-grid certificate-admin-grid">
+      <div class="certificate-section-heading"><span>3</span><div><h3>Finalidad</h3><p>Indica para qué será utilizado el documento.</p></div></div>
+      <div class="form-grid certificate-purpose-grid">
         <label>Finalidad<select name="finalidad"><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
         <label data-purpose-other hidden>Especificar otra finalidad<input name="finalidad_otro" maxlength="160" value="${esc(x?.finalidad_otro||'')}"></label>
       </div>
     </section>
     <section class="certificate-form-section certificate-admin-management">
-      <div class="certificate-section-heading"><span>4</span><div><h4>Gestión administrativa</h4><p>Define el estado documental y los datos del pago.</p></div></div>
-      <div class="v7-grid certificate-admin-grid">
+      <div class="certificate-section-heading"><span>4</span><div><h3>Gestión administrativa</h3><p>Define el estado documental y los datos del pago.</p></div></div>
+      <div class="form-grid certificate-person-grid">
         <label>Estado documental<select name="estado_documento"><option value="pendiente_emision">Pendiente de emisión</option><option value="emitido">Emitido</option><option value="anulado">Anulado</option></select></label>
         <label>Estado de pago<select name="estado_pago"><option value="pendiente">Pendiente</option><option value="pagado">Pagado</option><option value="exento">Exento</option><option value="anulado">Anulado</option></select></label>
         <label>Valor<input name="valor" type="number" min="0" value="${x?.valor??st.data.valor_certificado}" required></label>

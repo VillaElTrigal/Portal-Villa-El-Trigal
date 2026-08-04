@@ -1,3 +1,22 @@
+
+/* SIGVE v5.4.3 · El Portal Socio es la plantilla visual oficial de Certificados */
+.v7-modal-card:has(.certificate-admin-form){max-width:900px;width:min(900px,calc(100vw - 32px));}
+.certificate-admin-head{display:flex;justify-content:space-between;gap:18px;align-items:start;padding:0;}
+.certificate-admin-head h2{margin:0;font-size:1.5rem;color:#18313a;}
+.certificate-admin-head p{color:#637982;max-width:680px;margin:.45rem 0 0;line-height:1.5;}
+.certificate-unified-form{display:grid;gap:16px;margin-top:18px;}
+.certificate-form-section{border:1px solid #d7e2e5;border-radius:15px;padding:17px;background:#fff;}
+.certificate-section-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:15px;}
+.certificate-section-heading>span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:#e9f4f7;color:#145e75;font-weight:850;}
+.certificate-section-heading h3{margin:0;font-size:1rem;color:#18313a;}
+.certificate-section-heading p{margin:4px 0 0;color:#637982;font-size:.88rem;line-height:1.4;}
+.certificate-person-grid,.certificate-purpose-grid{gap:14px;}
+.certificate-wide-field{grid-column:1/-1;}
+.certificate-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:0;}
+.certificate-form-actions .button{min-width:180px;}
+.certificate-unified-form input[readonly]{background:#f1f5f6;color:#4f6871;}
+.certificate-admin-management{background:#fff;}
+@media(max-width:720px){.v7-modal-card:has(.certificate-admin-form){width:calc(100vw - 20px);}.certificate-form-section{padding:14px}.certificate-wide-field{grid-column:auto}.certificate-form-actions{display:grid;grid-template-columns:1fr}.certificate-form-actions .button{width:100%;min-width:0}}
 /* SIGVE v1.1.1 */
 .signature-preview{width:220px;height:90px;object-fit:contain;background:#fff;border:1px dashed #bbb;border-radius:8px;padding:6px}
 .authority-card{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;padding:1rem;border:1px solid #ddd;border-radius:12px;margin:.75rem 0;background:#fff}

@@ -1,0 +1,9 @@
+SIGVE v5.4.3 · Formulario de certificados 1:1
+
+- Portal Socio se mantiene como plantilla visual oficial.
+- Portal inicial usa las mismas tarjetas, encabezados, grillas, espaciados y responsive.
+- Se elimina del Portal inicial la solicitud de comprobante de domicilio.
+- Se conserva la declaración de veracidad obligatoria.
+- Administración usa las mismas tarjetas y grillas del Portal Socio, añadiendo solo la gestión administrativa.
+- Se eliminaron scripts duplicados al final de admin.html.
+- No requiere SQL.

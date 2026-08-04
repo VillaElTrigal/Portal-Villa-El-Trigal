@@ -7,7 +7,7 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=630">
-  <link rel="stylesheet" href="styles.css?v=542"><link rel="stylesheet" href="portal-v7.css?v=800">
+  <link rel="stylesheet" href="styles.css?v=543"><link rel="stylesheet" href="portal-v7.css?v=800">
   <link rel="stylesheet" href="portal-modals.css?v=4004">
 <style>.phone-prefix-field{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}.phone-prefix-field span{padding:.75rem;background:#f3f4f6;font-weight:700;white-space:nowrap}.phone-prefix-field input{border:0!important;border-radius:0!important;flex:1;min-width:0}</style></head>
 <body>
@@ -203,7 +203,7 @@
           </div>
           <form id="certificate-form" class="portal-form certificate-unified-form">
             <section class="certificate-form-section">
-              <div class="certificate-section-heading"><span>1</span><div><h4>Datos de la persona</h4><p>Ingresa la información de quien necesita el certificado.</p></div></div>
+              <div class="certificate-section-heading"><span>1</span><div><h3>Datos de la persona</h3><p>Ingresa la información de quien necesita el certificado.</p></div></div>
               <div class="form-grid certificate-person-grid">
                 <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
                 <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
@@ -214,19 +214,15 @@
               </div>
             </section>
             <section class="certificate-form-section">
-              <div class="certificate-section-heading"><span>2</span><div><h4>Finalidad</h4><p>Indica para qué será utilizado el documento.</p></div></div>
+              <div class="certificate-section-heading"><span>2</span><div><h3>Finalidad</h3><p>Indica para qué será utilizado el documento.</p></div></div>
               <div class="form-grid certificate-purpose-grid">
                 <label>Finalidad<select id="cert-purpose" required><option value="">Selecciona</option><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
                 <label id="cert-purpose-other-wrap" hidden>Especificar otra finalidad<input id="cert-purpose-other" maxlength="160"></label>
               </div>
             </section>
-            <section class="certificate-form-section certificate-doc-section">
-              <div class="certificate-section-heading"><span>3</span><div><h4>Comprobante de domicilio</h4><p>Adjunta el respaldo después de abrir WhatsApp.</p></div></div>
-              <div class="upload-guidance"><strong>Un solo archivo:</strong> boleta de luz, agua, internet, estado de cuenta o fotografía del domicilio. Formatos recomendados: JPG, PNG o PDF.</div>
-            </section>
             <label class="check-label certificate-declaration"><input id="cert-declaration" type="checkbox" required> Declaro que la información proporcionada es verídica y autorizo su uso únicamente para evaluar esta solicitud.</label>
             <div class="certificate-form-actions"><button class="button primary large-button" type="submit">Enviar solicitud por WhatsApp</button></div>
-            <p class="form-help">WhatsApp abrirá con tus datos escritos. Por seguridad del navegador, deberás adjuntar el comprobante manualmente antes de enviar.</p>
+            <p class="form-help">WhatsApp abrirá con tus datos escritos para que puedas revisar y enviar la solicitud.</p>
           </form>
           </div>
         </div>
