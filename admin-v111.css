@@ -33,3 +33,9 @@
 
 /* SIGVE v5.4.2 · Formulario unificado de certificados */
 .certificate-admin-head{padding:2px 2px 4px}.certificate-admin-head h3{margin:3px 0 5px;font-size:1.45rem}.certificate-admin-head p{margin:0;color:#647982;line-height:1.45}.certificate-admin-eyebrow{text-transform:uppercase;letter-spacing:.12em;font-weight:800;font-size:.72rem;color:#167045!important}.certificate-unified-form{display:grid;gap:14px;margin-top:16px}.certificate-form-section{border:1px solid #d7e2e5;border-radius:15px;padding:17px;background:#fff}.certificate-section-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:15px}.certificate-section-heading>span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:#e9f4f7;color:#14647a;font-weight:850}.certificate-section-heading h4{margin:0;color:#173947;font-size:1rem}.certificate-section-heading p{margin:4px 0 0;color:#647982;font-size:.88rem;line-height:1.4}.certificate-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.certificate-wide-field{grid-column:1/-1}.certificate-admin-management{background:#f7fbfc}.certificate-admin-form input[readonly]{background:#f1f5f6;color:#4f6871}.certificate-form-actions{justify-content:flex-end;margin-top:2px}.certificate-form-actions .button{min-width:130px}@media(max-width:720px){.certificate-form-section{padding:14px}.certificate-admin-grid{grid-template-columns:1fr}.certificate-wide-field{grid-column:auto}.certificate-form-actions{display:grid;grid-template-columns:1fr}.certificate-form-actions .button{width:100%}}
+
+/* SIGVE v5.4.4: selector de destinatario idéntico al Portal Socio */
+.cert-recipient-box{border:1px solid #dbe3ea;border-radius:12px;padding:12px;margin:0;background:#f8fbfc}
+.cert-recipient-box legend{font-weight:700;padding:0 6px}
+.cert-recipient-box .check{display:inline-flex;margin-right:18px;margin-top:8px}
+@media(max-width:720px){.cert-recipient-box .check{display:flex;margin-right:0}}

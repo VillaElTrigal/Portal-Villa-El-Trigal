@@ -1,0 +1,11 @@
+SIGVE v5.4.4 - Formularios de certificados idénticos al Portal Socio
+
+- Portal inicial: copia completa de las tres tarjetas del formulario del Portal Socio.
+- Portal inicial: incorpora Persona destinataria, Datos de la persona y Finalidad.
+- Portal inicial: todos los campos de datos permanecen editables.
+- Portal inicial: se mantiene la declaración de veracidad y se elimina la referencia al comprobante de domicilio.
+- Administración: copia las mismas tres tarjetas y los mismos campos del Portal Socio.
+- Administración: todos los campos permanecen editables.
+- Administración: conserva una cuarta tarjeta exclusiva llamada Gestión administrativa, donde se ubican socio, fecha, correlativo, estados y pago.
+- Portal Socio no fue modificado.
+- No requiere SQL en Supabase.

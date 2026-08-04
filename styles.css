@@ -106,3 +106,9 @@ nav a{white-space:nowrap}
 
 /* SIGVE v5.4.3 · Formulario público idéntico al patrón del Portal Socio */
 .certificate-section-heading h3{margin:0;font-size:1rem;color:#18313a}.certificate-declaration{display:flex!important;grid-template-columns:auto 1fr!important;align-items:flex-start;gap:10px!important;font-weight:500!important}.certificate-declaration input{width:auto;margin-top:3px}
+
+/* SIGVE v5.4.4: selector de destinatario idéntico al Portal Socio */
+.cert-recipient-box{border:1px solid #dbe3ea;border-radius:12px;padding:12px;margin:0;background:#f8fbfc}
+.cert-recipient-box legend{font-weight:700;padding:0 6px}
+.cert-recipient-box .check{display:inline-flex;margin-right:18px;margin-top:8px}
+@media(max-width:720px){.cert-recipient-box .check{display:flex;margin-right:0}}

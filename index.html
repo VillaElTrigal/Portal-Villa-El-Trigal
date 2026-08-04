@@ -7,7 +7,7 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=630">
-  <link rel="stylesheet" href="styles.css?v=543"><link rel="stylesheet" href="portal-v7.css?v=800">
+  <link rel="stylesheet" href="styles.css?v=544"><link rel="stylesheet" href="portal-v7.css?v=800">
   <link rel="stylesheet" href="portal-modals.css?v=4004">
 <style>.phone-prefix-field{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}.phone-prefix-field span{padding:.75rem;background:#f3f4f6;font-weight:700;white-space:nowrap}.phone-prefix-field input{border:0!important;border-radius:0!important;flex:1;min-width:0}</style></head>
 <body>
@@ -203,14 +203,12 @@
           </div>
           <form id="certificate-form" class="portal-form certificate-unified-form">
             <section class="certificate-form-section">
-              <div class="certificate-section-heading"><span>1</span><div><h3>Datos de la persona</h3><p>Ingresa la información de quien necesita el certificado.</p></div></div>
+              <div class="certificate-section-heading"><span>1</span><div><h3>Datos de la persona</h3><p>Ingresa los datos que aparecerán en el certificado de residencia.</p></div></div>
               <div class="form-grid certificate-person-grid">
                 <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
-                <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
                 <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
-                <label>Celular<div class="phone-prefix-field"><span>+56 9</span><input id="cert-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="12345678" maxlength="8" pattern="[0-9]{8}" required></div><small class="field-help">Ingresa los 8 números siguientes.</small></label>
+                <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
                 <label class="certificate-wide-field">Dirección<input id="cert-address" type="text" autocomplete="street-address" required></label>
-                <label class="certificate-wide-field">Correo electrónico<input id="cert-email" type="email" autocomplete="email" required></label>
               </div>
             </section>
             <section class="certificate-form-section">
@@ -438,10 +436,6 @@
     const cleanRutValue = value => String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
     const formatRutValue = value => { const clean=cleanRutValue(value); if(clean.length<2)return clean; let body=clean.slice(0,-1),dv=clean.slice(-1),out=''; while(body.length>3){out='.'+body.slice(-3)+out;body=body.slice(0,-3)} return body+out+'-'+dv; };
     const validRutValue = value => { const clean=cleanRutValue(value); if(clean.length<7)return false; const body=clean.slice(0,-1),dv=clean.slice(-1); let sum=0,m=2; for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*m;m=m===7?2:m+1} const r=11-(sum%11),expected=r===11?'0':r===10?'K':String(r); return dv===expected; };
-    const chilePhoneDigits=value=>String(value||'').replace(/\D/g,'').slice(0,8);
-    const formatChilePhone=value=>chilePhoneDigits(value);
-    const chilePhoneDb=value=>{const d=chilePhoneDigits(value);return d.length===8?`+569${d}`:null};
-    const certPhoneInput=document.getElementById('cert-phone');certPhoneInput.addEventListener('input',()=>certPhoneInput.value=chilePhoneDigits(certPhoneInput.value));
     const certRutInput=document.getElementById('cert-rut');
     certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
     const certPurpose=document.getElementById('cert-purpose'),certPurposeOtherWrap=document.getElementById('cert-purpose-other-wrap'),certPurposeOther=document.getElementById('cert-purpose-other');
@@ -451,7 +445,6 @@
       if (!this.reportValidity()) return;
       const rut=formatRutValue(certRutInput.value); certRutInput.value=rut;
       if(!validRutValue(rut)){ alert('El RUT ingresado no es válido.'); certRutInput.focus(); return; }
-      const certPhone=chilePhoneDb(certPhoneInput.value);if(!certPhone){alert('Ingresa un celular chileno válido: +56 9 1234 5678.');certPhoneInput.focus();return;}certPhoneInput.value=chilePhoneDigits(certPhone);
       const button=this.querySelector('button[type="submit"]'); const original=button.textContent; button.disabled=true; button.textContent='Registrando solicitud…';
       try{
         const cfg=window.PORTAL_CONFIG||{};
@@ -459,7 +452,7 @@
         const purpose=document.getElementById('cert-purpose').value;
         const purposeOther=document.getElementById('cert-purpose-other').value.trim();
         if(purpose==='otro'&&!purposeOther){alert('Especifica la otra finalidad.');document.getElementById('cert-purpose-other').focus();return;}
-        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:chilePhoneDb(document.getElementById('cert-phone').value),p_correo:document.getElementById('cert-email').value.trim(),p_origen:'publico',p_token:null,p_para_otro:false};
+        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
         const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
         const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
         const purposeLabel=purpose==='otro'?purposeOther:({laboral:'Laboral',estudiantil:'Estudiantil',transporte:'Transporte'}[purpose]||purpose);
@@ -471,13 +464,11 @@ Nombre: ${args.p_nombre}
 Nacionalidad: ${args.p_nacionalidad}
 RUT: ${row.rut_formateado||rut}
 Dirección: ${args.p_direccion}
-Teléfono: ${args.p_telefono}
-Correo: ${args.p_correo}
 Finalidad: ${purposeLabel}
 Estado: Pendiente de pago
 Valor: $${Number(row.valor||1000).toLocaleString('es-CL')}
 
-La solicitud quedó registrada en SIGVE. Adjuntaré ahora un comprobante de domicilio en este chat.`;
+La solicitud quedó registrada en SIGVE.`;
         openWhatsApp(message);
         alert(`Solicitud registrada con el correlativo CR-${folio}.`);
         this.reset();certPurposeOtherWrap.hidden=true;certPurposeOther.required=false;

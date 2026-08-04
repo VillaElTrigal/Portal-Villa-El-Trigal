@@ -1,0 +1,10 @@
+SIGVE v5.4.5 - Certificados simplificados
+
+- Portal Inicial: elimina Persona destinataria.
+- Portal Inicial: datos del certificado limitados a nombre completo, RUT, nacionalidad y dirección libre.
+- Portal Administración: aplica el mismo formulario simplificado con todos los campos editables.
+- Finalidad conserva el mismo listado del Portal Socio.
+- Al seleccionar Otro, se despliega el campo para especificar la finalidad.
+- Portal Administración conserva Gestión administrativa como sección 3.
+- Portal Socio no fue modificado.
+- No requiere SQL en Supabase.

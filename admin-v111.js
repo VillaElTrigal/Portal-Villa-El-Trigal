@@ -56,34 +56,27 @@ async function openCert(x=null){
   const opts=(so.data||[]).map(s=>`<option value="${s.id}" ${x?.socio_id===s.id?'selected':''}>${esc(s.nombre_completo)} · N° ${s.numero_socio||'—'}</option>`).join('');
   const d=modal(`<div class="panel-head certificate-admin-head"><div><h2>${x?'Editar':'Registrar'} certificado de residencia</h2><p>La información quedará registrada con correlativo único y vinculada a la gestión administrativa.</p></div></div><form class="certificate-unified-form certificate-admin-form">
     <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>1</span><div><h3>Persona destinataria</h3><p>Selecciona un socio o registra manualmente a la persona destinataria.</p></div></div>
-      <div class="form-grid certificate-person-grid">
-        <label>Vincular socio<select name="socio"><option value="">No es socio / ingreso manual</option>${opts}</select></label>
-        <label>Fecha<input name="fecha" type="date" value="${x?.fecha||today()}" required></label>
-        <label class="certificate-wide-field">Número correlativo<input name="folioView" value="CR-${String(nextFolio).padStart(5,'0')}" readonly><input name="folio" type="hidden" value="${nextFolio}"></label>
-      </div>
-    </section>
-    <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>2</span><div><h3>Datos de la persona</h3><p>La dirección y los datos de contacto se utilizarán para la emisión del certificado.</p></div></div>
+      <div class="certificate-section-heading"><span>1</span><div><h3>Datos de la persona</h3><p>Ingresa los datos que aparecerán en el certificado de residencia.</p></div></div>
       <div class="form-grid certificate-person-grid">
         <label>Nombre completo<input name="nombre" value="${esc(x?.nombre||'')}" required></label>
-        <label>Nacionalidad<input name="nacionalidad" value="${esc(x?.nacionalidad||'')}" required></label>
         <label>RUT<input name="rut" inputmode="text" maxlength="12" placeholder="12.345.678-9" value="${esc(x?.rut||'')}" required></label>
-        <label>Teléfono<input name="telefono" inputmode="numeric" maxlength="16" placeholder="+56 9 1234 5678" value="${esc(formatPhone111(x?.telefono||''))}"></label>
+        <label>Nacionalidad<input name="nacionalidad" value="${esc(x?.nacionalidad||'')}" required></label>
         <label class="certificate-wide-field">Dirección<input name="direccion" value="${esc(x?.direccion||'')}" required></label>
-        <label class="certificate-wide-field">Correo electrónico<input name="correo" type="email" value="${esc(x?.correo||'')}"></label>
       </div>
     </section>
     <section class="certificate-form-section">
-      <div class="certificate-section-heading"><span>3</span><div><h3>Finalidad</h3><p>Indica para qué será utilizado el documento.</p></div></div>
+      <div class="certificate-section-heading"><span>2</span><div><h3>Finalidad</h3><p>Indica para qué será utilizado el documento.</p></div></div>
       <div class="form-grid certificate-purpose-grid">
         <label>Finalidad<select name="finalidad"><option value="laboral">Laboral</option><option value="estudiantil">Estudiantil</option><option value="transporte">Transporte</option><option value="otro">Otro</option></select></label>
         <label data-purpose-other hidden>Especificar otra finalidad<input name="finalidad_otro" maxlength="160" value="${esc(x?.finalidad_otro||'')}"></label>
       </div>
     </section>
     <section class="certificate-form-section certificate-admin-management">
-      <div class="certificate-section-heading"><span>4</span><div><h3>Gestión administrativa</h3><p>Define el estado documental y los datos del pago.</p></div></div>
+      <div class="certificate-section-heading"><span>3</span><div><h3>Gestión administrativa</h3><p>Define el estado documental y los datos del pago.</p></div></div>
       <div class="form-grid certificate-person-grid">
+        <label>Vincular socio<select name="socio"><option value="">No es socio / ingreso manual</option>${opts}</select></label>
+        <label>Fecha<input name="fecha" type="date" value="${x?.fecha||today()}" required></label>
+        <label class="certificate-wide-field">Número correlativo<input name="folioView" value="CR-${String(nextFolio).padStart(5,'0')}" readonly><input name="folio" type="hidden" value="${nextFolio}"></label>
         <label>Estado documental<select name="estado_documento"><option value="pendiente_emision">Pendiente de emisión</option><option value="emitido">Emitido</option><option value="anulado">Anulado</option></select></label>
         <label>Estado de pago<select name="estado_pago"><option value="pendiente">Pendiente</option><option value="pagado">Pagado</option><option value="exento">Exento</option><option value="anulado">Anulado</option></select></label>
         <label>Valor<input name="valor" type="number" min="0" value="${x?.valor??st.data.valor_certificado}" required></label>
@@ -93,17 +86,17 @@ async function openCert(x=null){
     </section>
     <div class="actions certificate-form-actions"><button class="button primary">Guardar</button><button type="button" class="button secondary" data-close>Cancelar</button></div>
   </form>`);
-  const f=d.querySelector('form'),otherWrap=d.querySelector('[data-purpose-other]');f.telefono.addEventListener('blur',()=>f.telefono.value=formatPhone111(f.telefono.value));
+  const f=d.querySelector('form'),otherWrap=d.querySelector('[data-purpose-other]');
   f.finalidad.value=x?.finalidad||'laboral';f.estado_documento.value=x?.estado_documento||'emitido';f.estado_pago.value=x?.estado_pago||'pendiente';f.medio.value=x?.medio_pago||'efectivo';f.fondo.value=x?.fondo||'caja';
   const toggleOther=()=>{const show=f.finalidad.value==='otro';otherWrap.hidden=!show;f.finalidad_otro.required=show;if(!show)f.finalidad_otro.value=''};toggleOther();f.finalidad.onchange=toggleOther;
   f.rut.addEventListener('input',()=>f.rut.value=formatRut(f.rut.value));
-  f.socio.onchange=()=>{const socio=(so.data||[]).find(y=>y.id===f.socio.value);if(socio){f.nombre.value=socio.nombre_completo;f.nacionalidad.value=socio.nacionalidad||'';f.rut.value=formatRut(socio.rut);f.direccion.value=socio.direccion||'';f.telefono.value=formatPhone111(socio.telefono||'');f.correo.value=socio.correo||''}};
+  f.socio.onchange=()=>{const socio=(so.data||[]).find(y=>y.id===f.socio.value);if(socio){f.nombre.value=socio.nombre_completo;f.nacionalidad.value=socio.nacionalidad||'';f.rut.value=formatRut(socio.rut);f.direccion.value=socio.direccion||''}};
   f.medio.onchange=()=>f.fondo.value=f.medio.value==='transferencia'?'banco':'caja';
-  f.onsubmit=async e=>{e.preventDefault();f.rut.value=formatRut(f.rut.value);if(!validRut(f.rut.value))return toast('El RUT ingresado no es válido.',true);const phone=phoneDb111(f.telefono.value);if(f.telefono.value&&!phone)return toast('Ingresa un celular chileno válido: +56 9 1234 5678.',true);if(f.finalidad.value==='otro'&&!f.finalidad_otro.value.trim())return toast('Especifica la otra finalidad.',true);
+  f.onsubmit=async e=>{e.preventDefault();f.rut.value=formatRut(f.rut.value);if(!validRut(f.rut.value))return toast('El RUT ingresado no es válido.',true);if(f.finalidad.value==='otro'&&!f.finalidad_otro.value.trim())return toast('Especifica la otra finalidad.',true);
     const common={p_folio:Number(f.folio.value),p_nombre:f.nombre.value,p_rut:f.rut.value,p_nacionalidad:f.nacionalidad.value.trim(),p_direccion:f.direccion.value,p_finalidad:f.finalidad.value,p_finalidad_otro:f.finalidad_otro.value,p_fecha:f.fecha.value,p_valor:Number(f.valor.value),p_estado_documento:f.estado_documento.value,p_estado_pago:f.estado_pago.value,p_medio:f.medio.value,p_fondo:f.fondo.value,p_referencia:'',p_observaciones:''};
     const call=x?['actualizar_certificado_v111',{p_id:x.id,...common}]:['registrar_certificado_v111',{p_socio_id:f.socio.value||null,...common}];
     const{data,error}=await sb.rpc(call[0],call[1]);if(error)return toast(error.message,true);
-    const certId=x?.id||data;const upd=await sb.from('certificados_emitidos').update({telefono:phone,correo:f.correo.value.trim().toLowerCase()||null,nacionalidad:f.nacionalidad.value.trim()||null,destino:null,referencia_transferencia:null,observaciones:null}).eq('id',certId);if(upd.error)return toast(upd.error.message,true);
+    const certId=x?.id||data;const upd=await sb.from('certificados_emitidos').update({telefono:null,correo:null,nacionalidad:f.nacionalidad.value.trim()||null,destino:null,referencia_transferencia:null,observaciones:null}).eq('id',certId);if(upd.error)return toast(upd.error.message,true);
     d.remove();toast(x?'Certificado actualizado.':'Certificado registrado.');loadCerts111();
   };
 }
