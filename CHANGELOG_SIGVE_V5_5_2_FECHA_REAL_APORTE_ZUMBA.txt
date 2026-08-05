@@ -1,0 +1,7 @@
+SIGVE v5.5.2 - Fecha real del aporte de Zumba
+
+- El mes trabajado y la fecha real de pago quedan separados.
+- Permite registrar, por ejemplo, el aporte de julio con fecha de pago en agosto.
+- El aporte se muestra y se cierra dentro del mes al que corresponde (periodo).
+- Finanzas recibe la fecha real en que se efectuó el pago.
+- Requiere ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_2_PERIODO_ZUMBA.sql.

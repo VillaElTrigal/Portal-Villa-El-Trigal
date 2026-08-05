@@ -1,0 +1,8 @@
+SIGVE v5.5.1 - Corrección cálculo mensual de Zumba
+
+- El resumen de Zumba ahora cuenta las clases usando el mismo mes seleccionado en "Aportes y cierre mensual".
+- El total esperado se calcula como clases activas del mes x valor por clase configurado.
+- Se excluyen clases canceladas o archivadas.
+- El botón Registrar aporte usa exactamente la misma cantidad y monto del resumen mensual.
+- Se agregó control de errores de lectura de clases.
+- No requiere SQL adicional si ya se ejecutó la actualización v5.5.0.

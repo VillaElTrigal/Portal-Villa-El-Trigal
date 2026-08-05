@@ -1,0 +1,18 @@
+SIGVE v5.5.0 - Finanzas y Zumba
+
+1. Certificados de residencia
+- La fecha de emisión del certificado permanece independiente.
+- El ingreso financiero se crea con la fecha de Chile del día en que se marca como Pagado.
+- Al editar posteriormente un certificado pagado, no se duplica el movimiento ni se cambia su fecha financiera original.
+
+2. Taller de Zumba
+- Registrar aporte calcula automáticamente: clases activas del mes x valor por clase configurado.
+- Ejemplo: 6 clases x $2.000 = $12.000.
+- Solo permite un aporte mensual antes del cierre.
+- El total mensual muestra el monto esperado aunque todavía no se haya registrado el aporte.
+- Al cerrar el mes, Finanzas utiliza la fecha ingresada en el aporte.
+
+Instalación
+1. Reemplazar los archivos del proyecto.
+2. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_0_FINANZAS_ZUMBA.sql en Supabase > SQL Editor.
+3. Publicar y recargar con Ctrl + F5.
