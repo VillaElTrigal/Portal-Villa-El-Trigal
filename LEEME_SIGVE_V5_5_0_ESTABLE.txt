@@ -1,0 +1,17 @@
+SIGVE v5.5.0 ESTABLE
+
+Base utilizada:
+Portal-Villa-El-Trigal (3)(3).zip
+
+CAMBIOS
+1. Se conserva la corrección ya validada de Certificados de Residencia.
+2. Zumba calcula el total del mes según clases activas x valor configurado por clase.
+3. El mes trabajado y la fecha real del aporte son independientes.
+4. Ejemplo: julio 2026 puede pagarse el 05-08-2026.
+5. El cierre pertenece a julio; Finanzas usa la fecha real 05-08-2026.
+6. Se impide registrar más de un aporte para el mismo mes.
+
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_0_ESTABLE_ZUMBA.sql en Supabase > SQL Editor.
+2. Publicar los archivos del proyecto.
+3. Recargar Administración con Ctrl + F5.
