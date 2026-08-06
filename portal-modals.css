@@ -377,3 +377,20 @@ body.portal-modal-lock .portal-modal-active {
   grid-column: 1 / -1;
   width: 100%;
 }
+
+/* SIGVE v5.5.7 - Los encabezados de Reserva de sede y Hazte socio
+   se desplazan junto con el contenido del formulario. */
+.portal-modal-ready #arriendo.portal-modal-active .portal-modal-topbar,
+.portal-modal-ready #socios-solicitud.portal-modal-active .portal-modal-topbar {
+  position: relative;
+  top: auto;
+  z-index: 1;
+}
+
+@media (max-width: 720px) {
+  .portal-modal-ready #arriendo.portal-modal-active .portal-modal-topbar,
+  .portal-modal-ready #socios-solicitud.portal-modal-active .portal-modal-topbar {
+    position: relative;
+    top: auto;
+  }
+}

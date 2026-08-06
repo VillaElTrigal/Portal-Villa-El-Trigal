@@ -1,0 +1,16 @@
+SIGVE v5.5.7 - Meses de Zumba y encabezados del portal
+
+CAMBIOS
+1. Zumba
+- Los meses se guardan siempre en español: Julio 2026, Agosto 2026, etc.
+- El SQL también corrige los aportes existentes que quedaron en inglés.
+
+2. Portal principal
+- El encabezado de Reserva de sede ya no queda fijo.
+- El encabezado de Hazte socio ya no queda fijo.
+- Ambos encabezados se desplazan junto con el contenido del formulario.
+
+INSTALACIÓN
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_7_MESES_ZUMBA_ES.sql en Supabase > SQL Editor.
+2. Publicar los archivos del proyecto.
+3. Recargar el portal con Ctrl + F5.
