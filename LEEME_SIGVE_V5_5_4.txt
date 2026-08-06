@@ -1,0 +1,12 @@
+SIGVE v5.5.4 — Zumba: mes trabajado y fecha real de pago
+
+1. Ejecuta ACTUALIZAR_SUPABASE_SIGVE_V5_5_4_ZUMBA_FECHA_REAL.sql completo en Supabase > SQL Editor.
+2. Publica los archivos de esta carpeta.
+3. Recarga Administración con Ctrl + F5.
+
+Ejemplo permitido:
+- Mes trabajado: julio de 2026.
+- Fecha real del aporte: 05-08-2026.
+- El cierre corresponde a julio y Finanzas usa 05-08-2026.
+
+Este paquete no contiene la carpeta .git ni marcadores de conflictos.
