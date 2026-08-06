@@ -1,0 +1,11 @@
+SIGVE v5.5.6 — Zumba con fecha real de pago
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_6_ZUMBA_FECHA_REAL.sql completo en Supabase > SQL Editor.
+2. Publicar los archivos del proyecto.
+3. Recargar Administración con Ctrl + F5.
+
+Ejemplo permitido:
+- Período trabajado: julio de 2026.
+- Fecha real del pago: 05-08-2026.
+
+El aporte queda asociado a julio y, al cerrar el período, el movimiento de Finanzas utiliza la fecha real 05-08-2026.

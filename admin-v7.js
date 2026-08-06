@@ -326,20 +326,62 @@ async function openBulkReleaseZumba(){
  d.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,from=f.desde.value,to=f.hasta.value,days=[...f.querySelectorAll('[name=dias]:checked')].map(x=>Number(x.value));if(!from||!to||from>to)return alert('Revisa el rango de fechas.');if(!days.length)return alert('Selecciona al menos un día.');const q=await sb.from('reservas_sede').select('id,fecha_evento,hora_inicio,hora_termino,estado').eq('tipo','zumba').gte('fecha_evento',from).lte('fecha_evento',to).not('estado','in','("cancelado","archivado")').order('fecha_evento');if(q.error)return alert(q.error.message);const rows=(q.data||[]).filter(x=>days.includes(new Date(x.fecha_evento+'T12:00:00').getDay()||7));if(!rows.length)return alert('No hay clases activas que coincidan con el rango y los días seleccionados.');const preview=rows.slice(0,8).map(x=>`${dateCL(x.fecha_evento)} · ${x.hora_inicio?.slice(0,5)||''}–${x.hora_termino?.slice(0,5)||''}`).join('\n');const more=rows.length>8?`\n… y ${rows.length-8} clases más.`:'';if(!confirm(`Se liberarán ${rows.length} clases:\n\n${preview}${more}\n\nEstas fechas quedarán disponibles para arriendos. ¿Continuar?`))return;const ids=rows.map(x=>x.id),{error}=await sb.from('reservas_sede').update({estado:'cancelado',actualizado_en:new Date().toISOString()}).in('id',ids);if(error)return alert(error.message);const motivo=f.motivo.value.trim();try{const u=await user();await sb.from('auditoria').insert({modulo:'zumba',registro_id:ids[0],accion:'liberación masiva de clases',detalle:{cantidad:ids.length,desde:from,hasta:to,dias:days,motivo:motivo||null},usuario_id:u?.id||null})}catch{}d.remove();msg(`${rows.length} clases liberadas. Los horarios ya están disponibles para reservas.`);loadZumba();loadReservas();};
 }
 async function openZumbaPayment(){
- const month=$('#zumba-month')?.value||today().slice(0,7),bounds=monthBounds(month),c=await settings();
+ const period=$('#zumba-month')?.value||today().slice(0,7),bounds=monthBounds(period),config=await settings();
  const [classes,payments,closure]=await Promise.all([
   sb.from('reservas_sede').select('id,estado').eq('tipo','zumba').gte('fecha_evento',bounds.from).lte('fecha_evento',bounds.to),
-  sb.from('zumba_pagos').select('id,fecha,monto,periodo').eq('periodo',month+'-01'),
-  sb.from('zumba_cierres').select('id').eq('mes',month+'-01').maybeSingle()
+  sb.from('zumba_pagos').select('id,fecha,monto,periodo').eq('periodo',period+'-01'),
+  sb.from('zumba_cierres').select('id').eq('mes',period+'-01').maybeSingle()
  ]);
- if(classes.error)return alert(classes.error.message);if(payments.error)return alert(payments.error.message);if(closure.error)return alert(closure.error.message);
- if(closure.data)return alert('Este mes ya está cerrado y fue enviado a Finanzas.');
- if((payments.data||[]).length)return alert('Ya existe un aporte registrado para este mes. Elimínalo antes de reemplazarlo.');
- const classCount=(classes.data||[]).filter(x=>!['cancelado','archivado'].includes(String(x.estado||'').toLowerCase())).length,unitValue=Number(c.valor_zumba||2000),total=classCount*unitValue;
- if(!classCount)return alert('No hay clases activas de Zumba en el mes seleccionado.');
- const monthLabel=new Date(bounds.from+'T12:00:00').toLocaleDateString('es-CL',{month:'long',year:'numeric'});
- const d=modal(`<h3>Registrar aporte mensual de Zumba</h3><p class="help">${classCount} clase(s) × ${money(unitValue)} = <strong>${money(total)}</strong></p><form><div class="v7-grid"><label>Mes<input name="mes" value="${esc(monthLabel)}" readonly></label><label>Fecha del aporte<input name="fecha" type="date" value="${today()}" required></label><label>Número de clases<input name="clases" type="number" value="${classCount}" readonly></label><label>Valor por clase<input name="valor_clase" value="${money(unitValue)}" readonly></label><label>Monto total<input name="monto" type="number" value="${total}" readonly></label><label>Medio<select name="medio"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select></label><label class="certificate-wide-field">Observaciones<textarea name="obs" placeholder="Opcional"></textarea></label></div><div class="actions"><button class="button primary">Guardar aporte mensual</button><button type="button" class="button secondary" data-close>Cancelar</button></div></form>`);
- d.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,paymentDate=f.fecha.value;if(!paymentDate)return alert('Indica la fecha real en que se recibió el aporte.');const button=f.querySelector('button[type=submit],button:not([type])');if(button){button.disabled=true;button.textContent='Guardando…'}const{error}=await sb.rpc('registrar_aporte_zumba_mensual',{p_periodo:month+'-01',p_fecha_pago:paymentDate,p_cantidad_clases:classCount,p_valor_clase:unitValue,p_medio:f.medio.value,p_observaciones:f.obs.value.trim()||null});if(error){if(button){button.disabled=false;button.textContent='Guardar aporte mensual'}const detail=String(error.message||'');if(detail.includes('registrar_aporte_zumba_mensual')||detail.includes('schema cache'))return alert('Falta ejecutar el SQL de esta actualización en Supabase. Luego recarga con Ctrl + F5.');return alert(detail)}d.remove();msg(`Aporte de ${monthLabel} registrado por ${money(total)} con fecha real ${dateCL(paymentDate)}.`);await loadZumba()};
+ if(classes.error)return alert(classes.error.message);
+ if(payments.error)return alert(payments.error.message);
+ if(closure.error)return alert(closure.error.message);
+ if(closure.data)return alert('Este período ya está cerrado y fue enviado a Finanzas.');
+ if((payments.data||[]).length)return alert('Ya existe un aporte registrado para este período. Elimínalo antes de reemplazarlo.');
+
+ const classCount=(classes.data||[]).filter(x=>!['cancelado','archivado'].includes(String(x.estado||'').toLowerCase())).length;
+ const unitValue=Number(config.valor_zumba||2000),total=classCount*unitValue;
+ if(!classCount)return alert('No hay clases activas de Zumba en el período seleccionado.');
+
+ const periodLabel=new Date(bounds.from+'T12:00:00').toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+ const d=modal(`<h3>Registrar aporte mensual de Zumba</h3>
+  <p class="help">El período trabajado y la fecha real del pago son independientes.</p>
+  <form>
+   <div class="v7-grid">
+    <label>Período trabajado<input name="periodo" value="${esc(periodLabel)}" readonly></label>
+    <label>Fecha real del pago<input name="fecha" type="date" value="${today()}" required><small>Puede pertenecer a un mes posterior al período trabajado.</small></label>
+    <label>Número de clases<input name="clases" type="number" value="${classCount}" readonly></label>
+    <label>Valor por clase<input name="valor_clase" value="${money(unitValue)}" readonly></label>
+    <label>Monto total<input name="monto" type="number" value="${total}" readonly></label>
+    <label>Medio<select name="medio"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select></label>
+    <label class="certificate-wide-field">Observaciones<textarea name="obs" placeholder="Opcional"></textarea></label>
+   </div>
+   <p class="help"><strong>${classCount} clase(s) × ${money(unitValue)} = ${money(total)}</strong></p>
+   <div class="actions"><button type="submit" class="button primary">Guardar aporte mensual</button><button type="button" class="button secondary" data-close>Cancelar</button></div>
+  </form>`);
+
+ d.querySelector('form').onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget,paymentDate=f.fecha.value,button=f.querySelector('button[type="submit"]');
+  if(!paymentDate)return alert('Indica la fecha real en que se recibió el aporte.');
+  button.disabled=true;button.textContent='Guardando…';
+  const{error}=await sb.rpc('registrar_aporte_zumba_mensual',{
+   p_periodo:period+'-01',
+   p_fecha_pago:paymentDate,
+   p_cantidad_clases:classCount,
+   p_valor_clase:unitValue,
+   p_medio:f.medio.value,
+   p_observaciones:f.obs.value.trim()||null
+  });
+  if(error){
+   button.disabled=false;button.textContent='Guardar aporte mensual';
+   const detail=String(error.message||'');
+   if(detail.includes('registrar_aporte_zumba_mensual')||detail.includes('schema cache'))return alert('Debes ejecutar el SQL incluido en esta actualización en Supabase y luego recargar con Ctrl + F5.');
+   return alert(detail);
+  }
+  d.remove();
+  msg(`Aporte de ${periodLabel} registrado por ${money(total)} con fecha real ${dateCL(paymentDate)}.`);
+  await loadZumba();
+ };
 }
 async function deleteZumbaPayment(id){if(!confirm('¿Eliminar este aporte de prueba?'))return;const{error}=await sb.from('zumba_pagos').delete().eq('id',id).is('cierre_id',null);if(error)return alert(error.message);loadZumba()}
 async function closeZumbaMonth(){
