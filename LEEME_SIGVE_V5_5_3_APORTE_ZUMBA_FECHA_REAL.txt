@@ -1,0 +1,12 @@
+SIGVE v5.5.3 - Aporte de Zumba con fecha real
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_3_APORTE_ZUMBA_FECHA_REAL.sql en Supabase > SQL Editor.
+2. Publicar todos los archivos de esta carpeta.
+3. Recargar Administración con Ctrl + F5.
+
+Corrección:
+- El mes trabajado y la fecha real del aporte son independientes.
+- Ejemplo permitido: aporte de julio de 2026 pagado el 05-08-2026.
+- El aporte queda asociado al cierre de julio.
+- Al cerrar julio, Finanzas usa la fecha real 05-08-2026.
+- Se mantiene un único aporte por mes y el monto se calcula como clases activas × valor por clase.
