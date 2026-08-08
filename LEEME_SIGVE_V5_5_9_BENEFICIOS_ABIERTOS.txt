@@ -1,0 +1,7 @@
+SIGVE v5.5.9 · Beneficios abiertos
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_5_9_BENEFICIOS_ABIERTOS.sql en Supabase > SQL Editor.
+2. Publicar todos los archivos del ZIP.
+3. Recargar Administración y Portal Socio con Ctrl + F5.
+
+Novedad: Administración > Beneficios incorpora '+ Crear beneficio'. Los nuevos beneficios son informativos: no cambian precios ni reservas. Pueden activarse/desactivarse, tener vigencia, requisitos y mostrarse en Portal Socio. Los beneficios operativos actuales de arriendo permanecen intactos.

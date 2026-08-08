@@ -6,3 +6,5 @@
 .beneficio-card .benefit-summary{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin:1rem 0}.benefit-summary div{background:#f8fafc;border-radius:10px;padding:.7rem}.benefit-summary span{display:block;font-size:.76rem;color:#64748b}.benefit-summary strong{display:block;margin-top:.2rem}
 .benefit-evaluation{border:1px solid #bbf7d0;background:#f0fdf4;border-radius:12px;padding:.8rem;margin-top:.7rem}.benefit-evaluation.warn{border-color:#fde68a;background:#fffbeb}
 @media(max-width:700px){.beneficios-grid{grid-template-columns:1fr}.beneficio-card .benefit-summary{grid-template-columns:1fr}}
+
+.beneficio-card .badge.info{margin-left:.35rem;background:#ecfeff;color:#155e75}.benefit-summary .wide{grid-column:1/-1}

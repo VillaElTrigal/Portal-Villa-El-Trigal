@@ -125,13 +125,16 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
     const box=$('portalBenefitsSummary'); if(!box)return;
     try{
       const rows=await rpc('portal_socio_mis_beneficios',{p_token:token})||[];
-      if(!rows.length){box.innerHTML='<div class="notice">Actualmente no hay beneficios activos para el arriendo de la sede.</div>';return}
-      box.innerHTML=rows.map(b=>{
+      const infoRows=await rpc('portal_socio_beneficios_informativos',{p_token:token})||[];
+      if(!rows.length&&!infoRows.length){box.innerHTML='<div class="notice">Actualmente no hay beneficios activos.</div>';return}
+      const operational=rows.map(b=>{
         const ok=!!b.cumple;
         const icon=b.tipo==='gratis'?'🎁':'🏅';
         const value=b.tipo==='gratis'?'1 arriendo gratuito disponible':b.tipo==='porcentaje'?`${Number(b.valor||0)}% de descuento`:`${money(b.valor)} de descuento`;
         return `<article class="benefit-status ${ok?'eligible':'pending'}"><div class="benefit-icon">${icon}</div><div><h3>${escape(b.nombre)}</h3><p class="benefit-result">${ok?'✅ Beneficio disponible':'⏳ Aún no disponible'}</p><p>${escape(b.motivo||'')}</p><small>${escape(b.detalle||value)}</small></div></article>`;
       }).join('');
+      const informational=infoRows.map(b=>`<article class="benefit-status eligible"><div class="benefit-icon">🎁</div><div><h3>${escape(b.nombre)}</h3><p class="benefit-result">ℹ️ Beneficio para socios</p><p>${escape(b.descripcion||'')}</p>${b.requisitos_texto?`<small><strong>Cómo acceder:</strong> ${escape(b.requisitos_texto)}</small>`:''}${b.vigencia_hasta?`<small> · Vigente hasta ${new Date(b.vigencia_hasta+'T12:00:00').toLocaleDateString('es-CL')}</small>`:''}</div></article>`).join('');
+      box.innerHTML=operational+informational;
     }catch(err){box.innerHTML='<div class="notice">No fue posible revisar tus beneficios.</div>';msg('benefitsMsg',err.message,'error')}
   }
 
