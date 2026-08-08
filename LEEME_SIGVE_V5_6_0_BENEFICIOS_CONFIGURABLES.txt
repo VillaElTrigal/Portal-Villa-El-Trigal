@@ -1,0 +1,9 @@
+SIGVE v5.6.0 · Beneficios configurables
+
+1. Ejecutar ACTUALIZAR_SUPABASE_SIGVE_V5_6_0_BENEFICIOS_CONFIGURABLES.sql en Supabase.
+2. Publicar los archivos del proyecto.
+3. Recargar Administración con Ctrl + F5.
+
+El editor permite beneficio automático o informativo; porcentaje, monto fijo o gratuidad; exigir socio vigente; estar al día; mínimo de cuotas; límite de usos anual; vigencia; Portal Socio; requisitos y acuerdo.
+Los beneficios automáticos de esta versión se aplican al arriendo de la sede.
+No se eliminan beneficios ni usos existentes.
