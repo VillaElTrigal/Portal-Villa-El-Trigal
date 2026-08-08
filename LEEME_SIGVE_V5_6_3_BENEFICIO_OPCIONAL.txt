@@ -1,0 +1,15 @@
+SIGVE v5.6.3 · Beneficio opcional en Portal Socio
+
+Cambios:
+- Ningún beneficio se selecciona automáticamente.
+- El socio puede elegir "No usar beneficio".
+- Puede elegir uno de sus beneficios disponibles.
+- Si no lo usa, no se consume y queda disponible para otra reserva.
+- La solicitud guarda qué beneficio pidió.
+- El uso del beneficio se registra solo al confirmar la reserva desde Administración.
+
+Ejecutar en Supabase, en este orden:
+1) ACTUALIZAR_SUPABASE_SIGVE_V5_6_3_BENEFICIO_OPCIONAL.sql
+2) ACTUALIZAR_SUPABASE_SIGVE_V5_6_3_RESERVA_BENEFICIO_SELECCION.sql
+
+Después publicar los archivos y recargar Portal Socio con Ctrl + F5.
