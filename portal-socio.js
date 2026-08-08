@@ -3,6 +3,7 @@
   const cfg=window.PORTAL_CONFIG||{};
   const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
   let token=sessionStorage.getItem('sigve_portal_token'), children=[], currentMemberNumber='', childFormDirty=false, vias=[], currentSocio=null;
+  let memberRentalYear=new Date().getFullYear(), memberRentalLoaded=false, memberRentalDate='', memberRentalLabel='', memberRentalBenefits=[], memberRentalBase=40000;
   const $=(id)=>document.getElementById(id);
   const msg=(id,text,type='')=>{const e=$(id);e.textContent=text;e.className=`message ${type}`};
   const rpc=async(fn,args={})=>{const {data,error}=await sb.rpc(fn,args);if(error)throw new Error(error.message);return data};
@@ -205,17 +206,76 @@ La solicitud quedó registrada en SIGVE.`;
     finally{button.disabled=false;button.textContent=original}
   });
 
-  $('openRentalFromPortal')?.addEventListener('click',()=>{
-    const context={
-      origen:'portal_socio',
-      portal_token:token,
-      nombre:$('welcomeName').textContent.trim(),
-      rut:$('rutRead').textContent.trim(),
-      telefono:currentSocio?.telefono||'',
-      creado_en:Date.now()
-    };
-    sessionStorage.setItem('sigve_reserva_context',JSON.stringify(context));
-    location.href='index.html?reserva=portal_socio#arriendo';
+  const rentalMonthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const rentalDayNames=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  const rentalIso=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const rentalReadable=(y,m,d)=>`${d} de ${rentalMonthNames[m].toLowerCase()} de ${y}`;
+
+  async function renderMemberRentalCalendar(){
+    const host=$('memberRentalCalendars'),status=$('memberRentalStatus');if(!host||!token)return;
+    $('memberRentalYear').textContent=memberRentalYear;
+    $('memberRentalPrev').disabled=memberRentalYear<=new Date().getFullYear();
+    host.innerHTML='<div class="notice">Cargando disponibilidad…</div>';
+    const from=`${memberRentalYear}-01-01`,to=`${memberRentalYear+1}-01-01`;
+    const {data,error}=await sb.from('reservas_publicas').select('*').gte('fecha_evento',from).lt('fecha_evento',to);
+    if(error){host.innerHTML='<div class="notice">No fue posible cargar el calendario.</div>';status.textContent=error.message;return}
+    const occupied=new Map((data||[]).map(x=>[x.fecha_evento,x])),today=new Date();today.setHours(0,0,0,0);host.innerHTML='';
+    for(let m=0;m<12;m++){
+      const card=document.createElement('article');card.className='member-month-card';card.innerHTML=`<h4>${rentalMonthNames[m]} ${memberRentalYear}</h4>`;
+      const days=document.createElement('div');days.className='member-month-days';
+      rentalDayNames.forEach(n=>days.insertAdjacentHTML('beforeend',`<span class="member-day-name">${n}</span>`));
+      const offset=(new Date(memberRentalYear,m,1).getDay()+6)%7;for(let i=0;i<offset;i++)days.insertAdjacentHTML('beforeend','<span></span>');
+      const count=new Date(memberRentalYear,m+1,0).getDate();
+      for(let d=1;d<=count;d++){
+        const iso=rentalIso(memberRentalYear,m,d),entry=occupied.get(iso),date=new Date(memberRentalYear,m,d),b=document.createElement('button');b.type='button';b.textContent=d;b.dataset.date=iso;
+        if(date<today){b.className='member-calendar-day past';b.disabled=true}
+        else if(entry){b.className=`member-calendar-day ${entry.tipo==='zumba'||entry.tipo==='actividad'||entry.tipo==='administrativa'?'zumba':'reserved'}`;b.disabled=true;b.title=entry.descripcion_publica||'No disponible'}
+        else{b.className='member-calendar-day available';b.onclick=()=>selectMemberRentalDate(iso,rentalReadable(memberRentalYear,m,d),b)}
+        days.appendChild(b)
+      }
+      card.appendChild(days);host.appendChild(card)
+    }
+    status.textContent=`Disponibilidad ${memberRentalYear} actualizada desde Gestión de la Sede.`;memberRentalLoaded=true;
+  }
+
+  async function selectMemberRentalDate(iso,label,button){
+    memberRentalDate=iso;memberRentalLabel=label;
+    document.querySelectorAll('.member-calendar-day.selected').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');
+    $('memberRentalDateLabel').textContent=label;$('memberRentalSelection').hidden=false;$('memberRentalSelection').scrollIntoView({behavior:'smooth',block:'nearest'});
+    const benefitBox=$('memberRentalBenefitBox');benefitBox.innerHTML='<div class="notice">Calculando tus beneficios para esta fecha…</div>';
+    try{
+      const cfg=await sb.from('configuracion_gestion').select('valor_arriendo').eq('id',1).maybeSingle();memberRentalBase=Number(cfg.data?.valor_arriendo||40000);
+      memberRentalBenefits=await rpc('portal_socio_mis_beneficios',{p_token:token})||[];
+      const free=memberRentalBenefits.find(x=>x.cumple&&x.tipo==='gratis'),automatic=memberRentalBenefits.filter(x=>x.cumple&&x.tipo!=='gratis').sort((a,b)=>Number(a.valor_final)-Number(b.valor_final))[0];
+      const best=automatic||null,final=best?Number(best.valor_final):memberRentalBase;
+      benefitBox.innerHTML=`<div class="member-price-row"><span>Valor normal</span><strong>${money(memberRentalBase)}</strong></div>${best?`<div class="member-price-row"><span>Beneficio disponible</span><strong>${escape(best.nombre)}</strong></div><div class="member-price-row total"><span>Total estimado</span><strong>${money(final)}</strong></div>`:`<div class="member-price-row total"><span>Total</span><strong>${money(memberRentalBase)}</strong></div>`}${free?`<label class="member-free-choice"><input id="memberUseFree" type="checkbox"> <span><strong>${escape(free.nombre)}</strong><small>Usar mi arriendo gratuito en esta solicitud.</small></span></label>`:''}`;
+      $('memberUseFree')?.addEventListener('change',()=>{const total=benefitBox.querySelector('.member-price-row.total strong');if(total)total.textContent=$('memberUseFree').checked?money(0):money(final)})
+    }catch(err){benefitBox.innerHTML=`<div class="notice">No fue posible calcular los beneficios: ${escape(err.message)}</div>`}
+  }
+
+  $('memberRentalPrev')?.addEventListener('click',async()=>{if(memberRentalYear<=new Date().getFullYear())return;memberRentalYear--;memberRentalDate='';$('memberRentalSelection').hidden=true;await renderMemberRentalCalendar()});
+  $('memberRentalNext')?.addEventListener('click',async()=>{memberRentalYear++;memberRentalDate='';$('memberRentalSelection').hidden=true;await renderMemberRentalCalendar()});
+
+  // Carga el calendario cuando el socio abre la pestaña Arrendar sede.
+  document.querySelector('[data-tab="arriendoSocio"]')?.addEventListener('click',()=>{if(!memberRentalLoaded)renderMemberRentalCalendar()});
+
+  $('submitMemberRental')?.addEventListener('click',async()=>{
+    if(!memberRentalDate)return msg('benefitsMsg','Selecciona una fecha disponible.','error');
+    const button=$('submitMemberRental'),original=button.textContent;button.disabled=true;button.textContent='Guardando solicitud…';msg('benefitsMsg','');
+    const whatsappWindow=window.open('about:blank','_blank');
+    try{
+      const phone=phoneDbPortal(currentSocio?.telefono||'');if(!phone)throw new Error('Tu ficha no tiene un celular válido. Actualízalo en Mis datos antes de reservar.');
+      const useFree=!!$('memberUseFree')?.checked;
+      const {error}=await sb.rpc('crear_solicitud_reserva_con_beneficio',{p_nombre:currentSocio?.nombre_completo||$('welcomeName').textContent.trim(),p_telefono:phone,p_fecha:memberRentalDate,p_rut:formatRut(currentSocio?.rut||$('rutRead').textContent),p_observaciones:$('memberRentalNotes').value.trim()||null,p_token:token,p_usar_gratis:useFree});
+      if(error)throw error;
+      const eligible=memberRentalBenefits.filter(x=>x.cumple),free=eligible.find(x=>x.tipo==='gratis'),automatic=eligible.filter(x=>x.tipo!=='gratis').sort((a,b)=>Number(a.valor_final)-Number(b.valor_final))[0],applied=useFree&&free?free:automatic,final=applied?Number(applied.valor_final):memberRentalBase;
+      const benefitText=applied?` Beneficio aplicado: ${applied.nombre}. Total del arriendo: ${money(final)}.`:'';
+      const paymentText=final===0?' No corresponde abono por tratarse de un arriendo gratuito.':' Adjuntaré el comprobante del abono de $10.000.';
+      const text=`Hola, envié una solicitud de arriendo de la Sede Social Villa El Trigal para el día ${memberRentalLabel}. Mi nombre es ${currentSocio?.nombre_completo||''}.${benefitText}${paymentText} Entiendo que la reserva queda confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp.`;
+      const url=window.SIGVE_WHATSAPP?.url('56974596793',text)||`https://wa.me/56974596793?text=${encodeURIComponent(text)}`;if(whatsappWindow)whatsappWindow.location.href=url;else window.open(url,'_blank','noopener');
+      msg('benefitsMsg','Solicitud registrada. La fecha quedó bloqueada como pendiente.','success');memberRentalDate='';$('memberRentalSelection').hidden=true;$('memberRentalNotes').value='';await renderMemberRentalCalendar();
+    }catch(err){if(whatsappWindow)whatsappWindow.close();msg('benefitsMsg',/disponible|duplicate|fecha/i.test(err.message)?'La fecha acaba de ser ocupada. Selecciona otra fecha disponible.':err.message,'error');await renderMemberRentalCalendar()}
+    finally{button.disabled=false;button.textContent=original}
   });
 
   if(token)enter();
