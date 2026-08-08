@@ -61,12 +61,13 @@
         <div class="actions">
           <button class="button secondary" data-view-periodo="${p.id}">Ver detalle</button>
           ${editable ? `<button class="button primary" data-edit-periodo="${p.id}">Editar</button>` : ''}
-          ${p.estado === 'activo' ? `<button class="button danger" data-close-admin-period="${p.id}">Cerrar período</button>` : ''}
+          ${p.estado === 'activo' ? `<button class="button secondary" data-simulate-admin-period="${p.id}">🔎 Simular cierre</button><button class="button danger" data-close-admin-period="${p.id}">Cerrar período</button>` : ''}
         </div>
       </article>`;
     }).join('')}</div>`;
     $$('[data-edit-periodo]', host).forEach(b => b.onclick = () => openForm(rows.find(x => x.id === b.dataset.editPeriodo)));
     $$('[data-view-periodo]', host).forEach(b => b.onclick = () => openDetail(rows.find(x => x.id === b.dataset.viewPeriodo)));
+    $$('[data-simulate-admin-period]', host).forEach(b => b.onclick = () => openCloseSimulation(rows.find(x => x.id === b.dataset.simulateAdminPeriod)));
     $$('[data-close-admin-period]', host).forEach(b => b.onclick = () => openClosePeriod(rows.find(x => x.id === b.dataset.closeAdminPeriod)));
   }
 
@@ -110,6 +111,95 @@
       </div>
       <p><strong>Observaciones</strong><br>${esc(p.observaciones || 'Sin observaciones')}</p>
       <div class="periodos-actions"><button class="button secondary" data-close-periodos>Cerrar</button></div>`);
+  }
+
+
+  async function getSimulationSnapshot(p) {
+    const [movements, logs] = await Promise.all([
+      sb.from('movimientos_financieros').select('id,tipo,monto,fondo,fondo_origen,fondo_destino').eq('periodo_id', p.id),
+      sb.from('bitacora_institucional').select('id', { count: 'exact', head: true }).eq('periodo_id', p.id)
+    ]);
+    if (movements.error) throw movements.error;
+    // La bitácora es complementaria. Si la tabla no existe/no responde, la simulación continúa.
+    const financialRows = movements.data || [];
+    let caja = Number(p.saldo_caja_inicial || 0);
+    let banco = Number(p.saldo_banco_inicial || 0);
+    let ingresos = 0;
+    let gastos = 0;
+    let transferencias = 0;
+    for (const x of financialRows) {
+      const monto = Number(x.monto || 0);
+      if (x.tipo === 'ingreso') {
+        ingresos += monto;
+        if (x.fondo === 'caja') caja += monto;
+        if (x.fondo === 'banco') banco += monto;
+      } else if (x.tipo === 'gasto') {
+        gastos += monto;
+        if (x.fondo === 'caja') caja -= monto;
+        if (x.fondo === 'banco') banco -= monto;
+      } else if (x.tipo === 'transferencia') {
+        transferencias += 1;
+        if (x.fondo_origen === 'caja') caja -= monto;
+        if (x.fondo_origen === 'banco') banco -= monto;
+        if (x.fondo_destino === 'caja') caja += monto;
+        if (x.fondo_destino === 'banco') banco += monto;
+      }
+    }
+    return {
+      movimientos: financialRows.length,
+      ingresos,
+      gastos,
+      transferencias,
+      caja,
+      banco,
+      total: caja + banco,
+      bitacora: logs.error ? null : Number(logs.count || 0)
+    };
+  }
+
+  async function openCloseSimulation(p) {
+    if (!p || p.estado !== 'activo') return notify('Solo se puede simular el cierre del período activo.', true);
+    const el = modal(`<h3>Simulación de cierre</h3>
+      <div class="periodos-simulation-loading">
+        <strong>Preparando vista previa…</strong>
+        <p>Esta simulación es solo lectura. No modificará ningún dato en Supabase.</p>
+      </div>`);
+    try {
+      const x = await getSimulationSnapshot(p);
+      const logText = x.bitacora == null ? 'No disponible' : `${x.bitacora} eventos`;
+      el.querySelector('.periodos-modal-card').innerHTML = `<div class="periodos-simulation-head">
+          <div><span class="periodos-simulation-badge">🔎 SOLO SIMULACIÓN</span><h3>Vista previa del cierre</h3><p><strong>${esc(p.nombre)}</strong> · ${dateCL(p.fecha_inicio)} → ${dateCL(p.fecha_termino)}</p></div>
+        </div>
+        <div class="periodos-simulation-safe"><strong>No se cerrará nada.</strong><span>Esta pantalla únicamente consulta los datos actuales y muestra cómo quedaría el período si hoy ejecutaras el cierre real.</span></div>
+        <section class="periodos-simulation-grid">
+          <div><span>Movimientos financieros</span><strong>${x.movimientos}</strong></div>
+          <div><span>Ingresos acumulados</span><strong>${money(x.ingresos)}</strong></div>
+          <div><span>Gastos acumulados</span><strong>${money(x.gastos)}</strong></div>
+          <div><span>Transferencias</span><strong>${x.transferencias}</strong></div>
+          <div><span>Caja al cierre</span><strong>${money(x.caja)}</strong></div>
+          <div><span>Banco al cierre</span><strong>${money(x.banco)}</strong></div>
+          <div class="periodos-simulation-total"><span>Total institucional</span><strong>${money(x.total)}</strong></div>
+          <div><span>Bitácora institucional</span><strong>${esc(logText)}</strong></div>
+        </section>
+        <section class="periodos-simulation-result">
+          <h4>¿Qué ocurriría al cerrar realmente?</h4>
+          <ul>
+            <li>El período <strong>${esc(p.nombre)}</strong> cambiaría de <em>activo</em> a <em>cerrado</em> y quedaría en modo de solo lectura.</li>
+            <li>Se guardarían como referencia final los saldos de Caja y Banco mostrados arriba.</li>
+            <li>La administración aparecería en <strong>Archivo Histórico</strong> y se podría abrir su expediente.</li>
+            <li>Los movimientos financieros y los eventos de Bitácora que ya están vinculados a este período seguirían asociados a él.</li>
+            <li>Los socios continúan como registro comunitario permanente; no se eliminan al cambiar de administración.</li>
+          </ul>
+        </section>
+        <section class="periodos-simulation-limit">
+          <strong>Estado actual del Archivo Histórico</strong>
+          <p>Finanzas y Bitácora están integradas por período. Documentos, actividades, reservas, inventario, proyectos y acta de entrega todavía figuran en el expediente como módulos pendientes de vinculación histórica específica. La simulación no los presenta como archivados si el sistema actual no los vincula realmente al período.</p>
+        </section>
+        <div class="periodos-actions"><button type="button" class="button secondary" data-close-periodos>Cerrar simulación</button><button type="button" class="button danger" data-go-real-close>Cerrar período realmente</button></div>`;
+      el.querySelector('[data-go-real-close]')?.addEventListener('click', () => { el.remove(); openClosePeriod(p); });
+    } catch (error) {
+      el.querySelector('.periodos-modal-card').innerHTML = `<h3>No se pudo preparar la simulación</h3><div class="periodos-error">${esc(error.message || error)}</div><div class="periodos-actions"><button type="button" class="button secondary" data-close-periodos>Cerrar</button></div>`;
+    }
   }
 
 

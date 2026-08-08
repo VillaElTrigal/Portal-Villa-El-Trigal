@@ -1,0 +1,11 @@
+SIGVE v5.5.8 - Simulación de cierre administrativo
+
+Cambio principal:
+- Se agrega el botón “Simular cierre” al período administrativo activo.
+- La simulación es 100% de solo lectura: no ejecuta cerrar_periodo_administrativo ni modifica Supabase.
+- Muestra movimientos, ingresos, gastos, transferencias, saldos estimados de Caja/Banco/Total y cantidad de eventos de Bitácora.
+- Explica qué módulos están realmente integrados hoy al Archivo Histórico y cuáles siguen pendientes de vinculación histórica específica.
+- Desde la simulación se puede cerrar la ventana o pasar voluntariamente al diálogo de cierre real.
+
+No requiere SQL.
+Después de publicar, recarga Administración con Ctrl + F5.
