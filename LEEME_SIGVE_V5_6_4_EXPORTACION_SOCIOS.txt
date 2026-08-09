@@ -1,0 +1,16 @@
+SIGVE v5.6.4 · Exportación de socios
+
+Administración > Socios incorpora:
+- Exportar Excel (.xls compatible con Excel).
+- Lista imprimible / PDF en formato A4 horizontal.
+- Filtro por estado.
+- Ambos respetan el texto de búsqueda y el filtro de estado visibles.
+
+Excel incluye: N° socio, nombre, RUT, fecha de nacimiento, edad, estado civil,
+ocupación, dirección, teléfono, correo, fecha de ingreso, estado y autorización WhatsApp.
+
+La lista imprimible incluye los datos principales y una columna Firma / observación.
+Al abrirla aparece el diálogo de impresión del navegador, donde puede elegirse
+Guardar como PDF.
+
+No requiere cambios en Supabase.
