@@ -1,0 +1,6 @@
+SIGVE v5.6.4 · Beneficios últimos 12 meses
+- Cuotas mínimas configurables por beneficio.
+- Cuotas evaluadas sobre los últimos 12 meses según la fecha del arriendo.
+- Usos contabilizados por año calendario de la fecha del arriendo.
+- El 1 de enero reinicia usos, no el historial de cuotas.
+- 'Estar al día' continúa siendo opcional.
