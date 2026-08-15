@@ -36,3 +36,5 @@
 .member-benefit-radio span,.member-benefit-radio strong,.member-benefit-radio small{display:block}
 .member-benefit-radio small{margin-top:.15rem;color:#64748b}
 .member-benefit-radio:has(input:checked){border-color:#16827a;background:#f0fdfa}
+
+.street-whatsapp-card{display:grid;grid-template-columns:auto 1fr;gap:14px;margin:1rem 0;padding:1rem;border:1px solid #cfe8d5;border-radius:16px;background:#f4fbf6}.street-whatsapp-card[hidden]{display:none}.street-whatsapp-icon{font-size:2rem}.street-whatsapp-card h3{margin:.15rem 0}.street-whatsapp-card p{margin:.3rem 0 .8rem}.street-whatsapp-button{display:inline-flex;text-decoration:none;font-weight:800;padding:.7rem 1rem;border-radius:10px;background:#168a4a;color:#fff}@media(max-width:600px){.street-whatsapp-card{grid-template-columns:1fr}.street-whatsapp-icon{display:none}.street-whatsapp-button{width:100%;box-sizing:border-box;justify-content:center}}

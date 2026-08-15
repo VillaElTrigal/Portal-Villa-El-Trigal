@@ -1,0 +1,2 @@
+SIGVE v6.2.1 - WhatsApp por calle
+1) Ejecutar SQL incluido. 2) Publicar ZIP. 3) Administración > Vías > Editar y pegar enlaces. 4) Portal Socio muestra el grupo de su calle.
