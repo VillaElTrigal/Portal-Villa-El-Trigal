@@ -1,6 +1,8 @@
 (()=>{
 'use strict';
 const $=s=>document.querySelector(s);
+const cfg=window.PORTAL_CONFIG||{};
+const roleSb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let currentRole='';
 let rows=[];
@@ -8,8 +10,8 @@ let rows=[];
 const roleLabel=r=>({administrador:'Administrador principal',tesorero:'Tesorero',secretario:'Secretario'}[r]||r||'Sin rol');
 
 async function getMyRole(){
- const {data:{user}}=await sb.auth.getUser(); if(!user)return '';
- const {data}=await sb.from('administradores').select('rol,activo').eq('user_id',user.id).maybeSingle();
+ const {data:{user}}=await roleSb.auth.getUser(); if(!user)return '';
+ const {data}=await roleSb.from('administradores').select('rol,activo').eq('user_id',user.id).maybeSingle();
  currentRole=data?.activo?String(data.rol||'').toLowerCase():'';
  return currentRole;
 }
@@ -53,14 +55,14 @@ function render(){
 
 async function loadRoles(){
  if(currentRole!=='administrador')return;
- const {data,error}=await sb.rpc('sigve_listar_usuarios');
+ const {data,error}=await roleSb.rpc('sigve_listar_usuarios');
  if(error){$('#role-cards').innerHTML=`<p class="form-message error">${esc(error.message)}. Ejecuta primero ACTUALIZAR_SUPABASE_SIGVE_V6_3_USUARIOS_ROLES.sql.</p>`;return}
  rows=data||[]; render();
 }
 
 async function assignUser(e){
  e.preventDefault(); const f=e.currentTarget,m=$('#role-message'); m.textContent='Guardando…';
- const {error}=await sb.rpc('sigve_asignar_usuario',{p_email:f.email.value.trim(),p_nombre:f.nombre.value.trim(),p_rol:f.rol.value,p_activo:f.activo.checked});
+ const {error}=await roleSb.rpc('sigve_asignar_usuario',{p_email:f.email.value.trim(),p_nombre:f.nombre.value.trim(),p_rol:f.rol.value,p_activo:f.activo.checked});
  if(error){m.textContent=error.message; m.classList.add('error'); return}
  m.classList.remove('error');m.textContent=f.activo.checked?'Usuario asignado y activado.':'Usuario asignado. Quedó inactivo hasta que decidas activarlo.'; f.reset(); await loadRoles();
 }
@@ -70,11 +72,11 @@ async function onRoleAction(e){
  const id=t.dataset.id; if(!id)return;
  if(t.classList.contains('role-toggle')){
    const activate=t.dataset.active!=='true';
-   const {error}=await sb.rpc('sigve_cambiar_estado_usuario',{p_user_id:id,p_activo:activate});
+   const {error}=await roleSb.rpc('sigve_cambiar_estado_usuario',{p_user_id:id,p_activo:activate});
    if(error)return alert(error.message);
  }else{
    if(!confirm('¿Desasignar esta persona del cargo? Su cuenta de Authentication no será eliminada.'))return;
-   const {error}=await sb.rpc('sigve_desasignar_usuario',{p_user_id:id}); if(error)return alert(error.message);
+   const {error}=await roleSb.rpc('sigve_desasignar_usuario',{p_user_id:id}); if(error)return alert(error.message);
  }
  await loadRoles();
 }
