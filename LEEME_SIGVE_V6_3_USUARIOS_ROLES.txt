@@ -1,0 +1,28 @@
+SIGVE v6.3 – USUARIOS Y ROLES
+
+Se agregó el módulo “🔐 Usuarios y permisos”.
+
+Estado inicial esperado:
+- Administrador principal: activo (usuario actual).
+- Tesorero: sin asignar.
+- Secretario: sin asignar.
+
+IMPORTANTE – PASO EN SUPABASE
+1. Publica los archivos del ZIP normalmente.
+2. En Supabase > SQL Editor ejecuta completo:
+   ACTUALIZAR_SUPABASE_SIGVE_V6_3_USUARIOS_ROLES.sql
+
+Cuando en el futuro se defina un Tesorero o Secretario:
+1. Supabase > Authentication > Users: crea/invita al usuario con su correo.
+2. En SIGVE entra como Administrador > Usuarios y permisos.
+3. Elige el cargo, escribe nombre y el MISMO correo.
+4. Puedes dejar “Activar acceso inmediatamente” desmarcado.
+5. Cuando corresponda, pulsa Activar.
+
+Seguridad:
+- No se crean usuarios genéricos.
+- No se guardan contraseñas en el portal.
+- Tesorero/Secretario pueden quedar sin asignar o inactivos.
+- El Administrador principal no puede desactivarse ni eliminarse desde el módulo.
+- La función histórica es_admin() queda reservada al rol administrador.
+- Los permisos operativos de Tesorero/Secretario deben habilitarse por módulo antes de activar esas cuentas; por defecto quedan restringidos (fail closed).
