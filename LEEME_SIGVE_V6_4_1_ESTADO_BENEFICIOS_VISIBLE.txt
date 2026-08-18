@@ -1,0 +1,8 @@
+SIGVE v6.4.1 - Estado de beneficios visible
+
+Cambios:
+- Registro de socios incorpora una columna independiente "Beneficios".
+- Socio activo con 0 a 2 cuotas vencidas: Habilitados.
+- Socio activo con 3 o más cuotas vencidas: Suspendidos + cantidad de cuotas vencidas.
+- Socios no activos: No habilitados por estado.
+- No requiere ejecutar un SQL adicional. La lógica de morosidad sigue usando la actualización v6.4.

@@ -1,0 +1,27 @@
+SIGVE v6.4 · Suspensión automática por morosidad
+
+CAMBIOS
+1. Socios con 3 o más cuotas vencidas siguen institucionalmente ACTIVOS, pero quedan con beneficios suspendidos automáticamente.
+2. La lista de Socios muestra "Beneficios suspendidos" y la cantidad de cuotas vencidas.
+3. Se agregó filtro: "Beneficios suspendidos (3+ cuotas vencidas)".
+4. Exportar Navidad incluye solamente niños/as:
+   - activos en el registro del hogar,
+   - que participan en actividades,
+   - dentro de la edad máxima configurada,
+   - cuyo socio responsable está activo,
+   - y cuyo socio responsable tiene menos de 3 cuotas vencidas.
+5. Los beneficios de arriendo quedan bloqueados automáticamente al llegar a 3 cuotas vencidas, tanto en Administración como en Portal Socio.
+6. Al confirmar una reserva, SIGVE vuelve a validar el beneficio para impedir usar una solicitud antigua si el socio pasó a morosidad.
+7. Al regularizar la deuda y volver a menos de 3 cuotas vencidas, la suspensión desaparece automáticamente.
+8. El mes actual no cuenta como vencido; solo se cuentan períodos anteriores al mes en curso.
+
+INSTALACIÓN
+A) Copiar/publicar los archivos actualizados del proyecto en GitHub.
+B) Ejecutar una sola vez en Supabase > SQL Editor:
+   ACTUALIZAR_SUPABASE_SIGVE_V6_4_SUSPENSION_MOROSIDAD.sql
+C) Recargar Administración con Ctrl+F5.
+
+IMPORTANTE
+- No cambia el campo estado del socio.
+- No elimina cuotas, socios, niños/as ni beneficios existentes.
+- La suspensión es calculada automáticamente según las cuotas pendientes vencidas.
