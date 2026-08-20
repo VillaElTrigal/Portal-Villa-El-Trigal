@@ -1,0 +1,1 @@
+Vías adicionales exclusivas para Certificado de Residencia del Portal Principal. Ejecutar primero el SQL incluido. Administrar desde Administración > Vías. No afectan socios, Portal Socio ni WhatsApp.

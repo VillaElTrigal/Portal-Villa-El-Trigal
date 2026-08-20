@@ -209,7 +209,7 @@
                 <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
                 <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
                 <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
-                <label class="certificate-wide-field">Dirección<input id="cert-address" type="text" autocomplete="street-address" required></label>
+                <label class="certificate-wide-field">Calle, pasaje o avenida<select id="cert-via" required><option value="">Cargando vías…</option></select></label><label>Número<input id="cert-number" inputmode="numeric" maxlength="10" required placeholder="Ej.: 1278"></label><input id="cert-address" type="hidden">
               </div>
             </section>
             <section class="certificate-form-section">
@@ -441,6 +441,10 @@
     certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
     const certPurpose=document.getElementById('cert-purpose'),certPurposeOtherWrap=document.getElementById('cert-purpose-other-wrap'),certPurposeOther=document.getElementById('cert-purpose-other');
     certPurpose.addEventListener('change',()=>{const show=certPurpose.value==='otro';certPurposeOtherWrap.hidden=!show;certPurposeOther.required=show;if(!show)certPurposeOther.value='';});
+    const certVia=document.getElementById('cert-via'),certNumber=document.getElementById('cert-number'),certAddress=document.getElementById('cert-address');
+    const certViaLabel=v=>`${v.tipo||''} ${v.nombre||''}`.trim(),updateCertAddress=()=>{certAddress.value=certVia.value&&certNumber.value.trim()?`${certVia.value} ${certNumber.value.trim()}`:''};
+    certVia.addEventListener('change',updateCertAddress);certNumber.addEventListener('input',updateCertAddress);
+    (async()=>{try{const cfg=window.PORTAL_CONFIG||{},c=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey),[a,b]=await Promise.all([c.from('vias').select('tipo,nombre').eq('activa',true),c.from('vias_certificado').select('tipo,nombre').eq('activa',true)]),seen=new Set(),all=[...(a.data||[]),...(b.data||[])].filter(v=>{const k=certViaLabel(v).toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).sort((x,y)=>certViaLabel(x).localeCompare(certViaLabel(y),'es'));certVia.innerHTML='<option value="">Selecciona una vía</option>'+all.map(v=>`<option>${certViaLabel(v)}</option>`).join('')}catch(e){certVia.innerHTML='<option value="">No fue posible cargar las vías</option>'}})();
     document.getElementById('certificate-form').addEventListener('submit', async function(event) {
       event.preventDefault();
       if (!this.reportValidity()) return;
@@ -453,7 +457,7 @@
         const purpose=document.getElementById('cert-purpose').value;
         const purposeOther=document.getElementById('cert-purpose-other').value.trim();
         if(purpose==='otro'&&!purposeOther){alert('Especifica la otra finalidad.');document.getElementById('cert-purpose-other').focus();return;}
-        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
+        updateCertAddress();if(!certAddress.value){alert('Selecciona una vía e ingresa el número.');return;}\n        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
         const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
         const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
         const purposeLabel=purpose==='otro'?purposeOther:({laboral:'Laboral',estudiantil:'Estudiantil',transporte:'Transporte'}[purpose]||purpose);
