@@ -106,20 +106,31 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
       $('duesStatus').classList.toggle('pending',exigibleCount>0);
       $('pendingCount').textContent=exigibleCount;
       $('pendingAmount').textContent=money(exigibleTotal);
-      if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas exigibles pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;return}
+      if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas exigibles pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;if($('requestCashPayment'))$('requestCashPayment').disabled=true;return}
       box.innerHTML=portalPendingQuotas.map(q=>`<label class="portal-quota-row"><input type="checkbox" data-portal-quota="${q.id}" value="${Number(q.monto)||0}"><span><b>${escape(quotaMonthLabel(q.periodo))}</b><small>Cuota pendiente</small></span><strong>${money(q.monto)}</strong></label>`).join('');
       box.querySelectorAll('[data-portal-quota]').forEach(c=>c.addEventListener('change',updatePortalQuotaTotal));
       updatePortalQuotaTotal();
     }catch(err){box.innerHTML='<div class="notice">No fue posible cargar el detalle de cuotas.</div>';msg('paymentMsg',err.message,'error')}
   }
   function selectedPortalQuotas(){return portalPendingQuotas.filter(q=>document.querySelector(`input[data-portal-quota="${CSS.escape(String(q.id))}"]`)?.checked)}
-  function updatePortalQuotaTotal(){const selected=selectedPortalQuotas(),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);$('portalQuotaTotal').textContent=money(total);$('sendQuotaWhatsapp').disabled=!selected.length}
+  function updatePortalQuotaTotal(){const selected=selectedPortalQuotas(),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);$('portalQuotaTotal').textContent=money(total);$('sendQuotaWhatsapp').disabled=!selected.length;if($('requestCashPayment'))$('requestCashPayment').disabled=!selected.length}
   $('sendQuotaWhatsapp')?.addEventListener('click',()=>{
     const selected=selectedPortalQuotas();if(!selected.length)return;
     const months=selected.map(q=>quotaMonthLabel(q.periodo)).join(', '),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
     const name=$('welcomeName').textContent.trim(),number=$('numero').textContent.trim(),rut=$('rutRead').textContent.trim();
     const text=`Hola. Adjunto el comprobante del pago de mi cuota social.\n\nSOCIO: ${name}\nN° DE SOCIO: ${number}\nRUT: ${rut}\nCUOTA(S): ${months}\nMONTO TOTAL: ${money(total)}\nMEDIO: Transferencia\n\nPor favor confirmar la recepción del comprobante.\nJunta de Vecinos Villa El Trigal.`;
     window.SIGVE_WHATSAPP?.open?window.SIGVE_WHATSAPP.open('56974596793',text):window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+  });
+  $('requestCashPayment')?.addEventListener('click',async()=>{
+    const selected=selectedPortalQuotas();if(!selected.length)return;
+    const ids=selected.map(q=>q.id),months=selected.map(q=>quotaMonthLabel(q.periodo)).join(', '),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
+    const name=$('welcomeName').textContent.trim(),number=$('numero').textContent.trim(),rut=$('rutRead').textContent.trim();
+    try{
+      await rpc('portal_socio_solicitar_pago_efectivo',{p_token:token,p_cuota_ids:ids});
+      const text=`Hola. Solicito coordinar el pago en efectivo de mis cuotas sociales.\n\nSOCIO: ${name}\nN° DE SOCIO: ${number}\nRUT: ${rut}\nCUOTA(S): ${months}\nMONTO TOTAL: ${money(total)}\nMEDIO: Efectivo\n\nPor favor, indíqueme cómo y con quién puedo realizar el pago.\nJunta de Vecinos Villa El Trigal.`;
+      msg('paymentMsg','Solicitud registrada. Se abrirá WhatsApp para coordinar la entrega.','success');
+      window.SIGVE_WHATSAPP?.open?window.SIGVE_WHATSAPP.open('56974596793',text):window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
+    }catch(err){msg('paymentMsg',err.message,'error')}
   });
 
 

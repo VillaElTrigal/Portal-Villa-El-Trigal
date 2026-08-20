@@ -1,0 +1,2 @@
+SIGVE v7.5.0 · Pago en efectivo
+1) Ejecutar SQL incluido. 2) Publicar ZIP. 3) Portal Socio registra solicitud y abre WhatsApp. 4) Caja de Cuotas marca al socio. 5) Registrar efectivo: cuotas y Finanzas se actualizan y la solicitud se completa.
