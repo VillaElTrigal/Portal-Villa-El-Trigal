@@ -407,6 +407,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="portal-config.js"></script>
   <script>
     document.querySelectorAll('nav a').forEach(link => {
       link.addEventListener('click', () => document.body.classList.remove('menu-open'));
@@ -444,7 +446,30 @@
     const certVia=document.getElementById('cert-via'),certNumber=document.getElementById('cert-number'),certAddress=document.getElementById('cert-address');
     const certViaLabel=v=>`${v.tipo||''} ${v.nombre||''}`.trim(),updateCertAddress=()=>{certAddress.value=certVia.value&&certNumber.value.trim()?`${certVia.value} ${certNumber.value.trim()}`:''};
     certVia.addEventListener('change',updateCertAddress);certNumber.addEventListener('input',updateCertAddress);
-    (async()=>{try{const cfg=window.PORTAL_CONFIG||{},c=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey),[a,b]=await Promise.all([c.from('vias').select('tipo,nombre').eq('activa',true),c.from('vias_certificado').select('tipo,nombre').eq('activa',true)]),seen=new Set(),all=[...(a.data||[]),...(b.data||[])].filter(v=>{const k=certViaLabel(v).toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).sort((x,y)=>certViaLabel(x).localeCompare(certViaLabel(y),'es'));certVia.innerHTML='<option value="">Selecciona una vía</option>'+all.map(v=>`<option>${certViaLabel(v)}</option>`).join('')}catch(e){certVia.innerHTML='<option value="">No fue posible cargar las vías</option>'}})();
+    (async()=>{
+      try{
+        const cfg=window.PORTAL_CONFIG||{};
+        if(!window.supabase||!cfg.supabaseUrl||!cfg.supabaseAnonKey)throw new Error('Configuración de Supabase no disponible');
+        const c=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+        const a=await c.from('vias').select('tipo,nombre').eq('activa',true);
+        if(a.error)throw a.error;
+        let extra=[];
+        try{
+          const b=await c.from('vias_certificado').select('tipo,nombre').eq('activa',true);
+          if(!b.error)extra=b.data||[];
+        }catch(_){}
+        const seen=new Set();
+        const all=[...(a.data||[]),...extra].filter(v=>{
+          const k=certViaLabel(v).toLocaleLowerCase('es');
+          if(seen.has(k))return false;
+          seen.add(k);return true;
+        }).sort((x,y)=>certViaLabel(x).localeCompare(certViaLabel(y),'es',{sensitivity:'base'}));
+        certVia.innerHTML='<option value="">Selecciona una vía</option>'+all.map(v=>`<option value="${certViaLabel(v)}">${certViaLabel(v)}</option>`).join('');
+      }catch(e){
+        console.error('Error cargando vías de certificado:',e);
+        certVia.innerHTML='<option value="">No fue posible cargar las vías</option>';
+      }
+    })();
     document.getElementById('certificate-form').addEventListener('submit', async function(event) {
       event.preventDefault();
       if (!this.reportValidity()) return;
@@ -457,7 +482,8 @@
         const purpose=document.getElementById('cert-purpose').value;
         const purposeOther=document.getElementById('cert-purpose-other').value.trim();
         if(purpose==='otro'&&!purposeOther){alert('Especifica la otra finalidad.');document.getElementById('cert-purpose-other').focus();return;}
-        updateCertAddress();if(!certAddress.value){alert('Selecciona una vía e ingresa el número.');return;}\n        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
+        updateCertAddress();if(!certAddress.value){alert('Selecciona una vía e ingresa el número.');return;}
+        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
         const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
         const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
         const purposeLabel=purpose==='otro'?purposeOther:({laboral:'Laboral',estudiantil:'Estudiantil',transporte:'Transporte'}[purpose]||purpose);
@@ -490,8 +516,7 @@ La solicitud quedó registrada en SIGVE.`;
     });
 
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="portal-config.js"></script><script src="sigve-whatsapp.js?v=524"></script>
+  <script src="sigve-whatsapp.js?v=524"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
   <script src="portal-v7.js?v=5070"></script>
