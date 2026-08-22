@@ -16,6 +16,7 @@
   const formatPhonePortal=value=>{const d=phoneDigitsPortal(value);return d?`+56 9 ${d.slice(0,4)}${d.length>4?' '+d.slice(4):''}`:''};
   const phoneDbPortal=value=>{const d=phoneDigitsPortal(value);return d.length===8?`+569${d}`:null};
 const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return false;const body=clean.slice(0,-1),dv=clean.slice(-1);let sum=0,multiplier=2;for(let i=body.length-1;i>=0;i--){sum+=Number(body[i])*multiplier;multiplier=multiplier===7?2:multiplier+1}const result=11-(sum%11),expected=result===11?'0':result===10?'K':String(result);return dv===expected};
+  const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const titleName=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('es-CL').split(' ').map((w,i)=>i>0&&['de','del','la','las','los','y','e'].includes(w)?w:w.charAt(0).toLocaleUpperCase('es-CL')+w.slice(1)).join(' ');
   let portalModality='cotizante';
 
@@ -158,11 +159,20 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
 
 
   async function loadAssociatedPanel(){
-    const box=$('associatedEligibility'),form=$('associatedForm');if(!box||!form)return;
+    const box=$('associatedEligibility'),form=$('associatedForm'),list=$('associatedMembersList');if(!box||!form)return;
     $('associatedAddress').textContent=currentSocio?.direccion||'—';
-    if(portalModality!=='cotizante'){box.innerHTML='Esta opción está disponible únicamente para el <strong>socio cotizante</strong> del domicilio.';form.hidden=true;return}
+    if(portalModality!=='cotizante'){
+      box.innerHTML='Tu modalidad es <strong>Socio asociado</strong>. Tus cuotas y beneficios económicos están vinculados al socio cotizante responsable del hogar.';
+      form.hidden=true;if(list)list.innerHTML='';return
+    }
     box.innerHTML='Puedes solicitar un socio asociado del mismo domicilio. La directiva debe aprobar la incorporación antes de asignar su número de socio.';
     form.hidden=false;
+    if(list){
+      try{
+        const rows=await rpc('portal_socio_mis_asociados',{p_token:token});
+        list.innerHTML=(rows||[]).length?`<h3>Socios asociados a mi hogar</h3>${rows.map(x=>`<div class="child-card"><div><strong>N.º ${String(x.numero_socio||'').padStart(3,'0')} · ${escapeHtml(x.nombre_completo||'')}</strong><div class="muted">Socio asociado · Sin cuotas propias</div></div></div>`).join('')}`:'<div class="muted">Actualmente no tienes socios asociados vinculados.</div>';
+      }catch(_){list.innerHTML=''}
+    }
   }
   const associatedForm=$('associatedForm');
   const associatedRut=associatedForm?.elements?.rut;
