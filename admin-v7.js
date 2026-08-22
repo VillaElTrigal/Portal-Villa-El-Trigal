@@ -77,12 +77,16 @@ async function reviewAssociatedRequest(id,ok){
  await loadSolicitudesAsociados();
 }
 function memberChildLink(socio){const base=new URL('./registro-ninos.html',window.location.href);base.searchParams.set('token',socio.registro_ninos_token);return base.href}
+function firstMemberName(socio){
+ const n=String(socio?.nombres||socio?.nombre_completo||'Vecino').trim().split(/\s+/)[0];
+ return n||'Vecino';
+}
 function associatedMemberWelcomeText(socio){
  const numero=String(socio?.numero_socio||'').padStart(3,'0');
  const responsable=window.v7Socios?.find(x=>x.id===socio.socio_cotizante_id);
  const numeroResp=responsable?.numero_socio?String(responsable.numero_socio).padStart(3,'0'):'—';
  const nombreResp=responsable?.nombre_completo||'Socio cotizante responsable';
- return `🏡 ¡Bienvenido(a) a Villa El Trigal!
+ return `🏡 ¡Hola, ${firstMemberName(socio)}! Te damos la bienvenida a Villa El Trigal
 
 Tu incorporación como Socio Asociado ha sido aprobada.
 
