@@ -303,52 +303,54 @@ function renderNotificationCenter(items){
   list.querySelectorAll('[data-notification-section]').forEach(el=>el.onclick=()=>{markNotificationRead(el.dataset.notificationId);const key=el.dataset.notificationSection;if(key)document.querySelector(`[data-section="${key}"]`)?.click();$('#notification-panel')?.classList.remove('open');renderNotificationCenter(window.v7NotificationItems||[])});
 }
 async function loadNotifications(){
-  // El centro funciona como una bandeja de asuntos útiles para la directiva.
-  // Solo muestra: arriendos pendientes, pagos de cuotas recientes y certificados pendientes.
   const now=new Date();
   const since=new Date(now.getTime()-7*864e5).toISOString();
-  const [reservas,pagos,certificados]=await Promise.all([
+  const [reservas,pagos,certificados,notificaciones]=await Promise.all([
     sb.from('reservas_sede')
       .select('id,fecha_evento,nombre_arrendatario,creado_en')
-      .eq('tipo','arriendo')
-      .eq('estado','pendiente')
-      .order('creado_en',{ascending:false}),
+      .eq('tipo','arriendo').eq('estado','pendiente').order('creado_en',{ascending:false}),
     sb.from('cuotas_socios')
       .select('id,periodo,monto,fecha_pago,actualizado_en,socios(nombre_completo,numero_socio)')
-      .eq('estado','pagado')
-      .gte('actualizado_en',since)
-      .order('actualizado_en',{ascending:false}),
+      .eq('estado','pagado').gte('actualizado_en',since).order('actualizado_en',{ascending:false}),
     sb.from('certificados_emitidos')
       .select('id,folio,nombre,fecha,estado_pago,estado_documento,creado_en')
-      .eq('estado_pago','pendiente')
-      .order('creado_en',{ascending:false})
+      .eq('estado_pago','pendiente').order('creado_en',{ascending:false}),
+    sb.from('notificaciones_admin')
+      .select('id,tipo,referencia_id,titulo,detalle,seccion,prioridad,creado_en')
+      .gte('creado_en',since).order('creado_en',{ascending:false})
   ]);
 
   const items=[];
+  for(const x of notificaciones.data||[])items.push({
+    id:`notificacion:${x.id}`,
+    type:x.tipo||'socio',priority:x.prioridad||'alta',
+    title:x.titulo||'Nueva solicitud de socio',
+    text:x.detalle||'Nueva solicitud recibida',
+    label:'Revisar incorporación',section:x.seccion||'socios',date:x.creado_en
+  });
   for(const x of reservas.data||[])items.push({
-    id:`arriendo-pendiente:${x.id}`,
-    type:'reserva',priority:'alta',
+    id:`arriendo-pendiente:${x.id}`,type:'reserva',priority:'alta',
     title:'Arriendo pendiente de aprobar',
     text:`${x.nombre_arrendatario||'Sin nombre'} · ${dateCL(x.fecha_evento)}`,
     label:'Revisar solicitud',section:'reservas-v7',date:x.creado_en||x.fecha_evento
   });
   for(const x of pagos.data||[])items.push({
-    id:`pago-cuota:${x.id}:${x.actualizado_en||x.fecha_pago||''}`,
-    type:'cuota',priority:'media',
+    id:`pago-cuota:${x.id}:${x.actualizado_en||x.fecha_pago||''}`,type:'cuota',priority:'media',
     title:'Nuevo pago de cuota',
     text:`${x.socios?.nombre_completo||'Socio'}${x.socios?.numero_socio?` · N° ${x.socios.numero_socio}`:''} · ${money(x.monto)}`,
     label:`Cuota ${dateCL(x.periodo)}`,section:'cuotas',date:x.actualizado_en||x.fecha_pago
   });
   for(const x of (certificados.data||[]).filter(x=>!['anulado','entregado'].includes(x.estado_documento)))items.push({
-    id:`certificado-pendiente:${x.id}`,
-    type:'certificado',priority:'alta',
+    id:`certificado-pendiente:${x.id}`,type:'certificado',priority:'alta',
     title:'Certificado de residencia pendiente',
     text:`CR-${String(x.folio||0).padStart(5,'0')} · ${x.nombre||'Sin nombre'}`,
     label:'Pendiente de pago o gestión',section:'certificados',date:x.creado_en||x.fecha
   });
 
-  // Los errores de una consulta no deben ocultar las demás notificaciones.
-  [reservas,pagos,certificados].forEach(r=>{if(r.error)console.warn('Centro de notificaciones:',r.error.message)});
+  [reservas,pagos,certificados,notificaciones].forEach(r=>{
+    if(r.error)console.warn('Centro de notificaciones:',r.error.message)
+  });
+  items.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   window.v7NotificationItems=items;
   renderNotificationCenter(items);
 }
