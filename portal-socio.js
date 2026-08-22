@@ -164,11 +164,45 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
     box.innerHTML='Puedes solicitar un socio asociado del mismo domicilio. La directiva debe aprobar la incorporación antes de asignar su número de socio.';
     form.hidden=false;
   }
+  const associatedForm=$('associatedForm');
+  const associatedRut=associatedForm?.elements?.rut;
+  const associatedPhone=associatedForm?.elements?.telefono;
+  const associatedOccupation=associatedForm?.elements?.ocupacion;
+  const associatedOccupationOtherWrap=$('associatedOccupationOtherWrap');
+
+  associatedRut?.addEventListener('input',()=>{
+    associatedRut.value=formatRut(associatedRut.value);
+  });
+
+  associatedPhone?.addEventListener('input',()=>{
+    let d=String(associatedPhone.value||'').replace(/\D/g,'');
+    if(d.startsWith('569'))d=d.slice(3);
+    else if(d.startsWith('56'))d=d.slice(2);
+    else if(d.startsWith('9')&&d.length>8)d=d.slice(1);
+    associatedPhone.value=d.slice(0,8);
+  });
+
+  const updateAssociatedOccupation=()=>{
+    const isOther=associatedOccupation?.value==='Otro';
+    if(associatedOccupationOtherWrap)associatedOccupationOtherWrap.hidden=!isOther;
+    if(associatedForm?.elements?.ocupacion_otro){
+      associatedForm.elements.ocupacion_otro.required=!!isOther;
+      if(!isOther)associatedForm.elements.ocupacion_otro.value='';
+    }
+  };
+  associatedOccupation?.addEventListener('change',updateAssociatedOccupation);
+  updateAssociatedOccupation();
+
   $('associatedForm')?.addEventListener('submit',async e=>{
-    e.preventDefault();const f=e.currentTarget,rut=formatRut(f.rut.value);
+    e.preventDefault();
+    const f=e.currentTarget,rut=formatRut(f.rut.value);
+    f.rut.value=rut;
     if(!validRut(rut))return msg('associatedMsg','El RUT no es válido.','error');
+    const phoneDigits=String(f.telefono.value||'').replace(/\D/g,'');
+    if(phoneDigits && phoneDigits.length!==8)return msg('associatedMsg','El teléfono debe tener 8 dígitos después de +56 9.','error');
+    if(f.ocupacion.value==='Otro'&&!f.ocupacion_otro.value.trim())return msg('associatedMsg','Especifica la otra ocupación.','error');
     try{
-      await rpc('portal_socio_solicitar_asociado',{p_token:token,p_nombres:titleName(f.nombres.value),p_apellido_paterno:titleName(f.apellido_paterno.value),p_apellido_materno:titleName(f.apellido_materno.value),p_rut:rut,p_fecha_nacimiento:f.fecha_nacimiento.value,p_estado_civil:f.estado_civil.value,p_ocupacion:f.ocupacion.value,p_ocupacion_otro:f.ocupacion_otro.value.trim()||null,p_telefono:f.telefono.value.trim()||null,p_correo:f.correo.value.trim()||null,p_observaciones:f.observaciones.value.trim()||null});
+      await rpc('portal_socio_solicitar_asociado',{p_token:token,p_nombres:titleName(f.nombres.value),p_apellido_paterno:titleName(f.apellido_paterno.value),p_apellido_materno:titleName(f.apellido_materno.value),p_rut:rut,p_fecha_nacimiento:f.fecha_nacimiento.value,p_estado_civil:f.estado_civil.value,p_ocupacion:f.ocupacion.value,p_ocupacion_otro:f.ocupacion_otro.value.trim()||null,p_telefono:f.telefono.value.trim()?`+569${f.telefono.value.trim().replace(/\D/g,'').slice(0,8)}`:null,p_correo:f.correo.value.trim()||null,p_observaciones:f.observaciones.value.trim()||null});
       f.reset();msg('associatedMsg','Solicitud enviada correctamente. La directiva revisará la incorporación.','success');
     }catch(err){msg('associatedMsg',err.message,'error')}
   });
