@@ -140,12 +140,71 @@ async function deleteDocumento(x){if(!confirm('¿Eliminar este documento?'))retu
 function popupIcon(tipo){return {informativo:'ℹ️',actividad:'📅',importante:'⚠️',emergencia:'🚨'}[tipo]||'📢'}
 function popupDateValue(value){return value?String(value).slice(0,10):''}
 function popupIsCurrent(x){const today=new Date().toISOString().slice(0,10);return !!x.activo&&(!x.fecha_inicio||x.fecha_inicio<=today)&&(!x.fecha_termino||x.fecha_termino>=today)}
-function popupPreviewData(){const f=$('popup-form');return {id:f.id.value||'preview',titulo:f.titulo.value.trim()||'Título del aviso',mensaje:f.mensaje.value.trim()||'Aquí aparecerá el mensaje para los vecinos.',tipo:f.tipo.value,imagen_url:f.imagen_actual.value||'',boton_texto:f.boton_texto.value.trim(),boton_url:f.boton_url.value.trim()}}
+let popupLocalPreviewUrl='';
+function popupPreviewData(){
+  const f=$('popup-form');
+  const file=f.imagen.files?.[0];
+  if(file){
+    if(popupLocalPreviewUrl)URL.revokeObjectURL(popupLocalPreviewUrl);
+    popupLocalPreviewUrl=URL.createObjectURL(file);
+  }
+  return {
+    id:f.id.value||'preview',
+    titulo:f.titulo.value.trim()||'Título del aviso',
+    mensaje:f.mensaje.value.trim()||'Aquí aparecerá el mensaje para los vecinos.',
+    tipo:f.tipo.value,
+    imagen_url:file?popupLocalPreviewUrl:(f.imagen_actual.value||''),
+    boton_texto:f.boton_texto.value.trim(),
+    boton_url:f.boton_url.value.trim()
+  }
+}
 function showPopupPreview(x){const host=$('popup-preview-host');host.innerHTML=`<div class="community-popup-overlay show"><div class="community-popup type-${esc(x.tipo)}" role="dialog" aria-modal="true"><button class="community-popup-close" type="button" aria-label="Cerrar">×</button><div class="community-popup-icon">${popupIcon(x.tipo)}</div><span class="community-popup-label">${esc(x.tipo)}</span><h2>${esc(x.titulo)}</h2>${x.imagen_url?`<img class="community-popup-image" src="${esc(x.imagen_url)}" alt="">`:''}<p>${esc(x.mensaje).replace(/\n/g,'<br>')}</p><div class="community-popup-actions">${x.boton_texto?`<span class="community-popup-link">${esc(x.boton_texto)}</span>`:''}<button class="community-popup-understood" type="button">Entendido</button></div></div></div>`;host.querySelectorAll('button').forEach(b=>b.onclick=()=>host.innerHTML='')}
 async function loadPopups(){const{data,error}=await sb.from('avisos_popup').select('*').order('creado_en',{ascending:false});if(error){message('Avisos emergentes: '+error.message,true);return}const rows=data||[];const current=rows.find(popupIsCurrent);$('stat-popup').textContent=current?'Activo':'Inactivo';$('popup-status').textContent=current?'🟢 Activo ahora':'Sin aviso activo';$('popup-status').className='status-pill '+(current?'active':'inactive');const el=$('list-popup');el.innerHTML=rows.map(x=>`<article class="item"><div>${x.imagen_url?`<img class="thumb" src="${esc(x.imagen_url)}" alt="">`:''}<h3>${popupIcon(x.tipo)} ${esc(x.titulo)}</h3><p>${esc(x.mensaje)}</p><div class="item-meta">${esc(x.tipo)} · ${popupDateValue(x.fecha_inicio)} al ${popupDateValue(x.fecha_termino)} · ${x.activo?'Activo':'Inactivo'}${popupIsCurrent(x)?' · Visible ahora':''}</div></div><div class="actions"><button class="button secondary" data-preview-popup="${x.id}">Vista previa</button><button class="button secondary" data-edit-popup="${x.id}">Editar</button><button class="button danger" data-delete-popup="${x.id}">Eliminar</button></div></article>`).join('')||'<div class="panel empty">Todavía no hay avisos emergentes.</div>';el.querySelectorAll('[data-preview-popup]').forEach(b=>b.onclick=()=>showPopupPreview(rows.find(x=>x.id===b.dataset.previewPopup)));el.querySelectorAll('[data-edit-popup]').forEach(b=>b.onclick=()=>editPopup(rows.find(x=>x.id===b.dataset.editPopup)));el.querySelectorAll('[data-delete-popup]').forEach(b=>b.onclick=()=>deletePopup(b.dataset.deletePopup))}
 function editPopup(x){const f=$('popup-form');['id','titulo','mensaje','tipo','boton_texto','boton_url'].forEach(k=>f.elements[k].value=x[k]??'');f.fecha_inicio.value=popupDateValue(x.fecha_inicio);f.fecha_termino.value=popupDateValue(x.fecha_termino);f.mostrar_una_vez.checked=!!x.mostrar_una_vez;f.activo.checked=!!x.activo;f.imagen_actual.value=x.imagen_url||'';$('popup-imagen-actual').textContent=x.imagen_url?'Imagen actual cargada':'';$('cancel-popup').hidden=false;f.scrollIntoView({behavior:'smooth'})}
-function resetPopup(){const f=$('popup-form');f.reset();f.id.value='';f.imagen_actual.value='';f.mostrar_una_vez.checked=true;f.activo.checked=true;const today=new Date();const end=new Date(today);end.setDate(end.getDate()+7);f.fecha_inicio.value=today.toISOString().slice(0,10);f.fecha_termino.value=end.toISOString().slice(0,10);$('popup-imagen-actual').textContent='';$('cancel-popup').hidden=true}
-$('popup-form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget;try{if(f.fecha_termino.value<f.fecha_inicio.value)throw new Error('La fecha de término no puede ser anterior a la fecha de inicio.');const file=f.imagen.files[0];const payload={titulo:f.titulo.value.trim(),mensaje:f.mensaje.value.trim(),tipo:f.tipo.value,fecha_inicio:f.fecha_inicio.value,fecha_termino:f.fecha_termino.value,mostrar_una_vez:f.mostrar_una_vez.checked,activo:f.activo.checked,boton_texto:f.boton_texto.value.trim()||null,boton_url:f.boton_url.value.trim()||null,imagen_url:file?await upload(file,'avisos-popup'):f.imagen_actual.value||null,actualizado_por:state.user.id};const id=f.id.value;const q=id?sb.from('avisos_popup').update(payload).eq('id',id):sb.from('avisos_popup').insert({...payload,creado_por:state.user.id});const{error}=await q;if(error)throw error;message('Aviso emergente guardado correctamente.');resetPopup();loadPopups()}catch(err){message(err.message||String(err),true)}};
+function resetPopup(){const f=$('popup-form');if(popupLocalPreviewUrl){URL.revokeObjectURL(popupLocalPreviewUrl);popupLocalPreviewUrl=''}f.reset();f.id.value='';f.imagen_actual.value='';f.mostrar_una_vez.checked=true;f.activo.checked=true;const today=new Date();const end=new Date(today);end.setDate(end.getDate()+7);f.fecha_inicio.value=today.toISOString().slice(0,10);f.fecha_termino.value=end.toISOString().slice(0,10);$('popup-imagen-actual').textContent='';$('cancel-popup').hidden=true}
+$('popup-form').onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget;
+  try{
+    if(f.fecha_termino.value<f.fecha_inicio.value)throw new Error('La fecha de término no puede ser anterior a la fecha de inicio.');
+    const file=f.imagen.files?.[0];
+    let imagenUrl=f.imagen_actual.value||null;
+    if(file){
+      message('Subiendo imagen del aviso…');
+      imagenUrl=await upload(file,'avisos-popup');
+      if(!imagenUrl)throw new Error('La imagen se subió pero no fue posible obtener su URL pública.');
+    }
+    const payload={
+      titulo:f.titulo.value.trim(),
+      mensaje:f.mensaje.value.trim(),
+      tipo:f.tipo.value,
+      fecha_inicio:f.fecha_inicio.value,
+      fecha_termino:f.fecha_termino.value,
+      mostrar_una_vez:f.mostrar_una_vez.checked,
+      activo:f.activo.checked,
+      boton_texto:f.boton_texto.value.trim()||null,
+      boton_url:f.boton_url.value.trim()||null,
+      imagen_url:imagenUrl,
+      actualizado_por:state.user.id
+    };
+    const id=f.id.value;
+    const q=id
+      ? sb.from('avisos_popup').update(payload).eq('id',id)
+      : sb.from('avisos_popup').insert({...payload,creado_por:state.user.id});
+    const{error}=await q;
+    if(error)throw error;
+    message(file?'Aviso emergente e imagen guardados correctamente.':'Aviso emergente guardado correctamente.');
+    resetPopup();
+    loadPopups();
+  }catch(err){
+    message(err.message||String(err),true);
+  }
+};
+$('popup-form').elements.imagen?.addEventListener('change',()=>{
+  const f=$('popup-form');
+  const file=f.imagen.files?.[0];
+  $('popup-imagen-actual').textContent=file?`Imagen seleccionada: ${file.name}`:(f.imagen_actual.value?'Imagen actual cargada':'');
+});
 $('preview-popup').onclick=()=>showPopupPreview(popupPreviewData());$('cancel-popup').onclick=resetPopup;
 async function deletePopup(id){if(!confirm('¿Eliminar este aviso emergente?'))return;const{error}=await sb.from('avisos_popup').delete().eq('id',id);if(error)return message(error.message,true);message('Aviso eliminado.');loadPopups()}
 
