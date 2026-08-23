@@ -85,9 +85,9 @@ async function loadSolicitudesCambioCotizante(){
  box.innerHTML=(data||[]).map(x=>{
    const deuda=Number(x.deuda_cuotas_al_solicitar||0);
    const tratamiento=x.tratamiento_deuda==='transferir'
-     ?'Transferir deuda pendiente'
+     ?'Transferir deuda vencida'
      :x.tratamiento_deuda==='saldar'
-       ?'Saldar antes del cambio'
+       ?'Saldar deuda vencida antes del cambio'
        :'Sin deuda al solicitar';
    return `<article class="item"><div><strong>N.º ${String(x.actual?.numero_socio||'').padStart(3,'0')} · ${esc(x.actual?.nombre_completo||'')}</strong> → <strong>N.º ${String(x.nuevo?.numero_socio||'').padStart(3,'0')} · ${esc(x.nuevo?.nombre_completo||'')}</strong><div class="item-meta">Tratamiento: <strong>${tratamiento}</strong>${deuda?` · ${deuda} cuota(s) · ${money(x.deuda_monto_al_solicitar)}`:''}</div></div><div class="actions"><button class="button primary" data-ap-cot="${x.id}">Aprobar cambio</button><button class="button danger" data-re-cot="${x.id}">Rechazar</button></div></article>`;
  }).join('')||'<div class="panel empty">No hay solicitudes de cambio de cotizante pendientes.</div>';
