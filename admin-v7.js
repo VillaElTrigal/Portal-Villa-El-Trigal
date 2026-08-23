@@ -36,7 +36,7 @@ async function loadSocios(){
  if(deuda.error)return msg('No fue posible calcular la morosidad: '+deuda.error.message,true);
  const counts={};(deuda.data||[]).forEach(x=>counts[x.socio_id]=(counts[x.socio_id]||0)+1);
  window.v7Socios=socios.map(x=>({...x,_cuotas_vencidas:counts[x.id]||0,_beneficios_suspendidos:x.estado==='activo'&&(counts[x.id]||0)>=3}));
- renderSocios(window.v7Socios);await loadSolicitudes();await loadSolicitudesAsociados();await loadNotifications()
+ renderSocios(window.v7Socios);await loadSolicitudes();await loadSolicitudesAsociados();await loadSolicitudesCambioCotizante();await loadNotifications()
 }
 let viasCache=[];
 const normalizeViaSearch=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
@@ -76,6 +76,35 @@ async function reviewAssociatedRequest(id,ok){
  else msg('Socio asociado aprobado correctamente.');
  await loadSolicitudesAsociados();
 }
+async function loadSolicitudesCambioCotizante(){
+ const box=$('#solicitudes-cambio-cotizante');if(!box)return;
+ const{data,error}=await sb.from('solicitudes_cambio_cotizante')
+   .select('*,actual:cotizante_actual_id(numero_socio,nombre_completo),nuevo:nuevo_cotizante_id(numero_socio,nombre_completo)')
+   .eq('estado','pendiente').order('creado_en');
+ if(error){box.innerHTML='<div class="panel empty">Ejecuta primero el SQL de cambio de cotizante.</div>';return}
+ box.innerHTML=(data||[]).map(x=>{
+   const deuda=Number(x.deuda_cuotas_al_solicitar||0);
+   const tratamiento=x.tratamiento_deuda==='transferir'
+     ?'Transferir deuda pendiente'
+     :x.tratamiento_deuda==='saldar'
+       ?'Saldar antes del cambio'
+       :'Sin deuda al solicitar';
+   return `<article class="item"><div><strong>N.º ${String(x.actual?.numero_socio||'').padStart(3,'0')} · ${esc(x.actual?.nombre_completo||'')}</strong> → <strong>N.º ${String(x.nuevo?.numero_socio||'').padStart(3,'0')} · ${esc(x.nuevo?.nombre_completo||'')}</strong><div class="item-meta">Tratamiento: <strong>${tratamiento}</strong>${deuda?` · ${deuda} cuota(s) · ${money(x.deuda_monto_al_solicitar)}`:''}</div></div><div class="actions"><button class="button primary" data-ap-cot="${x.id}">Aprobar cambio</button><button class="button danger" data-re-cot="${x.id}">Rechazar</button></div></article>`;
+ }).join('')||'<div class="panel empty">No hay solicitudes de cambio de cotizante pendientes.</div>';
+ $$('[data-ap-cot]').forEach(b=>b.onclick=()=>reviewCotizanteChange(b.dataset.apCot,true));
+ $$('[data-re-cot]').forEach(b=>b.onclick=()=>reviewCotizanteChange(b.dataset.reCot,false));
+}
+async function reviewCotizanteChange(id,ok){
+ const observacion=prompt(ok?'Observación de aprobación (opcional):':'Motivo del rechazo (opcional):','');
+ if(observacion===null)return;
+ if(!confirm(ok?'¿Aprobar el cambio de socio cotizante? Esta operación actualizará la responsabilidad económica del hogar.':'¿Rechazar esta solicitud?'))return;
+ const{data,error}=await sb.rpc('revisar_solicitud_cambio_cotizante',{p_id:id,p_aprobar:ok,p_observacion:observacion.trim()||null});
+ if(error)return alert(error.message);
+ msg(data||(ok?'Cambio aprobado.':'Solicitud rechazada.'));
+ await loadSocios();
+ await loadSolicitudesCambioCotizante();
+}
+
 function memberChildLink(socio){const base=new URL('./registro-ninos.html',window.location.href);base.searchParams.set('token',socio.registro_ninos_token);return base.href}
 function firstMemberName(socio){
  const n=String(socio?.nombres||socio?.nombre_completo||'Vecino').trim().split(/\s+/)[0];

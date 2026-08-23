@@ -187,7 +187,9 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
                 <strong>N.º ${String(x.numero_socio||'').padStart(3,'0')} · ${escapeHtml(x.nombre_completo||'')}</strong>
                 <div class="muted">Socio asociado · Sin cuotas propias</div>
               </div>
+              <button type="button" class="secondary small" data-designar-cotizante="${x.id}">Designar como cotizante</button>
             </div>`).join('')}`;
+          list.querySelectorAll('[data-designar-cotizante]').forEach(b=>b.onclick=()=>requestCotizanteChange(b.dataset.designarCotizante));
         }
       }catch(err){
         console.warn('No fue posible cargar socios asociados',err);
@@ -195,6 +197,48 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
       }
     }
   }
+  async function requestCotizanteChange(nuevoId){
+    try{
+      const resumen=(await rpc('portal_socio_resumen_cambio_cotizante',{p_token:token,p_nuevo_cotizante_id:nuevoId}))?.[0];
+      if(!resumen)throw new Error('No fue posible revisar el cambio de cotizante.');
+      const num=String(resumen.nuevo_numero||'').padStart(3,'0');
+      const deuda=Number(resumen.deuda_cuotas||0);
+      const monto=Number(resumen.deuda_monto||0);
+      let tratamiento='sin_deuda';
+      let texto=`¿Deseas solicitar que N.º ${num} · ${resumen.nuevo_nombre} pase a ser el nuevo socio cotizante del hogar?`;
+      if(deuda>0){
+        const opcion=prompt(
+`Actualmente tienes ${deuda} cuota(s) pendiente(s) por ${money(monto)}.
+
+Escribe:
+1 = Transferir las cuotas pendientes al nuevo cotizante.
+2 = Saldar la deuda antes del cambio.
+
+La Directiva deberá aprobar la solicitud.`,
+'1');
+        if(opcion===null)return;
+        if(opcion==='1')tratamiento='transferir';
+        else if(opcion==='2')tratamiento='saldar';
+        else return msg('associatedMsg','Selecciona una opción válida: 1 o 2.','error');
+        texto+=tratamiento==='transferir'
+          ?`\n\nTus cuotas pendientes serán transferidas al nuevo cotizante si la Directiva aprueba.`
+          :`\n\nLa solicitud no podrá aprobarse mientras mantengas cuotas pendientes.`;
+      }else{
+        texto+=`\n\nActualmente no tienes cuotas pendientes.`;
+      }
+      if(!confirm(texto+'\n\n¿Enviar solicitud a la Directiva?'))return;
+      await rpc('portal_socio_solicitar_cambio_cotizante',{
+        p_token:token,
+        p_nuevo_cotizante_id:nuevoId,
+        p_tratamiento_deuda:tratamiento,
+        p_observaciones:null
+      });
+      msg('associatedMsg','Solicitud de cambio de socio cotizante enviada a la Directiva.','success');
+    }catch(err){
+      msg('associatedMsg',err.message,'error');
+    }
+  }
+
   const associatedForm=$('associatedForm');
   const associatedRut=associatedForm?.elements?.rut;
   const associatedPhone=associatedForm?.elements?.telefono;
