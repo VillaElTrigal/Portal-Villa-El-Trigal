@@ -398,11 +398,23 @@
     syncOtherOccupation();
     rut.dataset.rut = '1';
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
-    phone.addEventListener('input', () => phone.value = formatPhoneLocal(phone.value));
+    const publicSocioPhoneDigits=value=>{
+      let d=String(value||'').replace(/\D/g,'');
+      // Si pega un número completo +569XXXXXXXX, quitar solo el prefijo.
+      // Si escribe normalmente 56...... (8 dígitos), NO quitar el 56.
+      if(d.length>8&&d.startsWith('569'))d=d.slice(3);
+      else if(d.length>8&&d.startsWith('9'))d=d.slice(1);
+      return d.slice(0,8);
+    };
+    phone.addEventListener('input',()=>{
+      const d=publicSocioPhoneDigits(phone.value);
+      phone.value=d.length>4?`${d.slice(0,4)} ${d.slice(4)}`:d;
+    });
     form.onsubmit = async event => {
       event.preventDefault();
       const formattedRut = formatRut(rut.value);
-      const dbPhone = phoneDb(phone.value);
+      const socioPhoneDigits=publicSocioPhoneDigits(phone.value);
+      const dbPhone=socioPhoneDigits.length===8?`+569${socioPhoneDigits}`:null;
       const via=vias.find(v=>v.id===form.elements.via_id.value);
       const numero=form.elements.numero_domicilio.value.trim();
       if (!picker.valid() || !via) {message.textContent='Selecciona una calle, pasaje o avenida válida de la lista.';return}
