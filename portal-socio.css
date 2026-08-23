@@ -46,3 +46,11 @@
 .phone-field:focus-within{outline:2px solid rgba(15,118,110,.15);border-color:#0f766e}
 .phone-prefix{display:flex;align-items:center;padding:0 .75rem;background:#f1f5f9;color:#334155;font-weight:700;white-space:nowrap;border-right:1px solid #cbd5e1}
 .phone-field input{border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;flex:1;min-width:0}
+
+/* Pago anual por año calendario */
+.annual-payment-box{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0;padding:16px 18px;border:1px solid #cfe2d5;background:#f4fbf6;border-radius:14px}
+.annual-payment-box p{margin:.3rem 0 0;color:#5a6e63;font-size:.9rem}
+.annual-payment-box button{white-space:nowrap}
+.portal-quota-row.annual-future-quota{border-style:dashed;background:#fbfdfb}
+.portal-quota-row.annual-future-quota small{color:#25744b;font-weight:700}
+@media(max-width:600px){.annual-payment-box{display:block}.annual-payment-box button{width:100%;margin-top:12px}}

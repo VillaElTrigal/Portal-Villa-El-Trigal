@@ -95,28 +95,97 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
 
   let portalPendingQuotas=[];
   const quotaMonthLabel=v=>{if(!v)return '';const [y,m]=v.slice(0,7).split('-');return new Date(Number(y),Number(m)-1,1).toLocaleDateString('es-CL',{month:'long',year:'numeric'})};
-  async function loadPortalQuotas(){
+  const currentQuotaYear=()=>Number(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric'}).format(new Date()));
+  const currentQuotaPeriod=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit'}).format(new Date());
+
+  async function loadPortalQuotas(selectAnnual=false){
     const box=$('portalQuotaList'); if(!box)return;
     try{
+      if($('prepareAnnualPayment')){
+        $('prepareAnnualPayment').textContent=`Completar año ${currentQuotaYear()}`;
+        $('prepareAnnualPayment').hidden=portalModality==='asociado';
+      }
+
       const allPendingQuotas=await rpc('portal_socio_mis_cuotas',{p_token:token})||[];
-      const currentPeriod=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit'}).format(new Date());
-      portalPendingQuotas=allPendingQuotas.filter(q=>String(q.periodo||'').slice(0,7)<=currentPeriod);
-      // El resumen de "Mis datos" debe usar la misma regla que Pago de cuotas:
-      // solo meses vencidos o el mes actual, nunca cuotas futuras.
-      const exigibleTotal=portalPendingQuotas.reduce((sum,q)=>sum+Number(q.monto||0),0);
-      const exigibleCount=portalPendingQuotas.length;
-      $('duesStatus').textContent=exigibleCount?'Pendiente':'Al día';
-      $('duesStatus').classList.toggle('pending',exigibleCount>0);
-      $('pendingCount').textContent=exigibleCount;
-      $('pendingAmount').textContent=money(exigibleTotal);
-      if(!portalPendingQuotas.length){box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas exigibles pendientes.</div>';$('portalQuotaTotal').textContent=money(0);$('sendQuotaWhatsapp').disabled=true;if($('requestCashPayment'))$('requestCashPayment').disabled=true;return}
-      box.innerHTML=portalPendingQuotas.map(q=>`<label class="portal-quota-row"><input type="checkbox" data-portal-quota="${q.id}" value="${Number(q.monto)||0}"><span><b>${escape(quotaMonthLabel(q.periodo))}</b><small>Cuota pendiente</small></span><strong>${money(q.monto)}</strong></label>`).join('');
+      const currentPeriod=currentQuotaPeriod();
+
+      // Mostrar todas las cuotas pendientes ya creadas, incluyendo anticipadas.
+      portalPendingQuotas=allPendingQuotas;
+
+      // Estado "Al día" solo considera vencidas + mes actual.
+      const exigibles=allPendingQuotas.filter(q=>String(q.periodo||'').slice(0,7)<=currentPeriod);
+      const exigibleTotal=exigibles.reduce((sum,q)=>sum+Number(q.monto||0),0);
+      const exigibleCount=exigibles.length;
+
+      $('duesStatus').textContent=portalModality==='asociado'?'No aplica · Socio asociado':(exigibleCount?'Pendiente':'Al día');
+      $('duesStatus').classList.toggle('pending',portalModality!=='asociado'&&exigibleCount>0);
+      $('pendingCount').textContent=portalModality==='asociado'?0:exigibleCount;
+      $('pendingAmount').textContent=portalModality==='asociado'?money(0):money(exigibleTotal);
+
+      if(portalModality==='asociado'){
+        box.innerHTML='<div class="notice">Tu modalidad es <strong>Socio asociado</strong>. No generas cuotas propias.</div>';
+        $('portalQuotaTotal').textContent=money(0);
+        $('sendQuotaWhatsapp').disabled=true;
+        if($('requestCashPayment'))$('requestCashPayment').disabled=true;
+        return;
+      }
+
+      if(!portalPendingQuotas.length){
+        box.innerHTML='<div class="notice success-notice">✅ No tienes cuotas pendientes registradas.</div>';
+        $('portalQuotaTotal').textContent=money(0);
+        $('sendQuotaWhatsapp').disabled=true;
+        if($('requestCashPayment'))$('requestCashPayment').disabled=true;
+        return;
+      }
+
+      box.innerHTML=portalPendingQuotas.map(q=>{
+        const future=String(q.periodo||'').slice(0,7)>currentPeriod;
+        return `<label class="portal-quota-row${future?' annual-future-quota':''}"><input type="checkbox" data-portal-quota="${q.id}" value="${Number(q.monto)||0}"><span><b>${escape(quotaMonthLabel(q.periodo))}</b><small>${future?'Pago anticipado':'Cuota pendiente'}</small></span><strong>${money(q.monto)}</strong></label>`;
+      }).join('');
+
       box.querySelectorAll('[data-portal-quota]').forEach(c=>c.addEventListener('change',updatePortalQuotaTotal));
+
+      if(selectAnnual){
+        const year=String(currentQuotaYear());
+        box.querySelectorAll('[data-portal-quota]').forEach(c=>{
+          const q=portalPendingQuotas.find(x=>String(x.id)===String(c.dataset.portalQuota));
+          c.checked=String(q?.periodo||'').slice(0,4)===year;
+        });
+      }
+
       updatePortalQuotaTotal();
-    }catch(err){box.innerHTML='<div class="notice">No fue posible cargar el detalle de cuotas.</div>';msg('paymentMsg',err.message,'error')}
+    }catch(err){
+      box.innerHTML='<div class="notice">No fue posible cargar el detalle de cuotas.</div>';
+      msg('paymentMsg',err.message,'error');
+    }
   }
-  function selectedPortalQuotas(){return portalPendingQuotas.filter(q=>document.querySelector(`input[data-portal-quota="${CSS.escape(String(q.id))}"]`)?.checked)}
-  function updatePortalQuotaTotal(){const selected=selectedPortalQuotas(),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);$('portalQuotaTotal').textContent=money(total);$('sendQuotaWhatsapp').disabled=!selected.length;if($('requestCashPayment'))$('requestCashPayment').disabled=!selected.length}
+
+  function selectedPortalQuotas(){
+    return portalPendingQuotas.filter(q=>document.querySelector(`input[data-portal-quota="${CSS.escape(String(q.id))}"]`)?.checked)
+  }
+
+  function updatePortalQuotaTotal(){
+    const selected=selectedPortalQuotas(),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
+    $('portalQuotaTotal').textContent=money(total);
+    $('sendQuotaWhatsapp').disabled=!selected.length;
+    if($('requestCashPayment'))$('requestCashPayment').disabled=!selected.length
+  }
+
+  $('prepareAnnualPayment')?.addEventListener('click',async()=>{
+    if(portalModality==='asociado')return msg('paymentMsg','Los socios asociados no generan cuotas propias.','error');
+    const year=currentQuotaYear();
+    if(!confirm(`¿Preparar todos los meses pendientes de ${year} hasta diciembre?\n\nLos meses ya pagados no se duplicarán.`))return;
+    try{
+      msg('paymentMsg','Preparando cuotas del año…');
+      await rpc('portal_socio_preparar_pago_anual',{p_token:token,p_anio:year});
+      await loadPortalQuotas(true);
+      const selected=selectedPortalQuotas();
+      msg('paymentMsg',selected.length?`Se seleccionaron ${selected.length} cuota(s) pendientes de ${year}. Total: ${money(selected.reduce((a,q)=>a+Number(q.monto||0),0))}`:`No tienes cuotas pendientes de ${year}.`,'success');
+    }catch(err){
+      msg('paymentMsg',err.message,'error');
+    }
+  });
+
   $('sendQuotaWhatsapp')?.addEventListener('click',()=>{
     const selected=selectedPortalQuotas();if(!selected.length)return;
     const months=selected.map(q=>quotaMonthLabel(q.periodo)).join(', '),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
@@ -124,6 +193,7 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
     const text=`Hola. Adjunto el comprobante del pago de mi cuota social.\n\nSOCIO: ${name}\nN° DE SOCIO: ${number}\nRUT: ${rut}\nCUOTA(S): ${months}\nMONTO TOTAL: ${money(total)}\nMEDIO: Transferencia\n\nPor favor confirmar la recepción del comprobante.\nJunta de Vecinos Villa El Trigal.`;
     window.SIGVE_WHATSAPP?.open?window.SIGVE_WHATSAPP.open('56974596793',text):window.open(`https://wa.me/56974596793?text=${encodeURIComponent(text)}`,'_blank','noopener');
   });
+
   $('requestCashPayment')?.addEventListener('click',async()=>{
     const selected=selectedPortalQuotas();if(!selected.length)return;
     const ids=selected.map(q=>q.id),months=selected.map(q=>quotaMonthLabel(q.periodo)).join(', '),total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
