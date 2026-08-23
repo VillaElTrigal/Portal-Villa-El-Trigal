@@ -466,6 +466,14 @@ La solicitud quedó registrada en SIGVE.`;
     const benefitBox=$('memberRentalBenefitBox');benefitBox.innerHTML='<div class="notice">Calculando tus beneficios para esta fecha…</div>';
     try{
       const cfg=await sb.from('configuracion_gestion').select('valor_arriendo').eq('id',1).maybeSingle();memberRentalBase=Number(cfg.data?.valor_arriendo||40000);
+      const selectedYear=Number(String(iso).slice(0,4)),currentYear=new Date().getFullYear();
+      if(selectedYear!==currentYear){
+        memberRentalBenefits=[];
+        benefitBox.innerHTML=`<div class="member-price-row"><span>Valor normal</span><strong>${money(memberRentalBase)}</strong></div>
+        <div class="notice"><strong>Beneficios no disponibles para ${selectedYear}</strong><br>Los beneficios solo pueden utilizarse para reservas del año calendario actual. Los beneficios de ${selectedYear} estarán disponibles cuando se actualice el nuevo calendario. Puedes continuar con la reserva sin aplicar beneficio.</div>
+        <div class="member-price-row total"><span>Total estimado</span><strong>${money(memberRentalBase)}</strong></div>`;
+        return;
+      }
       memberRentalBenefits=await rpc('portal_socio_mis_beneficios',{p_token:token})||[];
       const eligible=memberRentalBenefits.filter(x=>x.cumple);
       benefitBox.innerHTML=`<div class="member-price-row"><span>Valor normal</span><strong>${money(memberRentalBase)}</strong></div>
@@ -496,6 +504,7 @@ La solicitud quedó registrada en SIGVE.`;
       const selectedBenefitId=document.querySelector('input[name="memberBenefitChoice"]:checked')?.value||'';
       const eligible=memberRentalBenefits.filter(x=>x.cumple);
       const selectedBenefit=eligible.find(x=>String(x.beneficio_id)===selectedBenefitId)||null;
+      if(selectedBenefit && Number(String(memberRentalDate).slice(0,4))!==new Date().getFullYear())throw new Error('Los beneficios solo pueden utilizarse para reservas del año calendario actual.');
       const {error}=await sb.rpc('crear_solicitud_reserva_con_beneficio',{p_nombre:currentSocio?.nombre_completo||$('welcomeName').textContent.trim(),p_telefono:phone,p_fecha:memberRentalDate,p_rut:formatRut(currentSocio?.rut||$('rutRead').textContent),p_observaciones:$('memberRentalNotes').value.trim()||null,p_token:token,p_usar_gratis:selectedBenefit?.tipo==='gratis',p_beneficio_id:selectedBenefit?.beneficio_id||null});
       if(error)throw error;
       const applied=selectedBenefit,final=applied?Number(applied.valor_final):memberRentalBase;
