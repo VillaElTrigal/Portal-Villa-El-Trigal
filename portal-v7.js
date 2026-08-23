@@ -282,14 +282,15 @@
     };
     loadReservationBenefits();
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
-    phone.addEventListener('input', () => phone.value = formatPhoneLocal(phone.value));
+    phone.addEventListener('input', () => {const d=String(phone.value||'').replace(/\D/g,'').slice(0,8);phone.value=d.length>4?`${d.slice(0,4)} ${d.slice(4)}`:d});
 
     form.onsubmit = async event => {
       event.preventDefault();
       const message = form.querySelector('.public-form-message');
       const submit = form.querySelector('button[type="submit"]');
       const formattedRut = formatRut(rut.value);
-      const dbPhone = phoneDb(phone.value);
+      const localPhoneDigits=String(phone.value||'').replace(/\D/g,'').slice(0,8);
+      const dbPhone=localPhoneDigits.length===8?`+569${localPhoneDigits}`:null;
       if (formattedRut && !validRut(formattedRut)) {
         message.textContent = 'Revisa el RUT ingresado.';
         return;
