@@ -145,3 +145,107 @@ nav a{white-space:nowrap}
 
 /* SIGVE v5.4.10 · Ocultar "Otra finalidad" hasta seleccionar Otro */
 #certificate-form #cert-purpose-other-wrap[hidden]{display:none!important}
+
+
+/* Portada · llamada principal Hazte Socio */
+.join-highlight{
+  position:relative;
+  z-index:3;
+  margin-top:-42px;
+  margin-bottom:56px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) minmax(250px,330px);
+  align-items:center;
+  gap:24px;
+  padding:24px 28px;
+  background:linear-gradient(135deg,#f7fff9 0%,#effbf3 100%);
+  border:1px solid #a9d8b6;
+  border-radius:22px;
+  box-shadow:0 16px 38px rgba(24,82,61,.16);
+}
+.join-highlight-icon{
+  width:76px;height:76px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#e1f5e8;
+  color:#12633f;
+  font-size:2.65rem;
+  box-shadow:inset 0 0 0 1px rgba(18,99,63,.08);
+}
+.join-highlight-kicker{
+  display:block;
+  margin-bottom:3px;
+  color:#1f7950;
+  font-size:.78rem;
+  font-weight:850;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.join-highlight h2{
+  margin:0 0 5px;
+  color:#173b45;
+  font-size:clamp(1.45rem,2.8vw,2rem);
+}
+.join-highlight p{margin:0;color:#405b62;line-height:1.45}
+.join-highlight p strong{color:#167247}
+.join-highlight-benefits{
+  display:flex;flex-wrap:wrap;gap:8px 18px;
+  margin-top:13px;
+  color:#34565a;
+  font-size:.9rem;
+  font-weight:650;
+}
+.join-highlight-benefits span{white-space:nowrap}
+.join-highlight-action{text-align:center}
+.join-highlight-button{
+  min-height:58px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:14px 22px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#137342,#1b8a55);
+  color:white;
+  text-decoration:none;
+  font-size:1.18rem;
+  font-weight:900;
+  letter-spacing:.015em;
+  box-shadow:0 10px 22px rgba(19,115,66,.25);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.join-highlight-button:hover{transform:translateY(-2px);box-shadow:0 14px 26px rgba(19,115,66,.30)}
+.join-highlight-action small{
+  display:block;margin-top:9px;
+  color:#547168;line-height:1.35;
+  font-size:.78rem;
+}
+/* El antiguo globo flotante de contacto se retira de la portada. */
+.whatsapp-float{display:none!important}
+
+@media(max-width:850px){
+  .join-highlight{
+    margin-top:-24px;
+    margin-bottom:38px;
+    grid-template-columns:64px 1fr;
+    gap:14px;
+    padding:20px;
+  }
+  .join-highlight-icon{width:62px;height:62px;font-size:2.1rem}
+  .join-highlight-action{grid-column:1/-1}
+  .join-highlight-button{width:100%}
+  .join-highlight-benefits{display:grid;gap:7px}
+  .join-highlight-benefits span{white-space:normal}
+}
+@media(max-width:520px){
+  .join-highlight{
+    margin-top:-18px;
+    margin-bottom:30px;
+    display:block;
+    padding:20px 16px;
+    text-align:center;
+    border-radius:18px;
+  }
+  .join-highlight-icon{margin:0 auto 10px}
+  .join-highlight-benefits{
+    margin:14px 0 16px;
+    text-align:left;
+  }
+  .join-highlight-action small{font-size:.8rem}
+}
