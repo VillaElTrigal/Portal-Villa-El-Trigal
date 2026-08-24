@@ -54,3 +54,25 @@
 .portal-quota-row.annual-future-quota{border-style:dashed;background:#fbfdfb}
 .portal-quota-row.annual-future-quota small{color:#25744b;font-weight:700}
 @media(max-width:600px){.annual-payment-box{display:block}.annual-payment-box button{width:100%;margin-top:12px}}
+
+
+.mobile-socio-nav{display:none}
+@media(max-width:700px){
+  body{padding-bottom:78px}
+  .mobile-socio-nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:130;
+    display:grid;grid-template-columns:repeat(5,1fr);
+    background:rgba(255,255,255,.97);
+    border-top:1px solid #dbe4e3;
+    box-shadow:0 -8px 24px rgba(15,57,63,.12);
+    padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+    backdrop-filter:blur(12px)
+  }
+  .mobile-socio-nav a,.mobile-socio-nav button{
+    border:0;background:transparent;text-decoration:none;color:#49646a;
+    min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;border-radius:12px;font:inherit;font-weight:700
+  }
+  .mobile-socio-nav span{font-size:1.2rem}
+  .mobile-socio-nav small{font-size:.66rem}
+}

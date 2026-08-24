@@ -8,9 +8,14 @@
   <meta name="description" content="Portal Comunitario de la Junta de Vecinos Villa El Trigal: noticias, actividades, trámites, reserva de sede, cuotas y contacto.">
   <meta name="theme-color" content="#145e75">
   <link rel="stylesheet" href="popup.css?v=AFICHEGRANDE1">
-  <link rel="stylesheet" href="styles.css?v=NOTICIASAFICHE1"><link rel="stylesheet" href="portal-v7.css?v=800">
+  <link rel="stylesheet" href="styles.css?v=PWA1"><link rel="stylesheet" href="portal-v7.css?v=800">
   <link rel="stylesheet" href="portal-modals.css?v=557">
-<style>.phone-prefix-field{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}.phone-prefix-field span{padding:.75rem;background:#f3f4f6;font-weight:700;white-space:nowrap}.phone-prefix-field input{border:0!important;border-radius:0!important;flex:1;min-width:0}</style></head>
+<style>.phone-prefix-field{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}.phone-prefix-field span{padding:.75rem;background:#f3f4f6;font-weight:700;white-space:nowrap}.phone-prefix-field input{border:0!important;border-radius:0!important;flex:1;min-width:0}</style>  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SIGVE">
+  <link rel="apple-touch-icon" href="assets/pwa-icon-192.png">
+</head>
 <body>
   <header class="header">
     <div class="container nav">
@@ -538,5 +543,39 @@ La solicitud quedó registrada en SIGVE.`;
   <script src="portal-popup.js?v=630"></script>
   <script src="portal-v7.js?v=HAZTESOCIOPHONE2"></script>
   <script src="portal-modals.js?v=4004"></script>
+
+  <nav class="mobile-app-nav" aria-label="Navegación móvil SIGVE">
+    <a href="#inicio"><span>🏠</span><small>Inicio</small></a>
+    <a href="#noticias"><span>📰</span><small>Noticias</small></a>
+    <a href="#socios-solicitud" class="mobile-app-primary"><span>➕</span><small>Hazte socio</small></a>
+    <a href="portal-socio.html"><span>👤</span><small>Mi SIGVE</small></a>
+    <a href="#contacto"><span>💬</span><small>Contacto</small></a>
+  </nav>
+  <button id="install-sigve" class="install-sigve" type="button" hidden>📲 Instalar SIGVE</button>
+
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(console.warn));
+}
+let sigveInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  sigveInstallPrompt=e;
+  const b=document.getElementById('install-sigve');
+  if(b)b.hidden=false;
+});
+document.getElementById('install-sigve')?.addEventListener('click',async()=>{
+  if(!sigveInstallPrompt)return;
+  sigveInstallPrompt.prompt();
+  await sigveInstallPrompt.userChoice;
+  sigveInstallPrompt=null;
+  document.getElementById('install-sigve').hidden=true;
+});
+window.addEventListener('appinstalled',()=>{
+  const b=document.getElementById('install-sigve');if(b)b.hidden=true;
+});
+</script>
+
 </body>
 </html>
