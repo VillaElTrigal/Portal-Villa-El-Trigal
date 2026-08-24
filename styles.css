@@ -249,3 +249,45 @@ nav a{white-space:nowrap}
   }
   .join-highlight-action small{font-size:.8rem}
 }
+
+
+/* Noticias y novedades · afiches responsivos */
+#noticias .publication-card .publication-photos.photos-1{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:18px;
+  background:#f4f7f6;
+}
+#noticias .publication-card .publication-photos.photos-1 button{
+  width:min(100%,780px);
+  height:auto;
+  max-height:none;
+  border-radius:14px;
+}
+#noticias .publication-card .publication-photos.photos-1 img{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:0;
+  max-height:none;
+  object-fit:contain;
+  background:#fff;
+}
+@media(max-width:700px){
+  #noticias .publication-card .publication-photos.photos-1{
+    display:block;
+    padding:8px;
+  }
+  #noticias .publication-card .publication-photos.photos-1 button{
+    width:100%;
+    height:auto;
+  }
+  #noticias .publication-card .publication-photos.photos-1 img{
+    width:100%;
+    height:auto;
+    min-height:0;
+    max-height:none;
+    object-fit:contain;
+  }
+}
