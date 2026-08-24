@@ -293,35 +293,89 @@ nav a{white-space:nowrap}
 }
 
 
-/* SIGVE PWA · experiencia móvil */
+
+/* SIGVE PWA · barra móvil compacta */
 .mobile-app-nav,.install-sigve{display:none}
 
 @media(max-width:700px){
-  body{padding-bottom:78px}
+  body{padding-bottom:74px!important}
+
   .mobile-app-nav{
-    position:fixed;left:0;right:0;bottom:0;z-index:120;
-    display:grid;grid-template-columns:repeat(5,1fr);
-    background:rgba(255,255,255,.97);
-    border-top:1px solid #dbe4e3;
-    box-shadow:0 -8px 24px rgba(15,57,63,.12);
-    padding:7px max(6px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-right));
-    backdrop-filter:blur(12px)
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    top:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:62px!important;
+    z-index:120!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:center!important;
+    gap:0!important;
+    margin:0!important;
+    padding:5px 6px calc(5px + env(safe-area-inset-bottom))!important;
+    background:rgba(255,255,255,.98)!important;
+    border:0!important;
+    border-top:1px solid #dbe4e3!important;
+    border-radius:0!important;
+    box-shadow:0 -5px 18px rgba(15,57,63,.11)!important;
+    backdrop-filter:blur(10px);
+    overflow:visible!important;
   }
+
   .mobile-app-nav a{
-    min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:2px;color:#49646a;text-decoration:none;font-weight:700;border-radius:12px;font-size:.75rem
+    position:relative!important;
+    display:flex!important;
+    min-width:0!important;
+    min-height:50px!important;
+    height:50px!important;
+    margin:0!important;
+    padding:4px 2px!important;
+    border:0!important;
+    border-radius:10px!important;
+    background:transparent!important;
+    color:#49646a!important;
+    text-decoration:none!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:2px!important;
+    font-size:.68rem!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+    box-shadow:none!important;
   }
-  .mobile-app-nav a span{font-size:1.25rem;line-height:1}
-  .mobile-app-nav a small{font-size:.67rem}
+
+  .mobile-app-nav a span{font-size:1.15rem!important;line-height:1!important}
+  .mobile-app-nav a small{font-size:.62rem!important;line-height:1.1!important;font-weight:700!important}
+
   .mobile-app-nav .mobile-app-primary{
-    background:#137342;color:#fff;margin:-18px 4px 0;min-height:64px;
-    border-radius:18px;box-shadow:0 8px 20px rgba(19,115,66,.28)
+    height:54px!important;
+    min-height:54px!important;
+    margin:-10px 3px 0!important;
+    background:#137342!important;
+    color:#fff!important;
+    border-radius:14px!important;
+    box-shadow:0 5px 14px rgba(19,115,66,.24)!important;
   }
+
   .install-sigve{
-    position:fixed;right:14px;bottom:88px;z-index:119;
-    border:0;border-radius:999px;background:#145e75;color:#fff;
-    padding:11px 15px;font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,.2)
+    position:fixed;
+    right:12px;
+    bottom:82px;
+    z-index:119;
+    border:0;
+    border-radius:999px;
+    background:#145e75;
+    color:#fff;
+    padding:9px 13px;
+    font-weight:800;
+    font-size:.82rem;
+    box-shadow:0 6px 18px rgba(0,0,0,.18)
   }
+
   .hero{min-height:52vh}
   .shortcuts{grid-template-columns:1fr 1fr!important;gap:10px}
   .shortcuts a{padding:16px 12px}
