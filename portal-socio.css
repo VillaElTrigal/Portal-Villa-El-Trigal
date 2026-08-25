@@ -126,3 +126,10 @@
     width:40px!important;height:40px!important;flex-basis:40px;font-size:1.05rem!important
   }
 }
+
+
+/* Avisos: respetar ocultamiento real de campanilla */
+#socio-notification-bell[hidden],
+#socio-notification-count[hidden]{
+  display:none!important;
+}
