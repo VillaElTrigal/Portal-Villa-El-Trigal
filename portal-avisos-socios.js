@@ -96,35 +96,49 @@ async function openPanel(){
   if(!token())return;
 
   const panel=$('#socio-notification-panel');
-  if(!panel)return;
+  const list=$('#socio-notification-list');
+  const summary=$('#socio-notification-summary');
+  if(!panel||!list)return;
+
+  // Abrir SIEMPRE el panel.
+  panel.hidden=false;
+  panel.setAttribute('aria-hidden','false');
+
+  if(!currentUnread.length){
+    if(summary)summary.textContent='Todo al día';
+    list.innerHTML=`
+      <div class="socio-notification-empty">
+        <span>🔔</span>
+        <strong>Todo al día</strong>
+        <small>No tienes avisos nuevos.</small>
+      </div>`;
+    return;
+  }
 
   renderPanel();
-  panel.hidden=false;
 
-  // Marcar como leídos DESPUÉS de haberlos mostrado.
-  if(currentUnread.length){
-    const toMark=[...currentUnread];
-    for(const x of toMark){
-      try{
-        await rpc('portal_socio_marcar_aviso_leido',{
-          p_token:token(),
-          p_aviso_id:x.id
-        });
-      }catch(e){
-        console.warn('Lectura aviso:',e.message);
-      }
+  // Marcar como leídos después de mostrarlos.
+  const toMark=[...currentUnread];
+  for(const x of toMark){
+    try{
+      await rpc('portal_socio_marcar_aviso_leido',{
+        p_token:token(),
+        p_aviso_id:x.id
+      });
+    }catch(e){
+      console.warn('Lectura aviso:',e.message);
     }
-    currentUnread=[];
-    renderBadge();
-    const summary=$('#socio-notification-summary');
-    if(summary)summary.textContent='Todo al día';
   }
+
+  currentUnread=[];
+  renderBadge();
+  if(summary)summary.textContent='Todo al día';
 }
 
 function bind(){
   $('#socio-notification-bell')?.addEventListener('click',openPanel);
   $('#socio-notification-close')?.addEventListener('click',()=>{
-    $('#socio-notification-panel').hidden=true;
+    $('#socio-notification-panel').hidden=true;$('#socio-notification-panel').setAttribute('aria-hidden','true');
   });
 
   // Cuando portal-socio inicia/cierra sesión, el storage cambia en esta misma pestaña

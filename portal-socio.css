@@ -133,3 +133,39 @@
 #socio-notification-count[hidden]{
   display:none!important;
 }
+
+
+/* Avisos Mi SIGVE · panel y estado vacío */
+#socio-notification-panel[hidden]{
+  display:none!important;
+}
+#socio-notification-panel:not([hidden]){
+  display:block!important;
+}
+.socio-notification-empty{
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:24px;
+  text-align:center;
+  color:#526b70;
+}
+.socio-notification-empty span{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#edf7f2;
+  font-size:1.6rem;
+}
+.socio-notification-empty strong{
+  color:#173b46;
+  font-size:1.05rem;
+}
+.socio-notification-empty small{
+  font-size:.88rem;
+}
