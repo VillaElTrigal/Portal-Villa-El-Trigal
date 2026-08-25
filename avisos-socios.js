@@ -34,29 +34,60 @@ async function loadAvisos(){
     return;
   }
 
-  box.innerHTML=(data||[]).map(a=>`
-    <article class="list-card">
-      <div>
-        <strong>${a.tipo==='reunion'?'📅':a.tipo==='importante'?'⚠️':'ℹ️'} ${esc(a.titulo)}</strong>
-        <p>${esc(a.mensaje)}</p>
-        <small>
-          Publicado: ${dt(a.fecha_publicacion)}
-          ${a.fecha_evento?` · Evento: ${dcl(a.fecha_evento)} ${tm(a.hora_evento)}`:''}
-          ${a.lugar?` · ${esc(a.lugar)}`:''}
-        </small>
-        <div class="item-meta">
-          👥 ${Number(a.destinatarios_total||0)} socio(s) activo(s) considerados ·
-          ${a.activo?'🟢 Activo':'⚪ Desactivado'}
-          ${a.fecha_expiracion?` · Visible hasta ${dcl(a.fecha_expiracion)}`:''}
+  const avisos=data||[];
+  const stats=new Map();
+
+  await Promise.all(avisos.map(async a=>{
+    try{
+      const r=await rpc('admin_estadisticas_aviso_socios',{p_aviso_id:a.id});
+      stats.set(a.id,Array.isArray(r)?r[0]:r);
+    }catch(e){
+      stats.set(a.id,null);
+    }
+  }));
+
+  box.innerHTML=avisos.map(a=>{
+    const st=stats.get(a.id);
+    const total=Number(st?.destinatarios_total ?? a.destinatarios_total ?? 0);
+    const vistos=Number(st?.vistos ?? 0);
+    const pendientes=Math.max(0,Number(st?.pendientes ?? total-vistos));
+    const pct=total?Math.round(vistos*100/total):0;
+
+    return `
+      <article class="list-card">
+        <div>
+          <strong>${a.tipo==='reunion'?'📅':a.tipo==='importante'?'⚠️':'ℹ️'} ${esc(a.titulo)}</strong>
+          <p>${esc(a.mensaje)}</p>
+          <small>
+            Publicado: ${dt(a.fecha_publicacion)}
+            ${a.fecha_evento?` · Evento: ${dcl(a.fecha_evento)} ${tm(a.hora_evento)}`:''}
+            ${a.lugar?` · ${esc(a.lugar)}`:''}
+          </small>
+
+          <div class="item-meta">
+            👥 ${total} socio(s) activo(s) ·
+            👁️ <strong>${vistos} de ${total}</strong> lo han visto (${pct}%) ·
+            ${pendientes} pendiente(s) ·
+            ${a.activo?'🟢 Activo':'⚪ Desactivado'}
+          </div>
+
+          <div class="aviso-reading-progress" aria-label="${pct}% leído">
+            <span style="width:${pct}%"></span>
+          </div>
+
+          <button class="button secondary small" type="button" data-view-readers="${a.id}">
+            Ver detalle de lectura
+          </button>
+          <div id="readers-${a.id}" class="aviso-readers" hidden></div>
         </div>
-      </div>
-      <div class="actions">
-        <button class="button secondary" data-toggle-aviso="${a.id}" data-active="${a.activo}">
-          ${a.activo?'Desactivar':'Activar'}
-        </button>
-      </div>
-    </article>
-  `).join('')||'<div class="notice">Aún no hay avisos publicados.</div>';
+
+        <div class="actions">
+          <button class="button secondary" data-toggle-aviso="${a.id}" data-active="${a.activo}">
+            ${a.activo?'Desactivar':'Activar'}
+          </button>
+        </div>
+      </article>`;
+  }).join('')||'<div class="notice">Aún no hay avisos publicados.</div>';
 
   box.querySelectorAll('[data-toggle-aviso]').forEach(b=>{
     b.onclick=async()=>{
@@ -68,6 +99,36 @@ async function loadAvisos(){
         await loadAvisos();
       }catch(e){
         alert(e.message);
+      }
+    };
+  });
+
+  box.querySelectorAll('[data-view-readers]').forEach(b=>{
+    b.onclick=async()=>{
+      const id=b.dataset.viewReaders;
+      const target=$(`#readers-${id}`);
+      if(!target)return;
+
+      if(!target.hidden){
+        target.hidden=true;
+        b.textContent='Ver detalle de lectura';
+        return;
+      }
+
+      target.hidden=false;
+      target.innerHTML='<div class="notice">Cargando socios…</div>';
+      b.textContent='Ocultar detalle';
+
+      try{
+        const rows=await rpc('admin_detalle_lectura_aviso_socios',{p_aviso_id:id})||[];
+        target.innerHTML=rows.map(x=>`
+          <div class="aviso-reader-row">
+            <span>${x.leido?'✅':'⏳'} N.º ${String(x.numero_socio||'').padStart(3,'0')} · ${esc(x.nombre_completo)}</span>
+            <small>${x.leido?`Visto ${dt(x.leido_en)}`:'Pendiente de lectura'}</small>
+          </div>
+        `).join('')||'<div class="notice">No hay destinatarios.</div>';
+      }catch(e){
+        target.innerHTML=`<div class="notice">${esc(e.message)}</div>`;
       }
     };
   });
