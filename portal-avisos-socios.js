@@ -16,6 +16,7 @@ async function rpc(name,args){
   return data;
 }
 
+let currentAvisos=[];
 let currentUnread=[];
 
 function ensureModal(){
@@ -61,6 +62,11 @@ function ensureModal(){
       background:#fbfdfd;
     }
     .sigve-aviso-card strong{display:block;color:#173b46;font-size:1rem;margin-bottom:7px}
+    .sigve-aviso-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .sigve-aviso-card-top strong{margin-bottom:7px}
+    .sigve-aviso-estado{flex:0 0 auto;font-size:.72rem;font-weight:700;padding:4px 8px;border-radius:999px;background:#eaf3f4;color:#526b70}
+    .sigve-aviso-nuevo .sigve-aviso-estado{background:#e7f7ee;color:#13713e}
+    .sigve-aviso-leido{opacity:.88}
     .sigve-aviso-card p{margin:0 0 10px;white-space:pre-wrap;line-height:1.5;color:#344e55}
     .sigve-aviso-card small{color:#5e7479;line-height:1.45}
     .sigve-aviso-empty{
@@ -119,6 +125,7 @@ function renderBadge(){
 
 async function loadAvisos(){
   if(!token()){
+    currentAvisos=[];
     currentUnread=[];
     renderBadge();
     return;
@@ -126,10 +133,13 @@ async function loadAvisos(){
 
   try{
     const items=await rpc('portal_socio_mis_avisos',{p_token:token()})||[];
+    currentAvisos=items;
     currentUnread=items.filter(x=>!x.leido);
     renderBadge();
   }catch(e){
     console.warn('Avisos socios:',e.message);
+    const vistosIds=new Set(vistos.map(x=>x.id));
+    currentAvisos=currentAvisos.map(x=>vistosIds.has(x.id)?{...x,leido:true}:x);
     currentUnread=[];
     renderBadge();
   }
@@ -143,22 +153,28 @@ function renderModal(){
 
   modal.hidden=false;
 
-  if(!currentUnread.length){
+  if(!currentAvisos.length){
     summary.textContent='Todo al día';
     body.innerHTML=`
       <div class="sigve-aviso-empty">
         <span>✅</span>
         <strong>Todo al día</strong>
-        <small>No tienes avisos nuevos.</small>
+        <small>No tienes avisos vigentes.</small>
       </div>`;
     return;
   }
 
-  summary.textContent=`${currentUnread.length} aviso${currentUnread.length===1?'':'s'} nuevo${currentUnread.length===1?'':'s'}`;
+  const nuevos=currentAvisos.filter(x=>!x.leido).length;
+  summary.textContent=nuevos
+    ?`${nuevos} aviso${nuevos===1?'':'s'} nuevo${nuevos===1?'':'s'} · ${currentAvisos.length} vigente${currentAvisos.length===1?'':'s'}`
+    :`${currentAvisos.length} aviso${currentAvisos.length===1?'':'s'} vigente${currentAvisos.length===1?'':'s'}`;
 
-  body.innerHTML=currentUnread.map(x=>`
-    <article class="sigve-aviso-card">
-      <strong>${x.tipo==='reunion'?'📅':x.tipo==='importante'?'⚠️':'ℹ️'} ${esc(x.titulo)}</strong>
+  body.innerHTML=currentAvisos.map(x=>`
+    <article class="sigve-aviso-card ${x.leido?'sigve-aviso-leido':'sigve-aviso-nuevo'}">
+      <div class="sigve-aviso-card-top">
+        <strong>${x.tipo==='reunion'?'📅':x.tipo==='importante'?'⚠️':'ℹ️'} ${esc(x.titulo)}</strong>
+        <span class="sigve-aviso-estado">${x.leido?'✓ Leído':'● Nuevo'}</span>
+      </div>
       <p>${esc(x.mensaje)}</p>
       ${x.fecha_evento?`
         <small>
@@ -168,7 +184,6 @@ function renderModal(){
         </small>`:''}
     </article>`).join('');
 }
-
 async function openAvisos(){
   if(!token())return;
 
