@@ -1,12 +1,12 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mi SIGVE · Portal del Socio</title><meta name="theme-color" content="#145e75">
-<link rel="stylesheet" href="portal-socio.css?v=PWABARFIX1">  <link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="portal-socio.css?v=AVISOSHEADER1">  <link rel="manifest" href="manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="SIGVE">
   <link rel="apple-touch-icon" href="assets/pwa-icon-192.png">
 </head><body>
-<header class="top"><a href="index.html" class="brand"><img src="assets/logo.svg" alt=""><span><b>Mi SIGVE</b><small>Portal del Socio · Villa El Trigal</small></span></a><button id="logout" class="ghost" hidden>Cerrar sesión</button></header>
+<header class="top"><a href="index.html" class="brand"><img src="assets/logo.svg" alt=""><span><b>Mi SIGVE</b><small>Portal del Socio · Villa El Trigal</small></span></a><div class="socio-header-actions"><button id="socio-notification-bell" class="socio-notification-bell socio-notification-bell-header" type="button" aria-label="Avisos de la Junta">🔔<span id="socio-notification-count">0</span></button><button id="logout" class="ghost" hidden>Cerrar sesión</button></div></header>
 <main class="shell">
 <section id="loginView" class="auth-card"><div class="icon">👤</div><h1>Portal del Socio</h1><p>Ingresa tu RUT y número de socio para acceder a Mi SIGVE.</p>
 <form id="rutForm"><label>RUT<input id="rut" data-rut inputmode="text" maxlength="12" autocomplete="username" placeholder="12.345.678-9" required><small class="field-help">Escribe solo los números; los puntos y el guion se agregan automáticamente.</small></label><label>Número de socio<input id="memberNumber" inputmode="numeric" autocomplete="off" placeholder="Ej.: 28" required></label><button class="primary">Ingresar a Mi SIGVE</button></form><p id="authMsg" class="message" role="status"></p></section>
@@ -120,11 +120,11 @@ document.querySelectorAll('[data-mobile-tab]').forEach(btn=>btn.addEventListener
 </script>
 
 
-<button id="socio-notification-bell" class="socio-notification-bell" type="button" aria-label="Avisos de la Junta" hidden>🔔<span id="socio-notification-count">0</span></button>
+
 <div id="socio-notification-panel" class="socio-notification-panel" hidden>
   <div class="socio-notification-head"><div><strong>Avisos de la Junta</strong><small id="socio-notification-summary">Todo al día</small></div><button id="socio-notification-close" type="button">×</button></div>
   <div id="socio-notification-list"></div>
 </div>
-<script src="portal-avisos-socios.js?v=2"></script>
+<script src="portal-avisos-socios.js?v=3"></script>
 
 </body></html>
