@@ -119,4 +119,12 @@ document.querySelectorAll('[data-mobile-tab]').forEach(btn=>btn.addEventListener
 }));
 </script>
 
+
+<button id="socio-notification-bell" class="socio-notification-bell" type="button" aria-label="Avisos de la Junta" hidden>🔔<span id="socio-notification-count">0</span></button>
+<div id="socio-notification-panel" class="socio-notification-panel" hidden>
+  <div class="socio-notification-head"><div><strong>Avisos de la Junta</strong><small id="socio-notification-summary">Todo al día</small></div><button id="socio-notification-close" type="button">×</button></div>
+  <div id="socio-notification-list"></div>
+</div>
+<script src="portal-avisos-socios.js?v=1"></script>
+
 </body></html>
