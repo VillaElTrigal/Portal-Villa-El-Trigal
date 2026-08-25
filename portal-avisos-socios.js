@@ -18,11 +18,79 @@ async function rpc(name,args){
 
 let currentUnread=[];
 
-function hideBell(){
-  const bell=$('#socio-notification-bell');
-  const count=$('#socio-notification-count');
-  if(bell)bell.hidden=true;
-  if(count){count.hidden=true;count.textContent=''}
+function ensureModal(){
+  if(document.getElementById('sigve-aviso-modal'))return;
+
+  const style=document.createElement('style');
+  style.textContent=`
+    #sigve-aviso-modal[hidden]{display:none!important}
+    #sigve-aviso-modal{
+      position:fixed;inset:0;z-index:99999;
+      background:rgba(10,35,43,.48);
+      display:grid;place-items:center;
+      padding:18px;
+    }
+    .sigve-aviso-dialog{
+      width:min(520px,100%);
+      max-height:82vh;
+      overflow:auto;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.28);
+    }
+    .sigve-aviso-head{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+      padding:18px 20px 14px;
+      border-bottom:1px solid #e4ebea;
+    }
+    .sigve-aviso-head div{display:flex;flex-direction:column;gap:3px}
+    .sigve-aviso-head strong{font-size:1.1rem;color:#173b46}
+    .sigve-aviso-head small{color:#6b7f83}
+    .sigve-aviso-close{
+      border:0;background:#eef4f4;color:#173b46;
+      width:36px;height:36px;border-radius:50%;
+      font-size:1.35rem;cursor:pointer;
+    }
+    .sigve-aviso-body{padding:16px 20px 20px}
+    .sigve-aviso-card{
+      border:1px solid #dfe8e7;
+      border-left:4px solid #18758a;
+      border-radius:12px;
+      padding:14px 15px;
+      margin-bottom:12px;
+      background:#fbfdfd;
+    }
+    .sigve-aviso-card strong{display:block;color:#173b46;font-size:1rem;margin-bottom:7px}
+    .sigve-aviso-card p{margin:0 0 10px;white-space:pre-wrap;line-height:1.5;color:#344e55}
+    .sigve-aviso-card small{color:#5e7479;line-height:1.45}
+    .sigve-aviso-empty{
+      min-height:170px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;gap:7px;color:#61767a
+    }
+    .sigve-aviso-empty span{font-size:2rem}
+    .sigve-aviso-empty strong{color:#173b46;font-size:1.05rem}
+  `;
+  document.head.appendChild(style);
+
+  const modal=document.createElement('div');
+  modal.id='sigve-aviso-modal';
+  modal.hidden=true;
+  modal.innerHTML=`
+    <div class="sigve-aviso-dialog" role="dialog" aria-modal="true" aria-labelledby="sigve-aviso-title">
+      <div class="sigve-aviso-head">
+        <div>
+          <strong id="sigve-aviso-title">🔔 Avisos de la Junta</strong>
+          <small id="sigve-aviso-summary">Todo al día</small>
+        </div>
+        <button class="sigve-aviso-close" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <div id="sigve-aviso-body" class="sigve-aviso-body"></div>
+    </div>`;
+
+  document.body.appendChild(modal);
+
+  modal.querySelector('.sigve-aviso-close').onclick=()=>modal.hidden=true;
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.hidden=true});
 }
 
 function renderBadge(){
@@ -30,16 +98,16 @@ function renderBadge(){
   const count=$('#socio-notification-count');
   if(!bell)return;
 
-  // Solo visible después de iniciar sesión.
   if(!token()){
-    hideBell();
+    bell.hidden=true;
+    if(count){count.hidden=true;count.textContent=''}
     return;
   }
 
   bell.hidden=false;
 
   if(count){
-    if(currentUnread.length>0){
+    if(currentUnread.length){
       count.textContent=String(currentUnread.length);
       count.hidden=false;
     }else{
@@ -52,7 +120,7 @@ function renderBadge(){
 async function loadAvisos(){
   if(!token()){
     currentUnread=[];
-    hideBell();
+    renderBadge();
     return;
   }
 
@@ -60,13 +128,6 @@ async function loadAvisos(){
     const items=await rpc('portal_socio_mis_avisos',{p_token:token()})||[];
     currentUnread=items.filter(x=>!x.leido);
     renderBadge();
-
-    const summary=$('#socio-notification-summary');
-    if(summary){
-      summary.textContent=currentUnread.length
-        ?`${currentUnread.length} aviso${currentUnread.length===1?'':'s'} nuevo${currentUnread.length===1?'':'s'}`
-        :'Todo al día';
-    }
   }catch(e){
     console.warn('Avisos socios:',e.message);
     currentUnread=[];
@@ -74,90 +135,90 @@ async function loadAvisos(){
   }
 }
 
-function renderPanel(){
-  const list=$('#socio-notification-list');
-  if(!list)return;
+function renderModal(){
+  ensureModal();
+  const modal=$('#sigve-aviso-modal');
+  const body=$('#sigve-aviso-body');
+  const summary=$('#sigve-aviso-summary');
+
+  modal.hidden=false;
 
   if(!currentUnread.length){
-    list.innerHTML='<div class="notice">✅ No tienes avisos nuevos.</div>';
-    return;
-  }
-
-  list.innerHTML=currentUnread.map(x=>`
-    <article class="socio-notification-card" data-aviso="${x.id}">
-      <strong>${x.tipo==='reunion'?'📅':x.tipo==='importante'?'⚠️':'ℹ️'} ${esc(x.titulo)}</strong>
-      <p>${esc(x.mensaje)}</p>
-      ${x.fecha_evento?`<small>📅 ${dcl(x.fecha_evento)}${x.hora_evento?' · 🕒 '+String(x.hora_evento).slice(0,5):''}${x.lugar?' · 📍 '+esc(x.lugar):''}</small>`:''}
-    </article>
-  `).join('');
-}
-
-async function openPanel(){
-  if(!token())return;
-
-  const panel=$('#socio-notification-panel');
-  const list=$('#socio-notification-list');
-  const summary=$('#socio-notification-summary');
-  if(!panel||!list)return;
-
-  // Abrir SIEMPRE el panel.
-  panel.hidden=false;
-  panel.setAttribute('aria-hidden','false');
-
-  if(!currentUnread.length){
-    if(summary)summary.textContent='Todo al día';
-    list.innerHTML=`
-      <div class="socio-notification-empty">
-        <span>🔔</span>
+    summary.textContent='Todo al día';
+    body.innerHTML=`
+      <div class="sigve-aviso-empty">
+        <span>✅</span>
         <strong>Todo al día</strong>
         <small>No tienes avisos nuevos.</small>
       </div>`;
     return;
   }
 
-  renderPanel();
+  summary.textContent=`${currentUnread.length} aviso${currentUnread.length===1?'':'s'} nuevo${currentUnread.length===1?'':'s'}`;
 
-  // Marcar como leídos después de mostrarlos.
-  const toMark=[...currentUnread];
-  for(const x of toMark){
-    try{
-      await rpc('portal_socio_marcar_aviso_leido',{
-        p_token:token(),
-        p_aviso_id:x.id
-      });
-    }catch(e){
-      console.warn('Lectura aviso:',e.message);
+  body.innerHTML=currentUnread.map(x=>`
+    <article class="sigve-aviso-card">
+      <strong>${x.tipo==='reunion'?'📅':x.tipo==='importante'?'⚠️':'ℹ️'} ${esc(x.titulo)}</strong>
+      <p>${esc(x.mensaje)}</p>
+      ${x.fecha_evento?`
+        <small>
+          📅 ${dcl(x.fecha_evento)}
+          ${x.hora_evento?' · 🕒 '+String(x.hora_evento).slice(0,5):''}
+          ${x.lugar?' · 📍 '+esc(x.lugar):''}
+        </small>`:''}
+    </article>`).join('');
+}
+
+async function openAvisos(){
+  if(!token())return;
+
+  // Primero mostrar el mensaje.
+  renderModal();
+
+  // Luego marcar como leído.
+  if(currentUnread.length){
+    const vistos=[...currentUnread];
+    for(const x of vistos){
+      try{
+        await rpc('portal_socio_marcar_aviso_leido',{
+          p_token:token(),
+          p_aviso_id:x.id
+        });
+      }catch(e){
+        console.warn('Lectura aviso:',e.message);
+      }
     }
+    currentUnread=[];
+    renderBadge();
   }
-
-  currentUnread=[];
-  renderBadge();
-  if(summary)summary.textContent='Todo al día';
 }
 
 function bind(){
-  $('#socio-notification-bell')?.addEventListener('click',openPanel);
-  $('#socio-notification-close')?.addEventListener('click',()=>{
-    $('#socio-notification-panel').hidden=true;$('#socio-notification-panel').setAttribute('aria-hidden','true');
-  });
+  ensureModal();
 
-  // Cuando portal-socio inicia/cierra sesión, el storage cambia en esta misma pestaña
-  // solo por código, por eso observamos el DOM y reintentamos periódicamente de forma liviana.
+  const bell=$('#socio-notification-bell');
+  if(bell){
+    bell.onclick=e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      openAvisos();
+    };
+  }
+
   let lastToken='';
   setInterval(()=>{
     const t=token();
     if(t!==lastToken){
       lastToken=t;
       if(t)loadAvisos();
-      else hideBell();
+      else renderBadge();
     }
   },800);
 }
 
 window.addEventListener('load',()=>{
-  hideBell();
   bind();
-  setTimeout(loadAvisos,1000);
+  setTimeout(loadAvisos,900);
 });
 
 })();
