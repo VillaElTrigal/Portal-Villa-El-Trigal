@@ -1,0 +1,77 @@
+
+/* SIGVE · Temas de temporada
+   Solo altera apariencia. No cambia formularios, datos ni navegación. */
+html,body{transition:background-color .3s ease,color .3s ease}
+body{position:relative}
+.sigve-seasonal-decor{pointer-events:none;position:fixed;inset:0;z-index:40;overflow:hidden}
+.sigve-seasonal-decor .sigve-garland{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:min(760px,88vw);padding:6px 18px;text-align:center;
+  border-radius:0 0 18px 18px;font-size:15px;letter-spacing:2px;
+  background:rgba(255,255,255,.88);box-shadow:0 4px 18px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px);
+}
+.sigve-seasonal-decor .sigve-corner{
+  position:absolute;top:70px;font-size:38px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.16));
+}
+.sigve-seasonal-decor .sigve-left{left:16px}
+.sigve-seasonal-decor .sigve-right{right:16px}
+
+/* Fiestas Patrias */
+body[data-sigve-theme="fiestas_patrias"]{
+  background-image:
+    radial-gradient(circle at 8% 9%, rgba(15,73,145,.08), transparent 20%),
+    radial-gradient(circle at 92% 10%, rgba(211,47,47,.08), transparent 20%);
+}
+body[data-sigve-theme="fiestas_patrias"] header,
+body[data-sigve-theme="fiestas_patrias"] .hero{
+  box-shadow:inset 0 -3px 0 rgba(211,47,47,.22);
+}
+body[data-sigve-theme="fiestas_patrias"] .button,
+body[data-sigve-theme="fiestas_patrias"] button{
+  transition:transform .15s ease,filter .15s ease;
+}
+
+/* Halloween */
+body[data-sigve-theme="halloween"]{
+  background-image:
+    radial-gradient(circle at 12% 10%, rgba(255,132,0,.10), transparent 22%),
+    radial-gradient(circle at 88% 12%, rgba(78,40,116,.10), transparent 22%);
+}
+body[data-sigve-theme="halloween"] .sigve-seasonal-decor .sigve-garland{
+  background:rgba(34,24,41,.92);color:#fff;
+}
+body[data-sigve-theme="halloween"] header,
+body[data-sigve-theme="halloween"] .hero{
+  box-shadow:inset 0 -3px 0 rgba(255,132,0,.25);
+}
+
+/* Navidad */
+body[data-sigve-theme="navidad"]{
+  background-image:
+    radial-gradient(circle at 10% 8%, rgba(16,116,72,.09), transparent 20%),
+    radial-gradient(circle at 90% 8%, rgba(184,33,45,.09), transparent 20%);
+}
+body[data-sigve-theme="navidad"] .sigve-seasonal-decor .sigve-garland{
+  background:rgba(250,255,252,.92);
+}
+.sigve-snow i{
+  position:absolute;top:-30px;font-style:normal;opacity:.65;
+  animation:sigveSnow linear infinite;
+}
+@keyframes sigveSnow{
+  from{transform:translateY(-30px) rotate(0deg)}
+  to{transform:translateY(110vh) rotate(360deg)}
+}
+
+@media(max-width:700px){
+  .sigve-seasonal-decor .sigve-garland{
+    width:92vw;font-size:12px;padding:5px 10px;white-space:nowrap;overflow:hidden;
+  }
+  .sigve-seasonal-decor .sigve-corner{font-size:28px;top:58px;opacity:.9}
+  .sigve-seasonal-decor .sigve-left{left:7px}
+  .sigve-seasonal-decor .sigve-right{right:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  .sigve-snow i{animation:none;display:none}
+}

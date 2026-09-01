@@ -166,5 +166,37 @@
 <section id="section-gestion" class="admin-section" hidden>
  <div class="panel"><h3>Valores y parámetros de gestión</h3><form id="gestion-form"><div class="v7-grid three"><label>Arriendo sede<input type="number" name="valor_arriendo" min="0" required></label><label>Abono mínimo<input type="number" name="abono_minimo" min="0" required></label><label>Certificado residencia<input type="number" name="valor_certificado" min="0" required></label><label>Cuota socio<input type="number" name="valor_cuota" min="0" required></label><label>Clase de Zumba<input type="number" name="valor_zumba" min="0" required></label><label>Edad máxima Navidad<input type="number" name="edad_max_navidad" min="0" max="18" required></label></div><div class="actions"><button class="button primary">Guardar valores</button></div></form></div>
 </section>
+
+<section class="card" id="apariencia-portal-card">
+  <h2>🎨 Apariencia del portal</h2>
+  <p class="muted">Activa una decoración de temporada sin modificar las funciones de SIGVE.</p>
+
+  <div class="form-grid">
+    <label>Modo
+      <select id="apariencia-modo">
+        <option value="auto">Automático según fecha</option>
+        <option value="manual">Manual</option>
+      </select>
+    </label>
+
+    <label>Tema manual
+      <select id="apariencia-tema">
+        <option value="normal">Normal</option>
+        <option value="fiestas_patrias">🇨🇱 Fiestas Patrias</option>
+        <option value="halloween">🎃 Halloween</option>
+        <option value="navidad">🎄 Navidad</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="notice" id="apariencia-estado">Cargando configuración…</div>
+  <button type="button" class="button" id="apariencia-guardar">Guardar apariencia</button>
+
+  <p class="muted" style="margin-top:10px">
+    Fechas automáticas: Fiestas Patrias 10–20 septiembre · Halloween 25–31 octubre · Navidad 10–26 diciembre.
+  </p>
+</section>
+
 </main></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="portal-config.js"></script><script src="sigve-whatsapp.js?v=524"></script><script src="admin.js?v=POPUPFOTO1"></script><script src="admin-v7.js?v=AVISOSSOCIOS1"></script><script src="avisos-socios.js?v=4"></script><script src="admin-v110.js?v=PAGOANUAL1"></script><link rel="stylesheet" href="admin-v111.css?v=549"><script src="admin-v111.js?v=550"></script><link rel="stylesheet" href="beneficios.css?v=560"><script src="beneficios.js?v=560"></script><script src="admin-periodos.js?v=558"></script><script src="admin-v300.js?v=400"></script><link rel="stylesheet" href="cumpleanos.css?v=1"><script src="cumpleanos.js?v=523"></script><link rel="stylesheet" href="admin-roles.css?v=630"><script src="admin-roles.js?v=630"></script><div id="popup-preview-host"></div></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="portal-config.js"></script><script src="sigve-whatsapp.js?v=524"></script><script src="admin.js?v=POPUPFOTO1"></script><script src="admin-v7.js?v=AVISOSSOCIOS1"></script><script src="avisos-socios.js?v=4"></script><script src="admin-v110.js?v=PAGOANUAL1"></script><link rel="stylesheet" href="admin-v111.css?v=549"><script src="admin-v111.js?v=550"></script><link rel="stylesheet" href="beneficios.css?v=560"><script src="beneficios.js?v=560"></script><script src="admin-periodos.js?v=558"></script><script src="admin-v300.js?v=400"></script><link rel="stylesheet" href="cumpleanos.css?v=1"><script src="cumpleanos.js?v=523"></script><link rel="stylesheet" href="admin-roles.css?v=630"><script src="admin-roles.js?v=630"></script><div id="popup-preview-host"></div>  <script src="admin-apariencia.js?v=1"></script>
+</body></html>
