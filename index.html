@@ -232,7 +232,13 @@
                 <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
                 <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
                 <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
-                <label class="certificate-wide-field">Calle, pasaje o avenida<select id="cert-via" required><option value="">Cargando vías…</option></select></label><label>Número<input id="cert-number" inputmode="numeric" maxlength="10" required placeholder="Ej.: 1278"></label><input id="cert-address" type="hidden">
+                <label class="certificate-wide-field">Calle, pasaje o avenida
+  <div class="via-picker certificate-via-picker" id="cert-via-picker">
+    <input id="cert-via-search" type="text" autocomplete="off" required placeholder="Escribe una letra o el nombre de la vía" aria-expanded="false">
+    <input id="cert-via" type="hidden">
+    <div id="cert-via-suggestions" class="via-suggestions" role="listbox" hidden></div>
+  </div>
+</label><label>Número<input id="cert-number" inputmode="numeric" maxlength="10" required placeholder="Ej.: 1278"></label><input id="cert-address" type="hidden">
               </div>
             </section>
             <section class="certificate-form-section">
@@ -465,31 +471,48 @@
     certRutInput.addEventListener('input',()=>certRutInput.value=formatRutValue(certRutInput.value));
     const certPurpose=document.getElementById('cert-purpose'),certPurposeOtherWrap=document.getElementById('cert-purpose-other-wrap'),certPurposeOther=document.getElementById('cert-purpose-other');
     certPurpose.addEventListener('change',()=>{const show=certPurpose.value==='otro';certPurposeOtherWrap.hidden=!show;certPurposeOther.required=show;if(!show)certPurposeOther.value='';});
-    const certVia=document.getElementById('cert-via'),certNumber=document.getElementById('cert-number'),certAddress=document.getElementById('cert-address');
-    const certViaLabel=v=>`${v.tipo||''} ${v.nombre||''}`.trim(),updateCertAddress=()=>{certAddress.value=certVia.value&&certNumber.value.trim()?`${certVia.value} ${certNumber.value.trim()}`:''};
-    certVia.addEventListener('change',updateCertAddress);certNumber.addEventListener('input',updateCertAddress);
+    const certVia=document.getElementById('cert-via'),certViaSearch=document.getElementById('cert-via-search'),certViaPicker=document.getElementById('cert-via-picker'),certViaSuggestions=document.getElementById('cert-via-suggestions'),certNumber=document.getElementById('cert-number'),certAddress=document.getElementById('cert-address');
+    const certViaLabel=v=>`${v.tipo||''} ${v.nombre||''}`.trim();
+    const certNormalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
+    const certEscape=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    let certVias=[],certMatches=[];
+    const updateCertAddress=()=>{certAddress.value=certVia.value&&certNumber.value.trim()?`${certVia.value} ${certNumber.value.trim()}`:''};
+    const closeCertVias=()=>{certViaSuggestions.hidden=true;certViaSearch.setAttribute('aria-expanded','false')};
+    const chooseCertVia=v=>{certVia.value=certViaLabel(v);certViaSearch.value=certViaLabel(v);closeCertVias();updateCertAddress()};
+    const renderCertVias=()=>{
+      const q=certNormalize(certViaSearch.value);
+      certVia.value='';
+      certMatches=certVias.filter(v=>!q||certNormalize(certViaLabel(v)).includes(q)).slice(0,40);
+      certViaSuggestions.innerHTML=certMatches.length
+        ?certMatches.map((v,i)=>`<button type="button" class="via-suggestion" data-cert-via="${i}">${certEscape(certViaLabel(v))}</button>`).join('')
+        :'<div class="via-empty">No hay coincidencias.</div>';
+      certViaSuggestions.hidden=false;
+      certViaSearch.setAttribute('aria-expanded','true');
+      certViaSuggestions.querySelectorAll('[data-cert-via]').forEach(b=>b.onclick=()=>chooseCertVia(certMatches[Number(b.dataset.certVia)]));
+      updateCertAddress();
+    };
+    certViaSearch.addEventListener('focus',renderCertVias);
+    certViaSearch.addEventListener('input',renderCertVias);
+    certNumber.addEventListener('input',()=>{certNumber.value=certNumber.value.replace(/[^0-9]/g,'');updateCertAddress()});
+    document.addEventListener('click',e=>{if(certViaPicker&&!certViaPicker.contains(e.target))closeCertVias()});
     (async()=>{
       try{
-        const cfg=window.PORTAL_CONFIG||{};
-        if(!window.supabase||!cfg.supabaseUrl||!cfg.supabaseAnonKey)throw new Error('Configuración de Supabase no disponible');
-        const c=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
-        const a=await c.from('vias').select('tipo,nombre').eq('activa',true);
+        const c=window.supabase.createClient(window.PORTAL_CONFIG.supabaseUrl,window.PORTAL_CONFIG.supabaseAnonKey);
+        const [a,b]=await Promise.all([
+          c.from('vias').select('tipo,nombre').eq('activa',true),
+          c.from('vias_certificado').select('tipo,nombre').eq('activa',true)
+        ]);
         if(a.error)throw a.error;
-        let extra=[];
-        try{
-          const b=await c.from('vias_certificado').select('tipo,nombre').eq('activa',true);
-          if(!b.error)extra=b.data||[];
-        }catch(_){}
         const seen=new Set();
-        const all=[...(a.data||[]),...extra].filter(v=>{
-          const k=certViaLabel(v).toLocaleLowerCase('es');
-          if(seen.has(k))return false;
+        certVias=[...(a.data||[]),...((b&&!b.error&&b.data)||[])].filter(v=>{
+          const k=certNormalize(certViaLabel(v));
+          if(!k||seen.has(k))return false;
           seen.add(k);return true;
         }).sort((x,y)=>certViaLabel(x).localeCompare(certViaLabel(y),'es',{sensitivity:'base'}));
-        certVia.innerHTML='<option value="">Selecciona una vía</option>'+all.map(v=>`<option value="${certViaLabel(v)}">${certViaLabel(v)}</option>`).join('');
+        certViaSearch.placeholder='Escribe una letra o el nombre de la vía';
       }catch(e){
         console.error('Error cargando vías de certificado:',e);
-        certVia.innerHTML='<option value="">No fue posible cargar las vías</option>';
+        certViaSearch.placeholder='No fue posible cargar las vías';
       }
     })();
     document.getElementById('certificate-form').addEventListener('submit', async function(event) {
@@ -524,7 +547,7 @@ Valor: $${Number(row.valor||1000).toLocaleString('es-CL')}
 La solicitud quedó registrada en SIGVE.`;
         openWhatsApp(message);
         alert(`Solicitud registrada con el correlativo CR-${folio}.`);
-        this.reset();certPurposeOtherWrap.hidden=true;certPurposeOther.required=false;
+        this.reset();certVia.value='';certAddress.value='';closeCertVias();certPurposeOtherWrap.hidden=true;certPurposeOther.required=false;
       }catch(error){alert('No fue posible registrar la solicitud: '+(error.message||error));}
       finally{button.disabled=false;button.textContent=original;}
     });
