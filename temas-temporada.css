@@ -291,3 +291,367 @@ body[data-sigve-theme]:not([data-sigve-theme="normal"])[data-sigve-portal="admin
   .theme-snow i{animation:none;display:none}
   *{scroll-behavior:auto!important}
 }
+
+
+/* =========================================================
+   HALLOWEEN · CORRECCIÓN DE CONTRASTE Y LEGIBILIDAD
+   ========================================================= */
+body[data-sigve-theme="halloween"]{
+  --h-text:#fffaf4;
+  --h-muted:#ddd0e8;
+  --h-soft:#c9bad5;
+  --h-link:#ffd36b;
+  --h-card:#2b1b39;
+  --h-card-2:#21142e;
+  --h-border:rgba(255,255,255,.14);
+}
+
+/* Navegación y encabezados */
+body[data-sigve-theme="halloween"] :is(
+  .header,.header *,
+  .nav,.nav *,
+  .top,.top *,
+  .topbar,.topbar *,
+  .brand,.brand *,
+  .menu-button,
+  .mobile-app-nav,.mobile-app-nav *
+){
+  color:var(--h-text)!important;
+}
+
+body[data-sigve-theme="halloween"] .header{
+  background:linear-gradient(90deg,#160d21,#25142f,#160d21)!important;
+}
+
+body[data-sigve-theme="halloween"] .header nav a{
+  color:#f9f3ff!important;
+}
+body[data-sigve-theme="halloween"] .header nav a:hover{
+  color:#ffb13b!important;
+}
+
+/* Hero */
+body[data-sigve-theme="halloween"] .hero :is(
+  h1,h2,h3,p,.lead,.eyebrow,strong,span
+){
+  color:var(--h-text)!important;
+}
+body[data-sigve-theme="halloween"] .hero .eyebrow{
+  color:#ffbd4a!important;
+}
+
+/* Tarjetas y secciones principales */
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts a,
+  .join-highlight,
+  .featured,
+  .activity-card,
+  .announcement-card,
+  .document-card,
+  .contact-card,
+  .form-panel,
+  .calendar-panel,
+  .conditions-card,
+  .bank-box,
+  .qr-card,
+  .card,
+  .panel,
+  .box,
+  .list-card,
+  .admin-card,
+  .stat-card,
+  .portal-card,
+  .dashboard-card,
+  .modal-card,
+  .modal-content
+){
+  background:linear-gradient(180deg,rgba(48,29,63,.98),rgba(37,22,51,.98))!important;
+  border-color:var(--h-border)!important;
+  color:var(--h-text)!important;
+}
+
+/* Todo texto dentro de tarjetas oscuras */
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts a,
+  .join-highlight,
+  .featured,
+  .activity-card,
+  .announcement-card,
+  .document-card,
+  .contact-card,
+  .form-panel,
+  .calendar-panel,
+  .conditions-card,
+  .bank-box,
+  .card,
+  .panel,
+  .list-card,
+  .admin-card,
+  .stat-card,
+  .portal-card,
+  .dashboard-card,
+  .modal-card,
+  .modal-content
+) :is(h1,h2,h3,h4,h5,h6,strong,b,label,legend,span,li,td,th){
+  color:var(--h-text)!important;
+}
+
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts a,
+  .join-highlight,
+  .featured,
+  .activity-card,
+  .announcement-card,
+  .document-card,
+  .contact-card,
+  .form-panel,
+  .calendar-panel,
+  .conditions-card,
+  .bank-box,
+  .card,
+  .panel,
+  .list-card,
+  .admin-card,
+  .stat-card,
+  .portal-card,
+  .dashboard-card,
+  .modal-card,
+  .modal-content
+) :is(p,small,.muted,.field-help,.form-help,.small){
+  color:var(--h-muted)!important;
+}
+
+/* Enlaces */
+body[data-sigve-theme="halloween"] a{
+  color:var(--h-link)!important;
+}
+body[data-sigve-theme="halloween"] a:hover{
+  color:#fff1b8!important;
+}
+
+/* Formularios */
+body[data-sigve-theme="halloween"] :is(input,select,textarea){
+  background:#160d20!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.22)!important;
+}
+body[data-sigve-theme="halloween"] :is(input,textarea)::placeholder{
+  color:#b9a8c4!important;
+  opacity:1!important;
+}
+body[data-sigve-theme="halloween"] select option{
+  background:#160d20!important;
+  color:#fff!important;
+}
+
+/* Tablas */
+body[data-sigve-theme="halloween"] table{
+  color:#fff!important;
+}
+body[data-sigve-theme="halloween"] :is(th,td){
+  border-color:rgba(255,255,255,.12)!important;
+}
+body[data-sigve-theme="halloween"] th{
+  color:#ffcf72!important;
+}
+
+/* Estados, etiquetas y badges */
+body[data-sigve-theme="halloween"] :is(.badge,.pill,.status,.tag){
+  color:#fff!important;
+  border-color:rgba(255,255,255,.15)!important;
+}
+body[data-sigve-theme="halloween"] .notice,
+body[data-sigve-theme="halloween"] .notice-box{
+  background:#382048!important;
+  color:#fff!important;
+  border-color:rgba(255,177,59,.28)!important;
+}
+
+/* Portal Socio y Administración */
+body[data-sigve-theme="halloween"][data-sigve-portal="socio"] :is(
+  main,.portal-shell,.portal-content,.profile-card,.summary-card
+){
+  color:#fff!important;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"] :is(
+  .admin-main,.admin-content,.dashboard,.content
+){
+  color:#fff!important;
+}
+
+/* Botones secundarios que antes quedaban oscuros sobre oscuro */
+body[data-sigve-theme="halloween"] :is(
+  .button.secondary,
+  button.secondary,
+  .btn-secondary
+){
+  background:#3c2450!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.18)!important;
+}
+
+
+/* =========================================================
+   NAVIDAD · LUCES FIJAS + NIEVE CONTINUA
+   ========================================================= */
+
+/* La capa navideña acompaña al usuario durante todo el scroll */
+body[data-sigve-theme="navidad"] .sigve-theme-atmosphere{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+
+/* Mantener las luces siempre visibles arriba */
+body[data-sigve-theme="navidad"] .theme-lights{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  height:42px!important;
+  z-index:1002!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-around!important;
+  padding:0 10px!important;
+  border-top:2px solid rgba(26,66,38,.75)!important;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.18));
+}
+
+body[data-sigve-theme="navidad"] .theme-lights::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:2px;
+  background:#315f40;
+}
+
+body[data-sigve-theme="navidad"] .theme-lights b{
+  position:relative!important;
+  width:11px!important;
+  height:17px!important;
+  margin-top:2px!important;
+  border-radius:50% 50% 45% 45%!important;
+  opacity:1!important;
+  animation:sigveChristmasGlow 1.8s ease-in-out infinite alternate!important;
+}
+
+body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+1){
+  background:#e2383f!important;
+  box-shadow:0 0 8px #e2383f,0 0 16px rgba(226,56,63,.7)!important;
+}
+body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+2){
+  background:#4aa8ee!important;
+  box-shadow:0 0 8px #4aa8ee,0 0 16px rgba(74,168,238,.7)!important;
+}
+body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+3){
+  background:#4cb65c!important;
+  box-shadow:0 0 8px #4cb65c,0 0 16px rgba(76,182,92,.7)!important;
+}
+body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n){
+  background:#ffd047!important;
+  box-shadow:0 0 8px #ffd047,0 0 17px rgba(255,208,71,.75)!important;
+}
+
+@keyframes sigveChristmasGlow{
+  from{filter:brightness(.82);transform:translateY(0) scale(.96)}
+  to{filter:brightness(1.22);transform:translateY(1px) scale(1.05)}
+}
+
+/* Nieve más visible y distribuida por toda la pantalla */
+body[data-sigve-theme="navidad"] .theme-snow{
+  position:fixed!important;
+  inset:0!important;
+  z-index:1000!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+
+body[data-sigve-theme="navidad"] .theme-snow i{
+  position:absolute!important;
+  top:-40px!important;
+  color:#fff!important;
+  font-style:normal!important;
+  font-size:20px!important;
+  line-height:1!important;
+  opacity:.88!important;
+  text-shadow:0 1px 4px rgba(35,80,95,.35)!important;
+  animation:sigveChristmasSnow 11s linear infinite!important;
+}
+
+/* Repartir los 36 copos por el ancho y variar tiempos/tamaños */
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+1){left:3%!important;animation-delay:-1s!important;font-size:14px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+2){left:11%!important;animation-delay:-7s!important;font-size:20px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+3){left:19%!important;animation-delay:-4s!important;font-size:12px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+4){left:28%!important;animation-delay:-9s!important;font-size:18px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+5){left:36%!important;animation-delay:-2s!important;font-size:23px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+6){left:45%!important;animation-delay:-6s!important;font-size:13px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+7){left:54%!important;animation-delay:-10s!important;font-size:19px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+8){left:63%!important;animation-delay:-3s!important;font-size:15px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+9){left:72%!important;animation-delay:-8s!important;font-size:22px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+10){left:81%!important;animation-delay:-5s!important;font-size:13px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+11){left:90%!important;animation-delay:-11s!important;font-size:18px!important}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n){left:97%!important;animation-delay:-1.5s!important;font-size:12px!important}
+
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n){
+  animation-duration:14s!important;
+}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n+1){
+  animation-duration:10s!important;
+}
+body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n+2){
+  animation-duration:17s!important;
+}
+
+@keyframes sigveChristmasSnow{
+  0%{
+    transform:translate3d(0,-6vh,0) rotate(0deg);
+  }
+  50%{
+    transform:translate3d(24px,52vh,0) rotate(180deg);
+  }
+  100%{
+    transform:translate3d(-18px,108vh,0) rotate(360deg);
+  }
+}
+
+/* Los pinos se quedan como decoración superior, sin invadir contenido */
+body[data-sigve-theme="navidad"] .theme-pine{
+  position:fixed!important;
+  top:47px!important;
+  z-index:998!important;
+}
+
+/* Reservar visualmente un poco de espacio para las luces */
+body[data-sigve-theme="navidad"] .sigve-theme-banner{
+  margin-top:34px!important;
+}
+
+@media(max-width:760px){
+  body[data-sigve-theme="navidad"] .theme-lights{
+    height:32px!important;
+  }
+  body[data-sigve-theme="navidad"] .theme-lights b{
+    width:8px!important;
+    height:12px!important;
+  }
+  body[data-sigve-theme="navidad"] .theme-snow i{
+    opacity:.72!important;
+  }
+  body[data-sigve-theme="navidad"] .sigve-theme-banner{
+    margin-top:26px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body[data-sigve-theme="navidad"] .theme-lights b{
+    animation:none!important;
+  }
+  /* Conservamos algunos copos estáticos en vez de ocultar toda la nieve */
+  body[data-sigve-theme="navidad"] .theme-snow i{
+    animation:none!important;
+    opacity:.28!important;
+  }
+}
