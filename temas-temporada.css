@@ -1,77 +1,293 @@
 
-/* SIGVE · Temas de temporada
-   Solo altera apariencia. No cambia formularios, datos ni navegación. */
-html,body{transition:background-color .3s ease,color .3s ease}
-body{position:relative}
-.sigve-seasonal-decor{pointer-events:none;position:fixed;inset:0;z-index:40;overflow:hidden}
-.sigve-seasonal-decor .sigve-garland{
-  position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:min(760px,88vw);padding:6px 18px;text-align:center;
-  border-radius:0 0 18px 18px;font-size:15px;letter-spacing:2px;
-  background:rgba(255,255,255,.88);box-shadow:0 4px 18px rgba(0,0,0,.10);
-  backdrop-filter:blur(8px);
+/* =========================================================
+   SIGVE · TEMAS COMPLETOS DE TEMPORADA
+   Portal Principal + Portal Socio + Portal Administrador
+   Capa 100% visual: no modifica lógica ni formularios.
+   ========================================================= */
+:root{
+  --season-primary:#0c3457;
+  --season-secondary:#166a78;
+  --season-accent:#e9b949;
+  --season-surface:#ffffff;
+  --season-surface-2:#f5f8fa;
+  --season-text:#172b3a;
+  --season-muted:#667783;
+  --season-border:rgba(12,52,87,.13);
+  --season-shadow:0 16px 42px rgba(20,38,55,.12);
 }
-.sigve-seasonal-decor .sigve-corner{
-  position:absolute;top:70px;font-size:38px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.16));
+body.sigve-theme-ready{
+  transition:background .35s ease,color .35s ease;
 }
-.sigve-seasonal-decor .sigve-left{left:16px}
-.sigve-seasonal-decor .sigve-right{right:16px}
+.sigve-theme-atmosphere{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+}
+.sigve-theme-banner{
+  display:none;
+  position:relative;z-index:1000;text-align:center;
+  font-weight:900;letter-spacing:.04em;
+  padding:7px 12px;
+  box-shadow:0 5px 18px rgba(0,0,0,.14);
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) > *:not(.sigve-theme-atmosphere):not(.sigve-theme-banner){
+  position:relative;z-index:1;
+}
 
-/* Fiestas Patrias */
+/* ---------- Shared themed surfaces ---------- */
+body[data-sigve-theme]:not([data-sigve-theme="normal"]){
+  background:var(--season-page-bg)!important;
+  color:var(--season-text);
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  .card,.panel,.box,.list-card,.modal-card,.modal-content,.admin-card,.stat-card,
+  .news-card,.service-card,.quick-card,.portal-card,.dashboard-card
+){
+  border-color:var(--season-border)!important;
+  box-shadow:var(--season-shadow);
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  input,select,textarea
+){
+  border-color:var(--season-border)!important;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  button,.button,.btn
+){
+  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  button,.button,.btn
+):hover{transform:translateY(-1px);filter:brightness(1.04)}
+
+/* ---------- FIESTAS PATRIAS ---------- */
 body[data-sigve-theme="fiestas_patrias"]{
-  background-image:
-    radial-gradient(circle at 8% 9%, rgba(15,73,145,.08), transparent 20%),
-    radial-gradient(circle at 92% 10%, rgba(211,47,47,.08), transparent 20%);
+  --season-primary:#063b78;
+  --season-secondary:#d52b2f;
+  --season-accent:#f4c34d;
+  --season-surface:rgba(255,255,255,.96);
+  --season-surface-2:#f5f8fd;
+  --season-text:#102d4f;
+  --season-muted:#5f7083;
+  --season-border:rgba(16,57,105,.16);
+  --season-shadow:0 15px 38px rgba(5,48,99,.13);
+  --season-page-bg:
+    linear-gradient(180deg,rgba(235,244,255,.96),rgba(255,255,255,.98) 42%,rgba(247,248,244,.98)),
+    radial-gradient(circle at 12% 12%,rgba(213,43,47,.13),transparent 24%),
+    radial-gradient(circle at 88% 16%,rgba(6,59,120,.16),transparent 25%);
 }
-body[data-sigve-theme="fiestas_patrias"] header,
+body[data-sigve-theme="fiestas_patrias"] .sigve-theme-banner{
+  display:block;
+  background:linear-gradient(90deg,#073e7d 0 33%,#fff 33% 66%,#d82f34 66%);
+  color:#0b3262;text-shadow:0 1px 0 #fff;
+}
+.theme-bunting{
+  position:absolute;top:38px;left:0;right:0;height:45px;
+  display:flex;justify-content:space-around;align-items:flex-start;
+  padding:0 4vw;
+}
+.theme-bunting i,.theme-bunting span{
+  width:30px;height:36px;display:grid;place-items:center;
+  clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.12));
+}
+.theme-bunting i:nth-of-type(odd){background:#d62e34}
+.theme-bunting i:nth-of-type(even){background:#fff}
+.theme-bunting span{background:#073e7d;color:#fff;font-style:normal}
+.theme-landscape{position:absolute;top:104px;font-size:64px;opacity:.92;filter:drop-shadow(0 7px 10px rgba(0,0,0,.15))}
+.theme-landscape-left{left:16px}.theme-landscape-right{right:16px}
+body[data-sigve-theme="fiestas_patrias"] :is(.header,.top,.admin-header,.sidebar){
+  border-color:rgba(7,62,125,.18)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] :is(.header,.top){
+  background:linear-gradient(90deg,rgba(255,255,255,.98),rgba(243,248,255,.98),rgba(255,247,247,.98))!important;
+}
+body[data-sigve-theme="fiestas_patrias"] :is(.button:not(.secondary),button.primary,.btn-primary){
+  background:linear-gradient(135deg,#073e7d,#0d5aaa)!important;color:#fff!important;
+}
 body[data-sigve-theme="fiestas_patrias"] .hero{
-  box-shadow:inset 0 -3px 0 rgba(211,47,47,.22);
+  background:
+    linear-gradient(180deg,rgba(237,246,255,.76),rgba(255,255,255,.89)),
+    radial-gradient(ellipse at 50% 100%,rgba(23,101,76,.20),transparent 42%)!important;
+  border-bottom:5px solid transparent;
+  border-image:linear-gradient(90deg,#073e7d 0 33%,#fff 33% 66%,#d62e34 66%) 1;
 }
-body[data-sigve-theme="fiestas_patrias"] .button,
-body[data-sigve-theme="fiestas_patrias"] button{
-  transition:transform .15s ease,filter .15s ease;
+body[data-sigve-theme="fiestas_patrias"] .hero h1::before{
+  content:"★  ¡Viva Chile!  ★";display:block;color:#c62329;
+  font-size:clamp(18px,2.3vw,30px);font-style:italic;margin-bottom:8px;
+}
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .admin-main::before,
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"] main::before{
+  content:"🇨🇱  Fiestas Patrias en Villa El Trigal";
+  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
+  font-weight:850;color:#073e7d;text-align:center;
+  background:linear-gradient(90deg,#edf5ff,#fff,#fff0f1);
+  border:1px solid rgba(7,62,125,.14);
 }
 
-/* Halloween */
+/* ---------- HALLOWEEN ---------- */
 body[data-sigve-theme="halloween"]{
-  background-image:
-    radial-gradient(circle at 12% 10%, rgba(255,132,0,.10), transparent 22%),
-    radial-gradient(circle at 88% 12%, rgba(78,40,116,.10), transparent 22%);
+  --season-primary:#6f2ca0;
+  --season-secondary:#f28c18;
+  --season-accent:#ffc145;
+  --season-surface:rgba(34,23,48,.96);
+  --season-surface-2:#241832;
+  --season-text:#f8f3ff;
+  --season-muted:#c7bad1;
+  --season-border:rgba(206,157,255,.20);
+  --season-shadow:0 18px 46px rgba(11,5,20,.36);
+  --season-page-bg:
+    radial-gradient(circle at 82% 10%,rgba(123,72,155,.26),transparent 24%),
+    radial-gradient(circle at 18% 10%,rgba(242,140,24,.12),transparent 20%),
+    linear-gradient(180deg,#150c21,#21132f 58%,#12091b);
 }
-body[data-sigve-theme="halloween"] .sigve-seasonal-decor .sigve-garland{
-  background:rgba(34,24,41,.92);color:#fff;
+body[data-sigve-theme="halloween"] .sigve-theme-banner{
+  display:block;color:#ffd26a;
+  background:linear-gradient(90deg,#160a22,#402058,#160a22);
 }
-body[data-sigve-theme="halloween"] header,
+.theme-moon{
+  position:absolute;right:7vw;top:78px;width:145px;height:145px;border-radius:50%;
+  background:radial-gradient(circle at 36% 35%,#fff5cd,#e9d8a5 50%,#a88f7b);
+  box-shadow:0 0 60px rgba(255,235,170,.25);
+  opacity:.80;
+}
+.theme-bats{position:absolute;right:10vw;top:110px;font-size:36px;color:#08050b;letter-spacing:8px;transform:rotate(-8deg)}
+.theme-web{position:absolute;top:40px;width:160px;height:160px;opacity:.24;
+ background:repeating-radial-gradient(circle at top left,transparent 0 18px,rgba(255,255,255,.7) 19px 20px);
+}
+.theme-web-left{left:0}.theme-web-right{right:0;transform:scaleX(-1)}
+body[data-sigve-theme="halloween"] :is(.header,.top,.admin-main,.sidebar,.topbar){
+  background-color:rgba(25,14,36,.94)!important;color:#f8f3ff!important;
+}
+body[data-sigve-theme="halloween"] :is(
+ .card,.panel,.box,.list-card,.modal-card,.modal-content,.admin-card,.stat-card,
+ .news-card,.service-card,.quick-card,.portal-card,.dashboard-card
+){
+  background:rgba(40,26,56,.94)!important;color:#f8f3ff!important;
+}
+body[data-sigve-theme="halloween"] :is(h1,h2,h3,h4,strong,label,.brand,.brand *,.topbar *){
+  color:#f8f3ff!important;
+}
+body[data-sigve-theme="halloween"] :is(p,small,.muted,.small){
+  color:#cdbfd8!important;
+}
+body[data-sigve-theme="halloween"] :is(input,select,textarea){
+  background:#180f23!important;color:#fff!important;
+}
+body[data-sigve-theme="halloween"] :is(.button:not(.secondary),button.primary,.btn-primary){
+  background:linear-gradient(135deg,#7b31a8,#b24bd4)!important;color:#fff!important;
+  box-shadow:0 8px 20px rgba(108,38,145,.28);
+}
 body[data-sigve-theme="halloween"] .hero{
-  box-shadow:inset 0 -3px 0 rgba(255,132,0,.25);
+  background:
+    radial-gradient(circle at 78% 22%,rgba(255,235,176,.22),transparent 17%),
+    linear-gradient(180deg,rgba(19,10,29,.74),rgba(30,16,43,.94))!important;
 }
+body[data-sigve-theme="halloween"] .hero h1{color:#ffc34d!important}
+body[data-sigve-theme="halloween"] .hero h1::before{
+  content:"🎃  Halloween  🦇";display:block;font-size:clamp(18px,2.3vw,30px);
+  color:#f6a22b;margin-bottom:8px;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"] .admin-main::before,
+body[data-sigve-theme="halloween"][data-sigve-portal="socio"] main::before{
+  content:"🎃  Halloween en Villa El Trigal  🦇";
+  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
+  text-align:center;font-weight:850;color:#ffc34d;
+  background:linear-gradient(90deg,#251334,#3d1f51,#251334);
+  border:1px solid rgba(246,162,43,.22);
+}
+body[data-sigve-theme="halloween"] a{color:#d9a6ff}
 
-/* Navidad */
+/* ---------- NAVIDAD ---------- */
 body[data-sigve-theme="navidad"]{
-  background-image:
-    radial-gradient(circle at 10% 8%, rgba(16,116,72,.09), transparent 20%),
-    radial-gradient(circle at 90% 8%, rgba(184,33,45,.09), transparent 20%);
+  --season-primary:#075a3c;
+  --season-secondary:#ba2632;
+  --season-accent:#e6b84c;
+  --season-surface:rgba(255,253,247,.97);
+  --season-surface-2:#f7f3e9;
+  --season-text:#18382d;
+  --season-muted:#66776f;
+  --season-border:rgba(7,90,60,.15);
+  --season-shadow:0 17px 42px rgba(6,70,47,.14);
+  --season-page-bg:
+    radial-gradient(circle at 12% 12%,rgba(198,38,48,.11),transparent 22%),
+    radial-gradient(circle at 88% 14%,rgba(7,90,60,.16),transparent 25%),
+    linear-gradient(180deg,#edf6f0,#fffdf7 46%,#f8f3e8);
 }
-body[data-sigve-theme="navidad"] .sigve-seasonal-decor .sigve-garland{
-  background:rgba(250,255,252,.92);
+body[data-sigve-theme="navidad"] .sigve-theme-banner{
+  display:block;color:#fff;
+  background:linear-gradient(90deg,#075a3c,#0b744e 50%,#075a3c);
 }
-.sigve-snow i{
-  position:absolute;top:-30px;font-style:normal;opacity:.65;
-  animation:sigveSnow linear infinite;
+.theme-lights{
+  position:absolute;top:38px;left:0;right:0;height:44px;display:flex;
+  align-items:flex-start;justify-content:space-around;
+  border-top:2px solid rgba(32,73,45,.56);
 }
-@keyframes sigveSnow{
-  from{transform:translateY(-30px) rotate(0deg)}
-  to{transform:translateY(110vh) rotate(360deg)}
+.theme-lights b{width:11px;height:16px;border-radius:50% 50% 45% 45%;background:#f5c842;box-shadow:0 0 13px #f5c842}
+.theme-lights b:nth-child(4n+1){background:#d63b41;box-shadow:0 0 13px #d63b41}
+.theme-lights b:nth-child(4n+2){background:#57a9e8;box-shadow:0 0 13px #57a9e8}
+.theme-lights b:nth-child(4n+3){background:#54a75c;box-shadow:0 0 13px #54a75c}
+.theme-pine{position:absolute;top:82px;font-size:72px;opacity:.88;filter:drop-shadow(0 8px 12px rgba(0,0,0,.13))}
+.theme-pine-left{left:10px}.theme-pine-right{right:10px}
+.theme-snow i{
+  position:absolute;top:-20px;color:#fff;font-style:normal;opacity:.60;
+  animation:sigve-fall linear infinite;
+}
+.theme-snow i:nth-child(3n){left:10%;animation-duration:13s}
+.theme-snow i:nth-child(3n+1){left:50%;animation-duration:16s;animation-delay:-7s}
+.theme-snow i:nth-child(3n+2){left:85%;animation-duration:19s;animation-delay:-11s}
+@keyframes sigve-fall{to{transform:translateY(110vh) translateX(35px)}}
+body[data-sigve-theme="navidad"] :is(.header,.top){
+  background:linear-gradient(90deg,rgba(246,252,247,.98),rgba(255,253,247,.98))!important;
+  border-bottom:3px solid #0b6847!important;
+}
+body[data-sigve-theme="navidad"] :is(.button:not(.secondary),button.primary,.btn-primary){
+  background:linear-gradient(135deg,#075a3c,#0a7750)!important;color:#fff!important;
+}
+body[data-sigve-theme="navidad"] .hero{
+  background:
+    linear-gradient(180deg,rgba(7,79,53,.82),rgba(8,100,66,.72)),
+    radial-gradient(circle at 50% 20%,rgba(255,223,116,.24),transparent 32%)!important;
+  color:#fff!important;
+}
+body[data-sigve-theme="navidad"] .hero :is(h1,h2,p){color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.22)}
+body[data-sigve-theme="navidad"] .hero h1::before{
+  content:"✨  Feliz Navidad  🎄";display:block;color:#ffe29a;
+  font-size:clamp(20px,2.5vw,34px);margin-bottom:8px;font-family:Georgia,serif;font-style:italic;
+}
+body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .admin-main::before,
+body[data-sigve-theme="navidad"][data-sigve-portal="socio"] main::before{
+  content:"✨  Feliz Navidad · Villa El Trigal  🎄";
+  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
+  text-align:center;font-weight:850;color:#fff;
+  background:linear-gradient(90deg,#075a3c,#0b754f,#075a3c);
+  border:1px solid rgba(229,184,76,.30);
 }
 
-@media(max-width:700px){
-  .sigve-seasonal-decor .sigve-garland{
-    width:92vw;font-size:12px;padding:5px 10px;white-space:nowrap;overflow:hidden;
-  }
-  .sigve-seasonal-decor .sigve-corner{font-size:28px;top:58px;opacity:.9}
-  .sigve-seasonal-decor .sigve-left{left:7px}
-  .sigve-seasonal-decor .sigve-right{right:7px}
+/* Admin seasonal treatment */
+body[data-sigve-theme]:not([data-sigve-theme="normal"])[data-sigve-portal="admin"] .sidebar{
+  box-shadow:8px 0 30px rgba(0,0,0,.08);
+}
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .sidebar{
+  background:linear-gradient(180deg,#082f60,#0d4c88)!important;
+}
+body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .sidebar{
+  background:linear-gradient(180deg,#06462f,#08704b)!important;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"])[data-sigve-portal="admin"] .sidebar :is(a,button,h1,h2,h3,strong,span){
+  color:#fff!important;
+}
+
+/* Mobile: still noticeable, but never covers controls */
+@media(max-width:760px){
+  .sigve-theme-banner{font-size:13px;padding:6px 8px}
+  .theme-bunting{top:34px;height:30px}
+  .theme-bunting i,.theme-bunting span{width:20px;height:25px;font-size:10px}
+  .theme-landscape,.theme-pine{font-size:38px;top:73px;opacity:.62}
+  .theme-moon{width:90px;height:90px;top:68px}
+  .theme-bats{top:83px;font-size:20px}
+  .theme-lights{top:34px;height:30px}
+  .theme-lights b{width:8px;height:11px}
 }
 @media(prefers-reduced-motion:reduce){
-  .sigve-snow i{animation:none;display:none}
+  .theme-snow i{animation:none;display:none}
+  *{scroll-behavior:auto!important}
 }
