@@ -1,657 +1,595 @@
 
 /* =========================================================
-   SIGVE · TEMAS COMPLETOS DE TEMPORADA
-   Portal Principal + Portal Socio + Portal Administrador
-   Capa 100% visual: no modifica lógica ni formularios.
+   SIGVE · TEMAS DE TEMPORADA V2
+   Rediseño integrado: no hay decoraciones escondiéndose
+   detrás del contenido. Los colores se aplican a la
+   estructura real del portal.
    ========================================================= */
+
 :root{
   --season-primary:#0c3457;
   --season-secondary:#166a78;
   --season-accent:#e9b949;
+  --season-page:#f6f8fa;
   --season-surface:#ffffff;
-  --season-surface-2:#f5f8fa;
+  --season-surface-alt:#f1f5f7;
   --season-text:#172b3a;
   --season-muted:#667783;
   --season-border:rgba(12,52,87,.13);
-  --season-shadow:0 16px 42px rgba(20,38,55,.12);
-}
-body.sigve-theme-ready{
-  transition:background .35s ease,color .35s ease;
-}
-.sigve-theme-atmosphere{
-  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
-}
-.sigve-theme-banner{
-  display:none;
-  position:relative;z-index:1000;text-align:center;
-  font-weight:900;letter-spacing:.04em;
-  padding:7px 12px;
-  box-shadow:0 5px 18px rgba(0,0,0,.14);
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"]) > *:not(.sigve-theme-atmosphere):not(.sigve-theme-banner){
-  position:relative;z-index:1;
+  --season-shadow:0 14px 36px rgba(20,38,55,.12);
 }
 
-/* ---------- Shared themed surfaces ---------- */
+html[data-sigve-theme],
+body[data-sigve-theme]{
+  transition:background-color .25s ease,color .25s ease;
+}
+
 body[data-sigve-theme]:not([data-sigve-theme="normal"]){
-  background:var(--season-page-bg)!important;
-  color:var(--season-text);
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
-  .card,.panel,.box,.list-card,.modal-card,.modal-content,.admin-card,.stat-card,
-  .news-card,.service-card,.quick-card,.portal-card,.dashboard-card
-){
-  border-color:var(--season-border)!important;
-  box-shadow:var(--season-shadow);
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
-  input,select,textarea
-){
-  border-color:var(--season-border)!important;
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
-  button,.button,.btn
-){
-  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
-  button,.button,.btn
-):hover{transform:translateY(-1px);filter:brightness(1.04)}
-
-/* ---------- FIESTAS PATRIAS ---------- */
-body[data-sigve-theme="fiestas_patrias"]{
-  --season-primary:#063b78;
-  --season-secondary:#d52b2f;
-  --season-accent:#f4c34d;
-  --season-surface:rgba(255,255,255,.96);
-  --season-surface-2:#f5f8fd;
-  --season-text:#102d4f;
-  --season-muted:#5f7083;
-  --season-border:rgba(16,57,105,.16);
-  --season-shadow:0 15px 38px rgba(5,48,99,.13);
-  --season-page-bg:
-    linear-gradient(180deg,rgba(235,244,255,.96),rgba(255,255,255,.98) 42%,rgba(247,248,244,.98)),
-    radial-gradient(circle at 12% 12%,rgba(213,43,47,.13),transparent 24%),
-    radial-gradient(circle at 88% 16%,rgba(6,59,120,.16),transparent 25%);
-}
-body[data-sigve-theme="fiestas_patrias"] .sigve-theme-banner{
-  display:block;
-  background:linear-gradient(90deg,#073e7d 0 33%,#fff 33% 66%,#d82f34 66%);
-  color:#0b3262;text-shadow:0 1px 0 #fff;
-}
-.theme-bunting{
-  position:absolute;top:38px;left:0;right:0;height:45px;
-  display:flex;justify-content:space-around;align-items:flex-start;
-  padding:0 4vw;
-}
-.theme-bunting i,.theme-bunting span{
-  width:30px;height:36px;display:grid;place-items:center;
-  clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);
-  filter:drop-shadow(0 4px 4px rgba(0,0,0,.12));
-}
-.theme-bunting i:nth-of-type(odd){background:#d62e34}
-.theme-bunting i:nth-of-type(even){background:#fff}
-.theme-bunting span{background:#073e7d;color:#fff;font-style:normal}
-.theme-landscape{position:absolute;top:104px;font-size:64px;opacity:.92;filter:drop-shadow(0 7px 10px rgba(0,0,0,.15))}
-.theme-landscape-left{left:16px}.theme-landscape-right{right:16px}
-body[data-sigve-theme="fiestas_patrias"] :is(.header,.top,.admin-header,.sidebar){
-  border-color:rgba(7,62,125,.18)!important;
-}
-body[data-sigve-theme="fiestas_patrias"] :is(.header,.top){
-  background:linear-gradient(90deg,rgba(255,255,255,.98),rgba(243,248,255,.98),rgba(255,247,247,.98))!important;
-}
-body[data-sigve-theme="fiestas_patrias"] :is(.button:not(.secondary),button.primary,.btn-primary){
-  background:linear-gradient(135deg,#073e7d,#0d5aaa)!important;color:#fff!important;
-}
-body[data-sigve-theme="fiestas_patrias"] .hero{
-  background:
-    linear-gradient(180deg,rgba(237,246,255,.76),rgba(255,255,255,.89)),
-    radial-gradient(ellipse at 50% 100%,rgba(23,101,76,.20),transparent 42%)!important;
-  border-bottom:5px solid transparent;
-  border-image:linear-gradient(90deg,#073e7d 0 33%,#fff 33% 66%,#d62e34 66%) 1;
-}
-body[data-sigve-theme="fiestas_patrias"] .hero h1::before{
-  content:"★  ¡Viva Chile!  ★";display:block;color:#c62329;
-  font-size:clamp(18px,2.3vw,30px);font-style:italic;margin-bottom:8px;
-}
-body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .admin-main::before,
-body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"] main::before{
-  content:"🇨🇱  Fiestas Patrias en Villa El Trigal";
-  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
-  font-weight:850;color:#073e7d;text-align:center;
-  background:linear-gradient(90deg,#edf5ff,#fff,#fff0f1);
-  border:1px solid rgba(7,62,125,.14);
+  background:var(--season-page)!important;
+  color:var(--season-text)!important;
 }
 
-/* ---------- HALLOWEEN ---------- */
-body[data-sigve-theme="halloween"]{
-  --season-primary:#6f2ca0;
-  --season-secondary:#f28c18;
-  --season-accent:#ffc145;
-  --season-surface:rgba(34,23,48,.96);
-  --season-surface-2:#241832;
-  --season-text:#f8f3ff;
-  --season-muted:#c7bad1;
-  --season-border:rgba(206,157,255,.20);
-  --season-shadow:0 18px 46px rgba(11,5,20,.36);
-  --season-page-bg:
-    radial-gradient(circle at 82% 10%,rgba(123,72,155,.26),transparent 24%),
-    radial-gradient(circle at 18% 10%,rgba(242,140,24,.12),transparent 20%),
-    linear-gradient(180deg,#150c21,#21132f 58%,#12091b);
-}
-body[data-sigve-theme="halloween"] .sigve-theme-banner{
-  display:block;color:#ffd26a;
-  background:linear-gradient(90deg,#160a22,#402058,#160a22);
-}
-.theme-moon{
-  position:absolute;right:7vw;top:78px;width:145px;height:145px;border-radius:50%;
-  background:radial-gradient(circle at 36% 35%,#fff5cd,#e9d8a5 50%,#a88f7b);
-  box-shadow:0 0 60px rgba(255,235,170,.25);
-  opacity:.80;
-}
-.theme-bats{position:absolute;right:10vw;top:110px;font-size:36px;color:#08050b;letter-spacing:8px;transform:rotate(-8deg)}
-.theme-web{position:absolute;top:40px;width:160px;height:160px;opacity:.24;
- background:repeating-radial-gradient(circle at top left,transparent 0 18px,rgba(255,255,255,.7) 19px 20px);
-}
-.theme-web-left{left:0}.theme-web-right{right:0;transform:scaleX(-1)}
-body[data-sigve-theme="halloween"] :is(.header,.top,.admin-main,.sidebar,.topbar){
-  background-color:rgba(25,14,36,.94)!important;color:#f8f3ff!important;
-}
-body[data-sigve-theme="halloween"] :is(
- .card,.panel,.box,.list-card,.modal-card,.modal-content,.admin-card,.stat-card,
- .news-card,.service-card,.quick-card,.portal-card,.dashboard-card
-){
-  background:rgba(40,26,56,.94)!important;color:#f8f3ff!important;
-}
-body[data-sigve-theme="halloween"] :is(h1,h2,h3,h4,strong,label,.brand,.brand *,.topbar *){
-  color:#f8f3ff!important;
-}
-body[data-sigve-theme="halloween"] :is(p,small,.muted,.small){
-  color:#cdbfd8!important;
-}
-body[data-sigve-theme="halloween"] :is(input,select,textarea){
-  background:#180f23!important;color:#fff!important;
-}
-body[data-sigve-theme="halloween"] :is(.button:not(.secondary),button.primary,.btn-primary){
-  background:linear-gradient(135deg,#7b31a8,#b24bd4)!important;color:#fff!important;
-  box-shadow:0 8px 20px rgba(108,38,145,.28);
-}
-body[data-sigve-theme="halloween"] .hero{
-  background:
-    radial-gradient(circle at 78% 22%,rgba(255,235,176,.22),transparent 17%),
-    linear-gradient(180deg,rgba(19,10,29,.74),rgba(30,16,43,.94))!important;
-}
-body[data-sigve-theme="halloween"] .hero h1{color:#ffc34d!important}
-body[data-sigve-theme="halloween"] .hero h1::before{
-  content:"🎃  Halloween  🦇";display:block;font-size:clamp(18px,2.3vw,30px);
-  color:#f6a22b;margin-bottom:8px;
-}
-body[data-sigve-theme="halloween"][data-sigve-portal="admin"] .admin-main::before,
-body[data-sigve-theme="halloween"][data-sigve-portal="socio"] main::before{
-  content:"🎃  Halloween en Villa El Trigal  🦇";
-  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
-  text-align:center;font-weight:850;color:#ffc34d;
-  background:linear-gradient(90deg,#251334,#3d1f51,#251334);
-  border:1px solid rgba(246,162,43,.22);
-}
-body[data-sigve-theme="halloween"] a{color:#d9a6ff}
-
-/* ---------- NAVIDAD ---------- */
-body[data-sigve-theme="navidad"]{
-  --season-primary:#075a3c;
-  --season-secondary:#ba2632;
-  --season-accent:#e6b84c;
-  --season-surface:rgba(255,253,247,.97);
-  --season-surface-2:#f7f3e9;
-  --season-text:#18382d;
-  --season-muted:#66776f;
-  --season-border:rgba(7,90,60,.15);
-  --season-shadow:0 17px 42px rgba(6,70,47,.14);
-  --season-page-bg:
-    radial-gradient(circle at 12% 12%,rgba(198,38,48,.11),transparent 22%),
-    radial-gradient(circle at 88% 14%,rgba(7,90,60,.16),transparent 25%),
-    linear-gradient(180deg,#edf6f0,#fffdf7 46%,#f8f3e8);
-}
-body[data-sigve-theme="navidad"] .sigve-theme-banner{
-  display:block;color:#fff;
-  background:linear-gradient(90deg,#075a3c,#0b744e 50%,#075a3c);
-}
-.theme-lights{
-  position:absolute;top:38px;left:0;right:0;height:44px;display:flex;
-  align-items:flex-start;justify-content:space-around;
-  border-top:2px solid rgba(32,73,45,.56);
-}
-.theme-lights b{width:11px;height:16px;border-radius:50% 50% 45% 45%;background:#f5c842;box-shadow:0 0 13px #f5c842}
-.theme-lights b:nth-child(4n+1){background:#d63b41;box-shadow:0 0 13px #d63b41}
-.theme-lights b:nth-child(4n+2){background:#57a9e8;box-shadow:0 0 13px #57a9e8}
-.theme-lights b:nth-child(4n+3){background:#54a75c;box-shadow:0 0 13px #54a75c}
-.theme-pine{position:absolute;top:82px;font-size:72px;opacity:.88;filter:drop-shadow(0 8px 12px rgba(0,0,0,.13))}
-.theme-pine-left{left:10px}.theme-pine-right{right:10px}
-.theme-snow i{
-  position:absolute;top:-20px;color:#fff;font-style:normal;opacity:.60;
-  animation:sigve-fall linear infinite;
-}
-.theme-snow i:nth-child(3n){left:10%;animation-duration:13s}
-.theme-snow i:nth-child(3n+1){left:50%;animation-duration:16s;animation-delay:-7s}
-.theme-snow i:nth-child(3n+2){left:85%;animation-duration:19s;animation-delay:-11s}
-@keyframes sigve-fall{to{transform:translateY(110vh) translateX(35px)}}
-body[data-sigve-theme="navidad"] :is(.header,.top){
-  background:linear-gradient(90deg,rgba(246,252,247,.98),rgba(255,253,247,.98))!important;
-  border-bottom:3px solid #0b6847!important;
-}
-body[data-sigve-theme="navidad"] :is(.button:not(.secondary),button.primary,.btn-primary){
-  background:linear-gradient(135deg,#075a3c,#0a7750)!important;color:#fff!important;
-}
-body[data-sigve-theme="navidad"] .hero{
-  background:
-    linear-gradient(180deg,rgba(7,79,53,.82),rgba(8,100,66,.72)),
-    radial-gradient(circle at 50% 20%,rgba(255,223,116,.24),transparent 32%)!important;
-  color:#fff!important;
-}
-body[data-sigve-theme="navidad"] .hero :is(h1,h2,p){color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.22)}
-body[data-sigve-theme="navidad"] .hero h1::before{
-  content:"✨  Feliz Navidad  🎄";display:block;color:#ffe29a;
-  font-size:clamp(20px,2.5vw,34px);margin-bottom:8px;font-family:Georgia,serif;font-style:italic;
-}
-body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .admin-main::before,
-body[data-sigve-theme="navidad"][data-sigve-portal="socio"] main::before{
-  content:"✨  Feliz Navidad · Villa El Trigal  🎄";
-  display:block;margin:0 0 16px;padding:10px 16px;border-radius:14px;
-  text-align:center;font-weight:850;color:#fff;
-  background:linear-gradient(90deg,#075a3c,#0b754f,#075a3c);
-  border:1px solid rgba(229,184,76,.30);
+/* La atmósfera solo contiene elementos realmente globales.
+   Siempre por encima visualmente, nunca detrás del contenido. */
+.sigve-theme-atmosphere{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9998!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
 }
 
-/* Admin seasonal treatment */
-body[data-sigve-theme]:not([data-sigve-theme="normal"])[data-sigve-portal="admin"] .sidebar{
-  box-shadow:8px 0 30px rgba(0,0,0,.08);
+.sigve-theme-banner{
+  position:relative!important;
+  z-index:18!important;
+  display:none;
+  text-align:center;
+  font-weight:900;
+  letter-spacing:.035em;
+  padding:7px 14px;
 }
-body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .sidebar{
-  background:linear-gradient(180deg,#082f60,#0d4c88)!important;
-}
-body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .sidebar{
-  background:linear-gradient(180deg,#06462f,#08704b)!important;
-}
-body[data-sigve-theme]:not([data-sigve-theme="normal"])[data-sigve-portal="admin"] .sidebar :is(a,button,h1,h2,h3,strong,span){
-  color:#fff!important;
-}
-
-/* Mobile: still noticeable, but never covers controls */
-@media(max-width:760px){
-  .sigve-theme-banner{font-size:13px;padding:6px 8px}
-  .theme-bunting{top:34px;height:30px}
-  .theme-bunting i,.theme-bunting span{width:20px;height:25px;font-size:10px}
-  .theme-landscape,.theme-pine{font-size:38px;top:73px;opacity:.62}
-  .theme-moon{width:90px;height:90px;top:68px}
-  .theme-bats{top:83px;font-size:20px}
-  .theme-lights{top:34px;height:30px}
-  .theme-lights b{width:8px;height:11px}
-}
-@media(prefers-reduced-motion:reduce){
-  .theme-snow i{animation:none;display:none}
-  *{scroll-behavior:auto!important}
-}
-
 
 /* =========================================================
-   HALLOWEEN · CORRECCIÓN DE CONTRASTE Y LEGIBILIDAD
+   SUPERFICIES COMUNES
    ========================================================= */
-body[data-sigve-theme="halloween"]{
-  --h-text:#fffaf4;
-  --h-muted:#ddd0e8;
-  --h-soft:#c9bad5;
-  --h-link:#ffd36b;
-  --h-card:#2b1b39;
-  --h-card-2:#21142e;
-  --h-border:rgba(255,255,255,.14);
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  .featured,.activity-card,.announcement-card,.document-card,.contact-card,
+  .form-panel,.calendar-panel,.conditions-card,.bank-box,.qr-card,
+  .card,.panel,.box,.list-card,.modal-card,.modal-content,
+  .admin-card,.stat-card,.news-card,.service-card,.quick-card,
+  .portal-card,.dashboard-card
+){
+  background:var(--season-surface)!important;
+  color:var(--season-text)!important;
+  border-color:var(--season-border)!important;
+  box-shadow:var(--season-shadow)!important;
 }
 
-/* Navegación y encabezados */
-body[data-sigve-theme="halloween"] :is(
-  .header,.header *,
-  .nav,.nav *,
-  .top,.top *,
-  .topbar,.topbar *,
-  .brand,.brand *,
-  .menu-button,
-  .mobile-app-nav,.mobile-app-nav *
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  h1,h2,h3,h4,h5,h6,strong,b,label,legend
 ){
-  color:var(--h-text)!important;
+  color:var(--season-text);
+}
+
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(
+  p,small,.muted,.small,.lead,.field-help,.form-help
+){
+  color:var(--season-muted);
+}
+
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(input,select,textarea){
+  border-color:var(--season-border)!important;
+}
+
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(button,.button,.btn){
+  transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) :is(button,.button,.btn):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.04);
+}
+
+/* =========================================================
+   FIESTAS PATRIAS · INTEGRADO
+   ========================================================= */
+body[data-sigve-theme="fiestas_patrias"]{
+  --season-primary:#063e7c;
+  --season-secondary:#d62c33;
+  --season-accent:#e4b43c;
+  --season-page:#eef4fa;
+  --season-surface:#ffffff;
+  --season-surface-alt:#f5f8fc;
+  --season-text:#12375f;
+  --season-muted:#526a82;
+  --season-border:rgba(6,62,124,.16);
+  --season-shadow:0 15px 34px rgba(5,48,99,.13);
+  background:
+    linear-gradient(180deg,#edf4fb 0,#f9fbfd 44%,#f2f5f7 100%)!important;
+}
+
+/* Franja tricolor pegada al HEADER, no al fondo del documento */
+body[data-sigve-theme="fiestas_patrias"] .header{
+  position:sticky!important;
+  top:0!important;
+  z-index:10000!important;
+  background:rgba(255,255,255,.985)!important;
+  border-bottom:0!important;
+  box-shadow:0 8px 26px rgba(10,44,80,.13)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .header::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:6px;
+  background:linear-gradient(90deg,#063e7c 0 33.33%,#ffffff 33.33% 66.66%,#d62c33 66.66%);
+  z-index:3;
+}
+body[data-sigve-theme="fiestas_patrias"] .header::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-15px;
+  height:16px;
+  background:
+    linear-gradient(135deg,#063e7c 25%,transparent 25%) 0 0/40px 16px repeat-x,
+    linear-gradient(225deg,#d62c33 25%,transparent 25%) 20px 0/40px 16px repeat-x;
+  opacity:.96;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.12));
+  z-index:2;
+  pointer-events:none;
+}
+
+/* Hero completamente patriótico, no solo un fondo claro */
+body[data-sigve-theme="fiestas_patrias"] .hero{
+  min-height:610px;
+  color:#fff!important;
+  background:
+    radial-gradient(circle at 82% 28%,rgba(255,255,255,.17),transparent 20%),
+    radial-gradient(circle at 16% 68%,rgba(255,255,255,.10),transparent 23%),
+    linear-gradient(112deg,rgba(3,43,91,.97) 0 46%,rgba(9,72,135,.91) 46% 67%,rgba(177,31,40,.92) 67% 100%)!important;
+  border-bottom:8px solid transparent!important;
+  border-image:linear-gradient(90deg,#063e7c 0 33%,#fff 33% 66%,#d62c33 66%) 1!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(135deg,transparent 0 54px,rgba(255,255,255,.025) 54px 56px);
+}
+body[data-sigve-theme="fiestas_patrias"] .hero :is(h1,h2,p,.lead,.eyebrow){
+  color:#fff!important;
+  text-shadow:0 2px 13px rgba(0,0,0,.24);
+}
+body[data-sigve-theme="fiestas_patrias"] .hero h1::before{
+  content:"★  Fiestas Patrias  ★";
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 0 12px;
+  padding:7px 14px;
+  border-radius:999px;
+  background:#fff;
+  color:#c5222c!important;
+  text-shadow:none!important;
+  font-size:clamp(15px,1.7vw,22px);
+  font-style:normal;
+  letter-spacing:.035em;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero-content{
+  position:relative;
+  z-index:2;
+}
+
+/* Accesos rápidos con identidad consistente */
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *{
+  background:#fff!important;
+  border:1px solid rgba(6,62,124,.12)!important;
+  box-shadow:0 11px 27px rgba(6,62,124,.12)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *:nth-child(3n+1){
+  border-top:4px solid #063e7c!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *:nth-child(3n+2){
+  border-top:4px solid #d62c33!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *:nth-child(3n){
+  border-top:4px solid #e0b13b!important;
+}
+
+body[data-sigve-theme="fiestas_patrias"] :is(
+  .section-heading h2,.payment h2,.contact-grid h2,.featured h2
+){
+  color:#063e7c!important;
+}
+
+body[data-sigve-theme="fiestas_patrias"] :is(
+  .button.primary,button.primary,.btn-primary,.button:not(.secondary)
+){
+  background:linear-gradient(135deg,#063e7c,#0d65b5)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+}
+
+body[data-sigve-theme="fiestas_patrias"] .join-highlight{
+  background:linear-gradient(125deg,#edf5ff 0%,#fff 52%,#fff1f2 100%)!important;
+  border:1px solid rgba(6,62,124,.16)!important;
+  box-shadow:0 16px 38px rgba(6,62,124,.14)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .featured{
+  background:linear-gradient(135deg,#fff,#f5f9fd)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] :is(
+  #actividades,#anuncios,#documentos,#cuotas,#contacto,#socios-solicitud,#mejorar
+){
+  position:relative;
+}
+
+/* Portales interno/admin */
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .sidebar{
+  background:linear-gradient(180deg,#062f63,#0a4f91)!important;
+  box-shadow:8px 0 28px rgba(4,39,81,.18)!important;
+}
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] .sidebar *{
+  color:#fff!important;
+}
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"] :is(.top,.topbar){
+  background:#fff!important;
+  border-bottom:5px solid transparent!important;
+  border-image:linear-gradient(90deg,#063e7c 0 33%,#fff 33% 66%,#d62c33 66%) 1!important;
+}
+
+/* =========================================================
+   HALLOWEEN · INTEGRADO Y OSCURO
+   ========================================================= */
+body[data-sigve-theme="halloween"]{
+  --season-primary:#7f37a8;
+  --season-secondary:#f09a2b;
+  --season-accent:#ffd167;
+  --season-page:#100817;
+  --season-surface:#24152f;
+  --season-surface-alt:#1b1025;
+  --season-text:#fff8ee;
+  --season-muted:#d3c2df;
+  --season-border:rgba(241,167,73,.17);
+  --season-shadow:0 18px 44px rgba(4,1,8,.42);
+  background:
+    radial-gradient(circle at 82% 4%,rgba(107,49,143,.21),transparent 24%),
+    radial-gradient(circle at 15% 21%,rgba(227,123,28,.08),transparent 23%),
+    linear-gradient(180deg,#0d0713,#170d20 55%,#0d0713)!important;
+  color:#fff8ee!important;
 }
 
 body[data-sigve-theme="halloween"] .header{
-  background:linear-gradient(90deg,#160d21,#25142f,#160d21)!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:10000!important;
+  background:rgba(16,8,23,.985)!important;
+  border-bottom:1px solid rgba(240,154,43,.25)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.32)!important;
+}
+body[data-sigve-theme="halloween"] .header::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;height:5px;
+  background:linear-gradient(90deg,#7b32a3,#f09a2b,#7b32a3);
+}
+body[data-sigve-theme="halloween"] .header :is(a,.brand,.brand *,button){
+  color:#fff7ee!important;
+}
+body[data-sigve-theme="halloween"] .header a:hover{
+  color:#ffc65a!important;
 }
 
-body[data-sigve-theme="halloween"] .header nav a{
-  color:#f9f3ff!important;
-}
-body[data-sigve-theme="halloween"] .header nav a:hover{
-  color:#ffb13b!important;
-}
-
-/* Hero */
-body[data-sigve-theme="halloween"] .hero :is(
-  h1,h2,h3,p,.lead,.eyebrow,strong,span
-){
-  color:var(--h-text)!important;
-}
-body[data-sigve-theme="halloween"] .hero .eyebrow{
-  color:#ffbd4a!important;
-}
-
-/* Tarjetas y secciones principales */
-body[data-sigve-theme="halloween"] :is(
-  .shortcuts a,
-  .join-highlight,
-  .featured,
-  .activity-card,
-  .announcement-card,
-  .document-card,
-  .contact-card,
-  .form-panel,
-  .calendar-panel,
-  .conditions-card,
-  .bank-box,
-  .qr-card,
-  .card,
-  .panel,
-  .box,
-  .list-card,
-  .admin-card,
-  .stat-card,
-  .portal-card,
-  .dashboard-card,
-  .modal-card,
-  .modal-content
-){
-  background:linear-gradient(180deg,rgba(48,29,63,.98),rgba(37,22,51,.98))!important;
-  border-color:var(--h-border)!important;
-  color:var(--h-text)!important;
-}
-
-/* Todo texto dentro de tarjetas oscuras */
-body[data-sigve-theme="halloween"] :is(
-  .shortcuts a,
-  .join-highlight,
-  .featured,
-  .activity-card,
-  .announcement-card,
-  .document-card,
-  .contact-card,
-  .form-panel,
-  .calendar-panel,
-  .conditions-card,
-  .bank-box,
-  .card,
-  .panel,
-  .list-card,
-  .admin-card,
-  .stat-card,
-  .portal-card,
-  .dashboard-card,
-  .modal-card,
-  .modal-content
-) :is(h1,h2,h3,h4,h5,h6,strong,b,label,legend,span,li,td,th){
-  color:var(--h-text)!important;
-}
-
-body[data-sigve-theme="halloween"] :is(
-  .shortcuts a,
-  .join-highlight,
-  .featured,
-  .activity-card,
-  .announcement-card,
-  .document-card,
-  .contact-card,
-  .form-panel,
-  .calendar-panel,
-  .conditions-card,
-  .bank-box,
-  .card,
-  .panel,
-  .list-card,
-  .admin-card,
-  .stat-card,
-  .portal-card,
-  .dashboard-card,
-  .modal-card,
-  .modal-content
-) :is(p,small,.muted,.field-help,.form-help,.small){
-  color:var(--h-muted)!important;
-}
-
-/* Enlaces */
-body[data-sigve-theme="halloween"] a{
-  color:var(--h-link)!important;
-}
-body[data-sigve-theme="halloween"] a:hover{
-  color:#fff1b8!important;
-}
-
-/* Formularios */
-body[data-sigve-theme="halloween"] :is(input,select,textarea){
-  background:#160d20!important;
+body[data-sigve-theme="halloween"] .hero{
   color:#fff!important;
-  border-color:rgba(255,255,255,.22)!important;
+  background:
+    radial-gradient(circle at 81% 22%,rgba(255,226,156,.34) 0 8%,rgba(255,226,156,.08) 9% 15%,transparent 16%),
+    radial-gradient(circle at 23% 88%,rgba(129,54,170,.27),transparent 24%),
+    linear-gradient(116deg,#12091b 0 56%,#2d163d 100%)!important;
+  border-bottom:1px solid rgba(240,154,43,.18)!important;
+}
+body[data-sigve-theme="halloween"] .hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 86% 20%,rgba(255,255,255,.035) 0 1px,transparent 2px) 0 0/28px 28px;
+}
+body[data-sigve-theme="halloween"] .hero :is(h1,h2,h3,p,.lead,.eyebrow,strong,span){
+  color:#fff!important;
+}
+body[data-sigve-theme="halloween"] .hero h1{
+  color:#ffc457!important;
+  text-shadow:0 3px 18px rgba(0,0,0,.55)!important;
+}
+body[data-sigve-theme="halloween"] .hero h1::before{
+  content:"🎃  Halloween en Villa El Trigal";
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin-bottom:13px;
+  padding:7px 13px;
+  border-radius:999px;
+  background:rgba(240,154,43,.13);
+  border:1px solid rgba(240,154,43,.28);
+  color:#ffc457!important;
+  font-size:clamp(15px,1.7vw,22px);
+  letter-spacing:.025em;
+}
+
+/* TODO el contenido estructural se oscurece */
+body[data-sigve-theme="halloween"] :is(
+  main,section,.section,.payment,.contact-grid,.documents,.activities,
+  .announcements,.gallery,.rental,.join-highlight
+){
+  color:#fff8ee;
+}
+
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts > *,
+  .featured,.activity-card,.announcement-card,.document-card,.contact-card,
+  .form-panel,.calendar-panel,.conditions-card,.bank-box,.qr-card,
+  .card,.panel,.box,.list-card,.modal-card,.modal-content,
+  .admin-card,.stat-card,.news-card,.service-card,.quick-card,
+  .portal-card,.dashboard-card,.join-highlight
+){
+  background:linear-gradient(180deg,#281735,#21132c)!important;
+  color:#fff8ee!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  box-shadow:0 17px 40px rgba(0,0,0,.31)!important;
+}
+
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts > *,
+  .featured,.activity-card,.announcement-card,.document-card,.contact-card,
+  .form-panel,.calendar-panel,.conditions-card,.bank-box,
+  .card,.panel,.box,.modal-card,.modal-content,.admin-card,.portal-card,.dashboard-card
+) :is(h1,h2,h3,h4,h5,h6,strong,b,label,legend,span,li,td,th){
+  color:#fff8ee!important;
+}
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts > *,
+  .featured,.activity-card,.announcement-card,.document-card,.contact-card,
+  .form-panel,.calendar-panel,.conditions-card,.bank-box,
+  .card,.panel,.box,.modal-card,.modal-content,.admin-card,.portal-card,.dashboard-card
+) :is(p,small,.muted,.small,.field-help,.form-help){
+  color:#d3c2df!important;
+}
+
+body[data-sigve-theme="halloween"] :is(
+  .section-heading h2,.payment h2,.contact-grid h2,.featured h2
+){
+  color:#ffc457!important;
+}
+
+body[data-sigve-theme="halloween"] :is(input,select,textarea){
+  background:#120b19!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.17)!important;
 }
 body[data-sigve-theme="halloween"] :is(input,textarea)::placeholder{
-  color:#b9a8c4!important;
+  color:#a995b7!important;
   opacity:1!important;
 }
 body[data-sigve-theme="halloween"] select option{
-  background:#160d20!important;
+  background:#120b19!important;
   color:#fff!important;
 }
 
-/* Tablas */
-body[data-sigve-theme="halloween"] table{
-  color:#fff!important;
+body[data-sigve-theme="halloween"] a{
+  color:#f1b75d!important;
 }
-body[data-sigve-theme="halloween"] :is(th,td){
-  border-color:rgba(255,255,255,.12)!important;
-}
-body[data-sigve-theme="halloween"] th{
-  color:#ffcf72!important;
-}
-
-/* Estados, etiquetas y badges */
-body[data-sigve-theme="halloween"] :is(.badge,.pill,.status,.tag){
-  color:#fff!important;
-  border-color:rgba(255,255,255,.15)!important;
-}
-body[data-sigve-theme="halloween"] .notice,
-body[data-sigve-theme="halloween"] .notice-box{
-  background:#382048!important;
-  color:#fff!important;
-  border-color:rgba(255,177,59,.28)!important;
-}
-
-/* Portal Socio y Administración */
-body[data-sigve-theme="halloween"][data-sigve-portal="socio"] :is(
-  main,.portal-shell,.portal-content,.profile-card,.summary-card
-){
-  color:#fff!important;
-}
-body[data-sigve-theme="halloween"][data-sigve-portal="admin"] :is(
-  .admin-main,.admin-content,.dashboard,.content
-){
-  color:#fff!important;
-}
-
-/* Botones secundarios que antes quedaban oscuros sobre oscuro */
 body[data-sigve-theme="halloween"] :is(
-  .button.secondary,
-  button.secondary,
-  .btn-secondary
+  .button.primary,button.primary,.btn-primary,.button:not(.secondary)
 ){
-  background:#3c2450!important;
+  background:linear-gradient(135deg,#7a35a0,#a74ec7)!important;
   color:#fff!important;
-  border-color:rgba(255,255,255,.18)!important;
+  border-color:transparent!important;
+  box-shadow:0 8px 22px rgba(95,33,126,.32)!important;
+}
+body[data-sigve-theme="halloween"] :is(
+  .button.secondary,button.secondary,.btn-secondary
+){
+  background:#3b224b!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.13)!important;
 }
 
+/* Quitar fondos claros residuales del portal */
+body[data-sigve-theme="halloween"] :is(
+  #actividades,#anuncios,#documentos,#cuotas,#contacto,#socios-solicitud,#mejorar,
+  .documents-grid,.announcements-grid,.contact-grid
+){
+  background:transparent!important;
+}
+
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"] :is(.sidebar,.admin-header,.topbar){
+  background:#160c20!important;
+  color:#fff!important;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"] .sidebar *{
+  color:#fff!important;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="socio"] :is(.top,.topbar){
+  background:#160c20!important;
+  color:#fff!important;
+  border-bottom:2px solid rgba(240,154,43,.28)!important;
+}
+
+/* Decoración Halloween integrada, fija y discreta */
+.theme-halloween-corner{
+  position:fixed;
+  z-index:9999;
+  top:92px;
+  right:18px;
+  font-size:42px;
+  opacity:.82;
+  filter:drop-shadow(0 6px 9px rgba(0,0,0,.45));
+}
+.theme-halloween-bats{
+  position:fixed;
+  z-index:9999;
+  top:128px;
+  right:80px;
+  color:#07030a;
+  font-size:29px;
+  letter-spacing:8px;
+  opacity:.78;
+}
 
 /* =========================================================
    NAVIDAD · LUCES FIJAS + NIEVE CONTINUA
    ========================================================= */
-
-/* La capa navideña acompaña al usuario durante todo el scroll */
-body[data-sigve-theme="navidad"] .sigve-theme-atmosphere{
-  position:fixed!important;
-  inset:0!important;
-  z-index:999!important;
-  pointer-events:none!important;
-  overflow:hidden!important;
+body[data-sigve-theme="navidad"]{
+  --season-primary:#075b3d;
+  --season-secondary:#b62531;
+  --season-accent:#e2b94f;
+  --season-page:#edf5ef;
+  --season-surface:#fffdf8;
+  --season-surface-alt:#f6f2e8;
+  --season-text:#17372c;
+  --season-muted:#61736a;
+  --season-border:rgba(7,91,61,.15);
+  --season-shadow:0 16px 40px rgba(6,70,47,.14);
+  background:
+    radial-gradient(circle at 10% 8%,rgba(182,37,49,.10),transparent 20%),
+    radial-gradient(circle at 88% 10%,rgba(7,91,61,.13),transparent 24%),
+    linear-gradient(180deg,#edf5ef,#fffdf8 45%,#f7f2e7)!important;
 }
 
-/* Mantener las luces siempre visibles arriba */
-body[data-sigve-theme="navidad"] .theme-lights{
+body[data-sigve-theme="navidad"] .header{
+  position:sticky!important;
+  top:0!important;
+  z-index:10000!important;
+  background:rgba(249,253,250,.985)!important;
+  border-bottom:3px solid #0b6847!important;
+  box-shadow:0 8px 25px rgba(6,70,47,.12)!important;
+}
+
+body[data-sigve-theme="navidad"] .hero{
+  background:
+    radial-gradient(circle at 50% 8%,rgba(255,225,134,.18),transparent 28%),
+    linear-gradient(118deg,rgba(5,77,50,.97),rgba(7,105,68,.90))!important;
+  color:#fff!important;
+}
+body[data-sigve-theme="navidad"] .hero :is(h1,h2,h3,p,.lead,.eyebrow,strong,span){
+  color:#fff!important;
+}
+body[data-sigve-theme="navidad"] .hero h1::before{
+  content:"✨  Feliz Navidad  🎄";
+  display:block;
+  color:#ffe4a0!important;
+  font-size:clamp(20px,2.4vw,32px);
+  margin-bottom:10px;
+  font-family:Georgia,serif;
+  font-style:italic;
+}
+
+body[data-sigve-theme="navidad"] :is(
+  .button.primary,button.primary,.btn-primary,.button:not(.secondary)
+){
+  background:linear-gradient(135deg,#075b3d,#0a7650)!important;
+  color:#fff!important;
+}
+
+.theme-lights{
   position:fixed!important;
   top:0!important;
   left:0!important;
   right:0!important;
-  height:42px!important;
-  z-index:1002!important;
+  z-index:10050!important;
+  height:32px!important;
   display:flex!important;
   align-items:flex-start!important;
   justify-content:space-around!important;
-  padding:0 10px!important;
-  border-top:2px solid rgba(26,66,38,.75)!important;
-  filter:drop-shadow(0 3px 5px rgba(0,0,0,.18));
+  border-top:2px solid #315f40!important;
+  pointer-events:none!important;
 }
-
-body[data-sigve-theme="navidad"] .theme-lights::before{
-  content:"";
-  position:absolute;
-  left:0;right:0;top:0;
-  height:2px;
-  background:#315f40;
-}
-
-body[data-sigve-theme="navidad"] .theme-lights b{
-  position:relative!important;
-  width:11px!important;
-  height:17px!important;
+.theme-lights b{
+  width:9px!important;
+  height:14px!important;
   margin-top:2px!important;
   border-radius:50% 50% 45% 45%!important;
-  opacity:1!important;
+  background:#ffd047!important;
+  box-shadow:0 0 8px #ffd047,0 0 16px rgba(255,208,71,.65)!important;
   animation:sigveChristmasGlow 1.8s ease-in-out infinite alternate!important;
 }
-
-body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+1){
-  background:#e2383f!important;
-  box-shadow:0 0 8px #e2383f,0 0 16px rgba(226,56,63,.7)!important;
-}
-body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+2){
-  background:#4aa8ee!important;
-  box-shadow:0 0 8px #4aa8ee,0 0 16px rgba(74,168,238,.7)!important;
-}
-body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n+3){
-  background:#4cb65c!important;
-  box-shadow:0 0 8px #4cb65c,0 0 16px rgba(76,182,92,.7)!important;
-}
-body[data-sigve-theme="navidad"] .theme-lights b:nth-child(4n){
-  background:#ffd047!important;
-  box-shadow:0 0 8px #ffd047,0 0 17px rgba(255,208,71,.75)!important;
-}
-
+.theme-lights b:nth-child(4n+1){background:#e2383f!important;box-shadow:0 0 8px #e2383f,0 0 16px rgba(226,56,63,.68)!important}
+.theme-lights b:nth-child(4n+2){background:#4aa8ee!important;box-shadow:0 0 8px #4aa8ee,0 0 16px rgba(74,168,238,.68)!important}
+.theme-lights b:nth-child(4n+3){background:#4cb65c!important;box-shadow:0 0 8px #4cb65c,0 0 16px rgba(76,182,92,.68)!important}
 @keyframes sigveChristmasGlow{
-  from{filter:brightness(.82);transform:translateY(0) scale(.96)}
+  from{filter:brightness(.85);transform:scale(.96)}
   to{filter:brightness(1.22);transform:translateY(1px) scale(1.05)}
 }
 
-/* Nieve más visible y distribuida por toda la pantalla */
-body[data-sigve-theme="navidad"] .theme-snow{
+.theme-snow{
   position:fixed!important;
   inset:0!important;
-  z-index:1000!important;
+  z-index:9999!important;
   pointer-events:none!important;
   overflow:hidden!important;
 }
-
-body[data-sigve-theme="navidad"] .theme-snow i{
+.theme-snow i{
   position:absolute!important;
   top:-40px!important;
   color:#fff!important;
   font-style:normal!important;
-  font-size:20px!important;
-  line-height:1!important;
-  opacity:.88!important;
-  text-shadow:0 1px 4px rgba(35,80,95,.35)!important;
-  animation:sigveChristmasSnow 11s linear infinite!important;
+  opacity:.86!important;
+  text-shadow:0 1px 4px rgba(35,80,95,.32)!important;
+  animation:sigveChristmasSnow linear infinite!important;
 }
-
-/* Repartir los 36 copos por el ancho y variar tiempos/tamaños */
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+1){left:3%!important;animation-delay:-1s!important;font-size:14px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+2){left:11%!important;animation-delay:-7s!important;font-size:20px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+3){left:19%!important;animation-delay:-4s!important;font-size:12px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+4){left:28%!important;animation-delay:-9s!important;font-size:18px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+5){left:36%!important;animation-delay:-2s!important;font-size:23px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+6){left:45%!important;animation-delay:-6s!important;font-size:13px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+7){left:54%!important;animation-delay:-10s!important;font-size:19px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+8){left:63%!important;animation-delay:-3s!important;font-size:15px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+9){left:72%!important;animation-delay:-8s!important;font-size:22px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+10){left:81%!important;animation-delay:-5s!important;font-size:13px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n+11){left:90%!important;animation-delay:-11s!important;font-size:18px!important}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(12n){left:97%!important;animation-delay:-1.5s!important;font-size:12px!important}
-
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n){
-  animation-duration:14s!important;
-}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n+1){
-  animation-duration:10s!important;
-}
-body[data-sigve-theme="navidad"] .theme-snow i:nth-child(3n+2){
-  animation-duration:17s!important;
-}
-
+.theme-snow i:nth-child(12n+1){left:3%!important;font-size:14px!important;animation-duration:12s!important;animation-delay:-1s!important}
+.theme-snow i:nth-child(12n+2){left:11%!important;font-size:20px!important;animation-duration:16s!important;animation-delay:-7s!important}
+.theme-snow i:nth-child(12n+3){left:19%!important;font-size:12px!important;animation-duration:11s!important;animation-delay:-4s!important}
+.theme-snow i:nth-child(12n+4){left:28%!important;font-size:18px!important;animation-duration:17s!important;animation-delay:-9s!important}
+.theme-snow i:nth-child(12n+5){left:36%!important;font-size:23px!important;animation-duration:13s!important;animation-delay:-2s!important}
+.theme-snow i:nth-child(12n+6){left:45%!important;font-size:13px!important;animation-duration:15s!important;animation-delay:-6s!important}
+.theme-snow i:nth-child(12n+7){left:54%!important;font-size:19px!important;animation-duration:12s!important;animation-delay:-10s!important}
+.theme-snow i:nth-child(12n+8){left:63%!important;font-size:15px!important;animation-duration:18s!important;animation-delay:-3s!important}
+.theme-snow i:nth-child(12n+9){left:72%!important;font-size:22px!important;animation-duration:14s!important;animation-delay:-8s!important}
+.theme-snow i:nth-child(12n+10){left:81%!important;font-size:13px!important;animation-duration:16s!important;animation-delay:-5s!important}
+.theme-snow i:nth-child(12n+11){left:90%!important;font-size:18px!important;animation-duration:11s!important;animation-delay:-10s!important}
+.theme-snow i:nth-child(12n){left:97%!important;font-size:12px!important;animation-duration:15s!important;animation-delay:-2s!important}
 @keyframes sigveChristmasSnow{
-  0%{
-    transform:translate3d(0,-6vh,0) rotate(0deg);
-  }
-  50%{
-    transform:translate3d(24px,52vh,0) rotate(180deg);
-  }
-  100%{
-    transform:translate3d(-18px,108vh,0) rotate(360deg);
-  }
+  0%{transform:translate3d(0,-7vh,0) rotate(0deg)}
+  50%{transform:translate3d(22px,52vh,0) rotate(180deg)}
+  100%{transform:translate3d(-16px,108vh,0) rotate(360deg)}
 }
 
-/* Los pinos se quedan como decoración superior, sin invadir contenido */
-body[data-sigve-theme="navidad"] .theme-pine{
-  position:fixed!important;
-  top:47px!important;
-  z-index:998!important;
+body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .sidebar{
+  background:linear-gradient(180deg,#06462f,#075c3d)!important;
+}
+body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .sidebar *{
+  color:#fff!important;
 }
 
-/* Reservar visualmente un poco de espacio para las luces */
-body[data-sigve-theme="navidad"] .sigve-theme-banner{
-  margin-top:34px!important;
-}
-
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 @media(max-width:760px){
-  body[data-sigve-theme="navidad"] .theme-lights{
-    height:32px!important;
+  body[data-sigve-theme="fiestas_patrias"] .header::after{
+    bottom:-10px;height:11px;background-size:28px 11px,28px 11px;background-position:0 0,14px 0;
   }
-  body[data-sigve-theme="navidad"] .theme-lights b{
-    width:8px!important;
-    height:12px!important;
+  .theme-halloween-corner{
+    top:82px;right:8px;font-size:30px;opacity:.62;
   }
-  body[data-sigve-theme="navidad"] .theme-snow i{
-    opacity:.72!important;
+  .theme-halloween-bats{
+    display:none;
   }
-  body[data-sigve-theme="navidad"] .sigve-theme-banner{
-    margin-top:26px!important;
+  .theme-lights{
+    height:25px!important;
+  }
+  .theme-lights b{
+    width:7px!important;height:10px!important;
+  }
+  .theme-snow i{
+    opacity:.68!important;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
-  body[data-sigve-theme="navidad"] .theme-lights b{
-    animation:none!important;
-  }
-  /* Conservamos algunos copos estáticos en vez de ocultar toda la nieve */
-  body[data-sigve-theme="navidad"] .theme-snow i{
-    animation:none!important;
-    opacity:.28!important;
-  }
+  .theme-lights b{animation:none!important}
+  .theme-snow i{animation:none!important;opacity:.22!important}
 }

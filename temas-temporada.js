@@ -37,39 +37,21 @@
     a.setAttribute('aria-hidden','true');
 
     if(theme==='fiestas_patrias'){
-      a.innerHTML=`
-        <div class="theme-sky-ribbon"></div>
-        <div class="theme-bunting"><span>★</span><i></i><span>★</span><i></i><span>★</span><i></i><span>★</span><i></i><span>★</span></div>
-        <div class="theme-landscape theme-landscape-left">🌺</div>
-        <div class="theme-landscape theme-landscape-right">🪁</div>`;
+      // El diseño patrio vive en header/hero/tarjetas mediante CSS.
+      // No usamos banderas flotantes para evitar saltos de capas al hacer scroll.
+      a.innerHTML='';
     }
     if(theme==='halloween'){
       a.innerHTML=`
-        <div class="theme-moon"></div>
-        <div class="theme-bats">⌁　⌁　⌁</div>
-        <div class="theme-web theme-web-left"></div>
-        <div class="theme-web theme-web-right"></div>
-        <div class="theme-landscape theme-landscape-left">🎃</div>
-        <div class="theme-landscape theme-landscape-right">🕯️</div>`;
+        <div class="theme-halloween-corner">🎃</div>
+        <div class="theme-halloween-bats">⌁ ⌁ ⌁</div>`;
     }
     if(theme==='navidad'){
       a.innerHTML=`
-        <div class="theme-lights">${'<b></b>'.repeat(28)}</div>
-        <div class="theme-pine theme-pine-left">🌲</div>
-        <div class="theme-pine theme-pine-right">🎄</div>
-        <div class="theme-snow">${'<i>•</i>'.repeat(36)}</div>`;
+        <div class="theme-lights">${'<b></b>'.repeat(32)}</div>
+        <div class="theme-snow">${'<i>❄</i>'.repeat(48)}</div>`;
     }
     document.body.appendChild(a);
-
-    const banner=document.createElement('div');
-    banner.className='sigve-theme-banner';
-    banner.setAttribute('aria-hidden','true');
-    banner.innerHTML=theme==='fiestas_patrias'
-      ?'<span>★</span> ¡Viva Chile! <span>★</span>'
-      :theme==='halloween'
-      ?'<span>🎃</span> Halloween en Villa El Trigal <span>🦇</span>'
-      :'<span>✨</span> Feliz Navidad <span>🎄</span>';
-    document.body.prepend(banner);
   }
 
   function apply(theme){
