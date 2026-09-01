@@ -961,99 +961,46 @@ body[data-sigve-theme="navidad"][data-sigve-portal="admin"] :is(.top,.topbar,.ad
 
 
 /* =========================================================
-   FIESTAS PATRIAS · PRUEBA CON FONDO GRÁFICO REAL
+   LIMPIEZA · SIN FONDOS CON DATOS FICTICIOS
    ========================================================= */
 body[data-sigve-theme="fiestas_patrias"] .hero{
-  background-image:
-    linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.18)),
-    url("fiestas-patrias-fondo.jpg")!important;
-  background-size:cover!important;
-  background-position:center center!important;
-  background-repeat:no-repeat!important;
+  background-image:none!important;
+}
+
+/* Recupera el fondo temático CSS limpio */
+body[data-sigve-theme="fiestas_patrias"] .hero{
+  background:
+    linear-gradient(180deg,rgba(240,247,255,.22),rgba(255,255,255,.03)),
+    linear-gradient(115deg,#dce9f5 0%,#f6f4ed 49%,#d9e7f3 100%)!important;
   min-height:620px!important;
+  border-bottom:7px solid #073f82!important;
 }
 
-body[data-sigve-theme="fiestas_patrias"] .hero::before{
-  background:linear-gradient(
-    90deg,
-    rgba(4,38,78,.10) 0%,
-    rgba(255,255,255,.10) 35%,
-    rgba(255,255,255,.16) 65%,
-    rgba(149,25,35,.09) 100%
-  )!important;
-  opacity:1!important;
-}
-
-body[data-sigve-theme="fiestas_patrias"] .hero::after{
-  background:linear-gradient(180deg,transparent,rgba(4,38,78,.18))!important;
-  height:100%!important;
-}
-
-/* Texto real del portal sobre el paisaje */
+/* Quita el gran panel translúcido agregado en la prueba */
 body[data-sigve-theme="fiestas_patrias"] .hero-copy{
-  background:rgba(255,255,255,.82)!important;
-  backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(5px);
-  border:1px solid rgba(255,255,255,.72);
-  border-radius:24px;
-  padding:28px 34px!important;
-  box-shadow:0 18px 42px rgba(3,35,73,.18);
-  max-width:680px;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  max-width:none!important;
 }
+
+/* Mantiene el texto legible usando solo sombra */
 body[data-sigve-theme="fiestas_patrias"] .hero :is(h1,h2,h3,p,.lead,.eyebrow){
-  color:#11365d!important;
-  text-shadow:none!important;
-}
-body[data-sigve-theme="fiestas_patrias"] .hero h1::before{
-  color:#c2202e!important;
+  color:#173b5c!important;
+  text-shadow:0 1px 2px rgba(255,255,255,.55)!important;
 }
 
-/* Tarjetas reales flotando sobre el escenario */
-body[data-sigve-theme="fiestas_patrias"] .shortcuts{
-  position:relative!important;
-  z-index:8!important;
-}
-body[data-sigve-theme="fiestas_patrias"] .shortcuts > *{
-  background:rgba(255,255,255,.94)!important;
-  backdrop-filter:blur(9px);
-  -webkit-backdrop-filter:blur(9px);
-}
-
-/* Mi SIGVE / Administración: mismo paisaje, paneles legibles encima */
+/* Sin fondos gráficos externos en Socio/Admin */
 body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"],
 body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"]{
   background:
-    linear-gradient(rgba(235,244,252,.68),rgba(244,247,250,.82)),
-    url("fiestas-patrias-fondo.jpg") center/cover fixed!important;
-}
-body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"] :is(
-  .card,.panel,.portal-card,.summary-card,.profile-card,.dashboard-card
-),
-body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] :is(
-  .card,.panel,.admin-card,.stat-card,.dashboard-card,.content
-){
-  background:rgba(255,255,255,.93)!important;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  box-shadow:0 15px 36px rgba(4,49,98,.15)!important;
+    linear-gradient(180deg,#edf4fb 0%,#f9fbfd 48%,#eef3f7 100%)!important;
 }
 
-/* Banderines siempre arriba, sin desaparecer tras el contenido */
+/* Bandera/banderines decorativos CSS siguen visibles y estables */
 body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland{
-  position:absolute!important;
   z-index:12!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-}
-
-@media(max-width:760px){
-  body[data-sigve-theme="fiestas_patrias"] .hero{
-    background-position:center top!important;
-  }
-  body[data-sigve-theme="fiestas_patrias"] .hero-copy{
-    margin:40px 14px 0!important;
-    padding:22px!important;
-    border-radius:18px;
-  }
 }
