@@ -54,6 +54,24 @@
     document.body.appendChild(a);
   }
 
+
+  function renderSeasonHero(theme){
+    document.querySelectorAll('.sigve-season-scene').forEach(x=>x.remove());
+    const hero=document.querySelector('.hero');
+    if(!hero || theme==='normal') return;
+    const s=document.createElement('div');
+    s.className='sigve-season-scene';
+    s.setAttribute('aria-hidden','true');
+    if(theme==='fiestas_patrias'){
+      s.innerHTML='<div class="sigve-season-garland"></div><div class="season-fp-flower"></div><div class="season-fp-kite"></div><div class="season-fp-guitar"></div>';
+    }else if(theme==='halloween'){
+      s.innerHTML='<div class="season-hw-web"></div><div class="season-hw-bats">⌁ ⌁ ⌁</div><div class="season-hw-castle"></div><div class="season-hw-pumpkin"></div>';
+    }else if(theme==='navidad'){
+      s.innerHTML='<div class="season-nv-house"></div><div class="season-nv-tree"></div>';
+    }
+    hero.prepend(s);
+  }
+
   function apply(theme){
     if(!THEMES.has(theme)) theme='normal';
     document.documentElement.dataset.sigveTheme=theme;
@@ -62,6 +80,7 @@
     document.body.dataset.sigvePortal=portalType();
     document.body.classList.add('sigve-theme-ready');
     makeAtmosphere(theme);
+    renderSeasonHero(theme);
     window.dispatchEvent(new CustomEvent('sigve-theme-change',{detail:{theme,label:LABELS[theme]}}));
   }
 

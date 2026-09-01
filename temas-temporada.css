@@ -593,3 +593,368 @@ body[data-sigve-theme="navidad"][data-sigve-portal="admin"] .sidebar *{
   .theme-lights b{animation:none!important}
   .theme-snow i{animation:none!important;opacity:.22!important}
 }
+
+
+/* =========================================================
+   SIGVE · TEMPORADAS V3 · DISEÑO SEGÚN REFERENCIA APROBADA
+   Esta capa reemplaza visualmente las versiones anteriores.
+   ========================================================= */
+
+/* ---------- COMPONENTES ESTABLES ---------- */
+.sigve-season-scene{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+.sigve-season-scene > *{position:absolute}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) .hero{
+  position:relative!important;
+  isolation:isolate;
+  overflow:hidden!important;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) .hero > *{
+  position:relative;
+  z-index:3;
+}
+body[data-sigve-theme]:not([data-sigve-theme="normal"]) .hero .sigve-season-scene{
+  z-index:1;
+}
+.sigve-season-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border-radius:7px;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  box-shadow:0 5px 16px rgba(0,0,0,.18);
+}
+.sigve-season-garland{
+  position:absolute;
+  left:0;right:0;top:0;
+  height:58px;
+  z-index:5;
+  pointer-events:none;
+}
+
+/* ---------- FIESTAS PATRIAS ---------- */
+body[data-sigve-theme="fiestas_patrias"]{
+  --fp-blue:#073f82;
+  --fp-red:#d62c38;
+  --fp-cream:#fffaf1;
+  --fp-gold:#d9a93b;
+  background:#f4f7fa!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .header{
+  background:#fff!important;
+  border-bottom:1px solid rgba(7,63,130,.13)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .header::after{display:none!important}
+body[data-sigve-theme="fiestas_patrias"] .hero{
+  min-height:620px!important;
+  background:
+    linear-gradient(180deg,rgba(240,247,255,.22),rgba(255,255,255,.03)),
+    linear-gradient(115deg,#dce9f5 0%,#f6f4ed 49%,#d9e7f3 100%)!important;
+  border-bottom:7px solid #073f82!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero::before{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:58%;
+  z-index:0;
+  background:
+    linear-gradient(145deg,transparent 0 29%,#b8cce0 30% 39%,transparent 40%) 0 100%/42% 78% no-repeat,
+    linear-gradient(215deg,transparent 0 31%,#c7d7e5 32% 42%,transparent 43%) 100% 100%/48% 82% no-repeat,
+    linear-gradient(155deg,transparent 0 38%,#91acc5 39% 49%,transparent 50%) 20% 100%/58% 70% no-repeat,
+    linear-gradient(205deg,transparent 0 38%,#7898b5 39% 49%,transparent 50%) 88% 100%/62% 74% no-repeat,
+    linear-gradient(#dfeaf3,#b9cfdf);
+  opacity:.98;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:0;height:92px;
+  z-index:1;
+  background:
+    radial-gradient(ellipse at 10% 100%,#315e42 0 24%,transparent 25%),
+    radial-gradient(ellipse at 28% 100%,#436f4b 0 26%,transparent 27%),
+    radial-gradient(ellipse at 52% 100%,#2e6140 0 25%,transparent 26%),
+    radial-gradient(ellipse at 75% 100%,#3e714b 0 26%,transparent 27%),
+    radial-gradient(ellipse at 96% 100%,#28573a 0 25%,transparent 26%);
+}
+body[data-sigve-theme="fiestas_patrias"] .hero :is(h1,h2,h3,p,.lead,.eyebrow){
+  color:#173b5c!important;
+  text-shadow:none!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero h1{
+  color:#173b5c!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .hero h1::before{
+  content:"¡Viva Chile!";
+  background:transparent!important;
+  color:#b91f2d!important;
+  padding:0!important;
+  font-family:Georgia,serif;
+  font-style:italic;
+  font-size:clamp(24px,2.7vw,39px);
+  box-shadow:none!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland{
+  background:
+    linear-gradient(145deg,transparent 0 45%,#0a4a91 46% 100%) 1% 0/38px 42px repeat-x;
+  opacity:.98;
+}
+body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland::before,
+body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland::after{
+  content:"";
+  position:absolute;left:0;right:0;top:0;height:52px;
+}
+body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland::before{
+  background:linear-gradient(215deg,transparent 0 45%,#fff 46% 100%) 20px 0/76px 42px repeat-x;
+}
+body[data-sigve-theme="fiestas_patrias"] .sigve-season-garland::after{
+  background:linear-gradient(145deg,transparent 0 45%,#d62c38 46% 100%) 39px 0/76px 42px repeat-x;
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-flower{
+  left:0;bottom:4px;width:135px;height:250px;
+  background:
+    radial-gradient(circle at 25% 20%,#d8323e 0 10px,transparent 11px),
+    radial-gradient(circle at 48% 34%,#e8474f 0 12px,transparent 13px),
+    radial-gradient(circle at 21% 48%,#c82330 0 11px,transparent 12px),
+    radial-gradient(ellipse at 35% 66%,#397243 0 20px,transparent 21px),
+    radial-gradient(ellipse at 60% 78%,#2d623a 0 25px,transparent 26px);
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.15));
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-kite{
+  right:8%;top:25%;width:75px;height:75px;
+  transform:rotate(45deg);
+  background:linear-gradient(135deg,#d62c38 0 50%,#0a4a91 50%);
+  border:3px solid rgba(255,255,255,.9);
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-kite::after{
+  content:"";
+  position:absolute;width:2px;height:180px;background:rgba(54,70,82,.55);
+  left:73px;top:70px;transform:rotate(-36deg);transform-origin:top;
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-guitar{
+  right:1.5%;bottom:8px;width:42px;height:190px;
+  border-radius:45% 45% 36% 36%;
+  background:#a96527;
+  box-shadow:inset 0 0 0 5px #dca65f,0 8px 18px rgba(0,0,0,.2);
+  transform:rotate(5deg);
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-guitar::before{
+  content:"";position:absolute;width:16px;height:120px;left:13px;top:-100px;background:#6f431e;border-radius:5px;
+}
+body[data-sigve-theme="fiestas_patrias"] .season-fp-guitar::after{
+  content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#503016;left:14px;top:55px;
+}
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *,
+body[data-sigve-theme="fiestas_patrias"] :is(.activity-card,.announcement-card,.document-card,.contact-card,.join-highlight,.featured){
+  background:rgba(255,255,255,.96)!important;
+  border:1px solid rgba(7,63,130,.12)!important;
+  border-top:4px solid #073f82!important;
+  box-shadow:0 14px 32px rgba(38,70,100,.13)!important;
+}
+body[data-sigve-theme="fiestas_patrias"] .shortcuts > *:nth-child(even),
+body[data-sigve-theme="fiestas_patrias"] .announcement-card{
+  border-top-color:#d62c38!important;
+}
+
+/* ---------- HALLOWEEN ---------- */
+body[data-sigve-theme="halloween"]{
+  --hw-bg:#0e0715;
+  --hw-panel:#21132d;
+  --hw-panel2:#2a1738;
+  --hw-purple:#7c3da2;
+  --hw-orange:#f0a12e;
+  background:#0e0715!important;
+}
+body[data-sigve-theme="halloween"] .hero{
+  min-height:620px!important;
+  background:
+    radial-gradient(circle at 76% 25%,#e8d4db 0 9%,#a47aa6 9.5% 13%,transparent 13.5%),
+    radial-gradient(circle at 78% 24%,rgba(255,255,255,.14),transparent 20%),
+    linear-gradient(180deg,#1c0b2c 0%,#35134c 54%,#120918 100%)!important;
+  border-bottom:5px solid #6e3294!important;
+}
+body[data-sigve-theme="halloween"] .hero::before{
+  content:"";
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(circle at 14% 20%,rgba(255,255,255,.6) 0 1px,transparent 2px) 0 0/55px 55px,
+    radial-gradient(circle at 64% 15%,rgba(255,255,255,.45) 0 1px,transparent 2px) 0 0/79px 79px;
+  opacity:.5;
+}
+body[data-sigve-theme="halloween"] .hero::after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:0;height:170px;z-index:1;
+  background:
+    linear-gradient(165deg,transparent 0 58%,#08040c 59% 100%) 0 100%/32% 100% no-repeat,
+    linear-gradient(195deg,transparent 0 58%,#08040c 59% 100%) 100% 100%/38% 100% no-repeat,
+    linear-gradient(#08040c,#08040c) 0 100%/100% 30px no-repeat;
+}
+body[data-sigve-theme="halloween"] .hero h1{
+  color:#f4a62d!important;
+  text-shadow:0 3px 15px #000!important;
+}
+body[data-sigve-theme="halloween"] .hero h1::before{
+  content:"Halloween";
+  background:transparent!important;
+  border:0!important;
+  color:#dba4ff!important;
+  padding:0!important;
+  font-family:Georgia,serif;
+  font-style:italic;
+  font-size:clamp(22px,2.5vw,36px);
+}
+body[data-sigve-theme="halloween"] .season-hw-castle{
+  right:7%;bottom:55px;width:145px;height:220px;
+  background:#08040c;
+  clip-path:polygon(5% 100%,5% 42%,19% 42%,19% 18%,31% 18%,31% 42%,43% 42%,43% 3%,55% 3%,55% 42%,70% 42%,70% 25%,82% 25%,82% 42%,95% 42%,95% 100%);
+  filter:drop-shadow(0 0 12px rgba(0,0,0,.7));
+}
+body[data-sigve-theme="halloween"] .season-hw-castle::after{
+  content:"";position:absolute;inset:45% 18% 18%;
+  background:
+    radial-gradient(circle,#ffb12e 0 4px,transparent 5px) 0 0/30px 38px;
+}
+body[data-sigve-theme="halloween"] .season-hw-pumpkin{
+  left:2%;bottom:22px;width:92px;height:70px;border-radius:50%;
+  background:#dd761b;
+  box-shadow:inset 16px 0 0 rgba(255,179,51,.18),inset -16px 0 0 rgba(86,29,10,.22),0 8px 20px rgba(0,0,0,.35);
+}
+body[data-sigve-theme="halloween"] .season-hw-pumpkin::before{
+  content:"▲  ▲";position:absolute;left:20px;top:18px;color:#1b0b20;font-size:17px;letter-spacing:11px;
+}
+body[data-sigve-theme="halloween"] .season-hw-pumpkin::after{
+  content:"⌣";position:absolute;left:32px;top:30px;color:#1b0b20;font-size:30px;font-weight:900;
+}
+body[data-sigve-theme="halloween"] .season-hw-web{
+  right:0;top:0;width:180px;height:180px;opacity:.45;
+  background:
+    repeating-radial-gradient(circle at 100% 0,transparent 0 18px,rgba(255,255,255,.45) 19px 20px),
+    repeating-conic-gradient(from 180deg at 100% 0,rgba(255,255,255,.42) 0 1deg,transparent 1deg 22.5deg);
+}
+body[data-sigve-theme="halloween"] .season-hw-bats{
+  right:28%;top:17%;font-size:30px;color:#09040d;letter-spacing:14px;transform:rotate(-7deg);
+}
+body[data-sigve-theme="halloween"] :is(
+  .shortcuts > *,.activity-card,.announcement-card,.document-card,.contact-card,
+  .join-highlight,.featured,.form-panel,.calendar-panel,.conditions-card,.bank-box,
+  .card,.panel,.admin-card,.portal-card,.dashboard-card,.modal-content
+){
+  background:linear-gradient(180deg,#291737,#20122c)!important;
+  border:1px solid rgba(211,156,255,.11)!important;
+  box-shadow:0 15px 34px rgba(0,0,0,.33)!important;
+}
+body[data-sigve-theme="halloween"] :is(section,.section,.payment,.documents,.activities,.announcements,#contacto,#mejorar){
+  background:#120918!important;
+}
+body[data-sigve-theme="halloween"] :is(h1,h2,h3,h4,h5,h6,strong,label,legend){color:#fff7ef!important}
+body[data-sigve-theme="halloween"] :is(p,small,.muted,.lead,.field-help,.form-help){color:#d7c8df!important}
+body[data-sigve-theme="halloween"] .section-heading h2{color:#f2a12d!important}
+
+/* ---------- NAVIDAD ---------- */
+body[data-sigve-theme="navidad"]{
+  --nv-green:#075c3e;
+  --nv-red:#b82431;
+  --nv-gold:#efc45b;
+  background:#eef4ef!important;
+}
+body[data-sigve-theme="navidad"] .hero{
+  min-height:620px!important;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(255,211,112,.17),transparent 27%),
+    linear-gradient(180deg,#07553d 0%,#0a6a4a 54%,#174f3c 100%)!important;
+  border-bottom:7px solid #075c3e!important;
+}
+body[data-sigve-theme="navidad"] .hero::before{
+  content:"";
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(circle,rgba(255,255,255,.85) 0 1.5px,transparent 2px) 0 0/42px 42px,
+    radial-gradient(circle,rgba(255,255,255,.65) 0 1px,transparent 1.5px) 17px 9px/61px 61px;
+  opacity:.58;
+}
+body[data-sigve-theme="navidad"] .hero::after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:0;height:135px;z-index:1;
+  background:
+    linear-gradient(155deg,transparent 0 56%,#f5f7f3 57% 100%) 0 100%/28% 100% no-repeat,
+    linear-gradient(205deg,transparent 0 55%,#e7ece8 56% 100%) 100% 100%/34% 100% no-repeat,
+    linear-gradient(#f7f8f5,#f7f8f5) 0 100%/100% 50px no-repeat;
+}
+body[data-sigve-theme="navidad"] .hero h1::before{
+  content:"Feliz Navidad";
+  color:#f3c85c!important;
+  font-family:Georgia,serif;
+  font-size:clamp(34px,4vw,58px);
+  font-style:italic;
+  text-shadow:0 4px 15px rgba(0,0,0,.25);
+}
+body[data-sigve-theme="navidad"] .season-nv-tree{
+  right:4%;bottom:38px;width:150px;height:300px;
+  background:
+    linear-gradient(155deg,transparent 0 48%,#0d3d2b 49% 100%) 0 30%/100% 34% no-repeat,
+    linear-gradient(205deg,transparent 0 48%,#0b4a31 49% 100%) 100% 48%/100% 38% no-repeat,
+    linear-gradient(155deg,transparent 0 48%,#0b5738 49% 100%) 0 72%/100% 42% no-repeat;
+  filter:drop-shadow(0 8px 13px rgba(0,0,0,.25));
+}
+body[data-sigve-theme="navidad"] .season-nv-tree::after{
+  content:"★";position:absolute;top:5px;left:62px;color:#ffd65e;font-size:31px;text-shadow:0 0 12px #ffd65e;
+}
+body[data-sigve-theme="navidad"] .season-nv-house{
+  left:2%;bottom:42px;width:190px;height:100px;background:#e9ddc8;border-radius:5px;
+  box-shadow:0 7px 18px rgba(0,0,0,.18);
+}
+body[data-sigve-theme="navidad"] .season-nv-house::before{
+  content:"";position:absolute;left:-12px;top:-64px;border-left:107px solid transparent;border-right:107px solid transparent;border-bottom:70px solid #7d2b2d;
+}
+body[data-sigve-theme="navidad"] .season-nv-house::after{
+  content:"";position:absolute;left:25px;bottom:20px;width:30px;height:38px;background:#ffd978;box-shadow:62px 0 0 #ffd978,112px 0 0 #ffd978;
+}
+body[data-sigve-theme="navidad"] :is(
+  .shortcuts > *,.activity-card,.announcement-card,.document-card,.contact-card,.join-highlight,.featured
+){
+  background:#fffdf8!important;
+  border:1px solid rgba(7,92,62,.13)!important;
+  border-top:4px solid #075c3e!important;
+  box-shadow:0 14px 32px rgba(7,75,51,.13)!important;
+}
+body[data-sigve-theme="navidad"] .announcement-card{border-top-color:#b82431!important}
+
+/* ---------- PORTAL SOCIO Y ADMIN: MISMA IDENTIDAD ---------- */
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="socio"] :is(.top,.topbar,.header),
+body[data-sigve-theme="fiestas_patrias"][data-sigve-portal="admin"] :is(.top,.topbar,.admin-header){
+  background:linear-gradient(90deg,#073f82,#fff 50%,#d62c38)!important;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="socio"],
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"]{
+  background:linear-gradient(180deg,#0d0613,#170c20)!important;
+}
+body[data-sigve-theme="halloween"][data-sigve-portal="socio"] :is(.top,.topbar,.header),
+body[data-sigve-theme="halloween"][data-sigve-portal="admin"] :is(.top,.topbar,.admin-header){
+  background:linear-gradient(90deg,#160a20,#341447,#160a20)!important;
+  border-bottom:2px solid #7c3da2!important;
+}
+body[data-sigve-theme="navidad"][data-sigve-portal="socio"] :is(.top,.topbar,.header),
+body[data-sigve-theme="navidad"][data-sigve-portal="admin"] :is(.top,.topbar,.admin-header){
+  background:linear-gradient(90deg,#075c3e,#0a724d)!important;
+  border-bottom:2px solid #d5b04c!important;
+}
+
+/* ---------- MÓVIL ---------- */
+@media(max-width:760px){
+  body[data-sigve-theme]:not([data-sigve-theme="normal"]) .hero{min-height:540px!important}
+  .season-fp-guitar,.season-fp-flower,.season-hw-castle,.season-nv-house{opacity:.45;transform:scale(.72)}
+  .season-fp-kite{right:8%;top:17%;transform:scale(.7) rotate(45deg)}
+  .season-nv-tree{right:-25px;transform:scale(.72);transform-origin:bottom right}
+  .sigve-season-garland{height:42px}
+}
