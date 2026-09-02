@@ -114,7 +114,7 @@ async function printCert111(x){
   const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const fechaLarga=`${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
   const w=window.open('','_blank');
-  w.document.write(`<html><head><meta charset="utf-8"><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css?v=562"></head><body>
+  w.document.write(`<html><head><meta charset="utf-8"><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css?v=563"></head><body>
   <div class="cert-print-sheet cert-residencia-oficial">
     <div class="cert-print-header">
       <div class="cert-print-brand"><img src="assets/logo.svg" alt="Villa El Trigal"></div>
@@ -141,7 +141,7 @@ async function printCert111(x){
     </div>
     <div class="cert-digital-note">Documento generado digitalmente por SIGVE · Folio ${String(x.folio).padStart(5,'0')}</div>
   </div>
-  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  <script>window.onload=()=>setTimeout(()=>window.print(),500)<\/script></body></html>`);
   w.document.close();
 }
 

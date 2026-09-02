@@ -1,17 +1,18 @@
-SIGVE18 - CERTIFICADO MEDIA PAGINA V4
+SIGVE18 - CERTIFICADO MEDIA PAGINA V5 · CORRECCIÓN IMPRESIÓN
 
-Esta versión corrige el selector real usado por el certificado:
-.cert-print-sheet.cert-residencia-oficial
+Lo que se veía en la captura era la vista de impresión en blanco.
+La causa era una regla @media print que ocultaba el contenido.
 
 REEMPLAZAR EN GITHUB:
-- admin.html
-- admin-v111.js
-- admin-v111.css
+1. admin.html
+2. admin-v111.js
+3. admin-v111.css
 
 NO EJECUTAR SQL.
 
-El certificado ahora mide físicamente:
-8,5 x 5,5 pulgadas (media hoja carta, horizontal)
-y se imprime en la mitad superior de una hoja carta.
-
-La ventana de Generar digital carga admin-v111.css?v=562 para evitar caché.
+Cambios:
+- El certificado queda forzado como visible al imprimir.
+- Se mantiene en media hoja carta horizontal (8,5 x 5,5 pulgadas).
+- La impresión usa una hoja carta normal, ocupando la mitad superior.
+- Se actualiza caché a v=563.
+- Se agrega una breve espera antes de abrir el diálogo de impresión.
