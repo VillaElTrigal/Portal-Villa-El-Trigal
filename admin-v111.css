@@ -392,3 +392,11 @@
     display: none !important;
   }
 }
+
+/* SIGVE V6 · Firmas y timbre */
+.cert-stamp-upload small{display:block;margin-top:4px;color:#667085;font-size:12px}
+.stamp-preview-wrap{margin-top:8px}
+.stamp-preview-wrap span{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+.stamp-preview{display:block;width:110px;height:110px;object-fit:contain;background:#fff;border:1px dashed #cbd5e1;border-radius:10px;padding:5px}
+.cert-stamp-img{display:block;width:.82in;height:.82in;object-fit:contain;margin:0 auto 2px}
+@media print{.cert-stamp-img{width:.82in!important;height:.82in!important;object-fit:contain!important}}

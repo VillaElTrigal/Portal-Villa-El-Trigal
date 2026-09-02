@@ -1,18 +1,24 @@
-SIGVE18 - CERTIFICADO MEDIA PAGINA V5 · CORRECCIÓN IMPRESIÓN
+SIGVE18 V6 · FIRMAS + TIMBRE OFICIAL
 
-Lo que se veía en la captura era la vista de impresión en blanco.
-La causa era una regla @media print que ocultaba el contenido.
+1) Ejecuta SIGVE18_V6_AGREGAR_TIMBRE.sql en Supabase.
+2) Reemplaza en GitHub:
+   - admin.html
+   - admin-v111.js
+   - admin-v111.css
 
-REEMPLAZAR EN GITHUB:
-1. admin.html
-2. admin-v111.js
-3. admin-v111.css
+Después:
+Administración > Autoridades y firmas
 
-NO EJECUTAR SQL.
+FIRMAS
+- Edita Presidente(a) y carga su firma PNG/JPG.
+- Edita Secretario(a) y carga su firma PNG/JPG.
+- Máximo 700 KB por imagen.
+- Recomendado: PNG recortado, fondo transparente.
 
-Cambios:
-- El certificado queda forzado como visible al imprimir.
-- Se mantiene en media hoja carta horizontal (8,5 x 5,5 pulgadas).
-- La impresión usa una hoja carta normal, ocupando la mitad superior.
-- Se actualiza caché a v=563.
-- Se agrega una breve espera antes de abrir el diálogo de impresión.
+TIMBRE
+- En Configuración del certificado digital aparece “Timbre oficial”.
+- Carga PNG/JPG y pulsa Guardar configuración.
+- Recomendado: PNG transparente y bien recortado.
+
+El certificado digital usará automáticamente las autoridades vigentes, sus firmas y el timbre guardado.
+No cambia el módulo de certificados ni su flujo.
