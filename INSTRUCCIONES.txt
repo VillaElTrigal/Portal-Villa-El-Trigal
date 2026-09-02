@@ -1,0 +1,17 @@
+SIGVE 18 · ELIMINAR APARIENCIA DE TEMPORADA
+
+1) En GitHub reemplaza SOLO estos 3 archivos:
+   - index.html
+   - portal-socio.html
+   - admin.html
+
+2) Elimina de GitHub estos archivos, porque ya no se utilizan:
+   - temas-temporada.css
+   - temas-temporada.js
+   - admin-apariencia.js
+
+3) En Supabase > SQL Editor ejecuta:
+   - ELIMINAR_APARIENCIA_SUPABASE.sql
+
+Esto elimina únicamente el módulo de apariencia/temas de temporada.
+No modifica socios, cuotas, beneficios, reservas, certificados, finanzas, avisos ni WhatsApp.
