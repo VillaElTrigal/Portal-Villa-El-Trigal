@@ -1,24 +1,22 @@
-SIGVE18 V6 · FIRMAS + TIMBRE OFICIAL
+SIGVE18 V7 · CORRECCIÓN AUTORIDADES Y FIRMAS
 
-1) Ejecuta SIGVE18_V6_AGREGAR_TIMBRE.sql en Supabase.
-2) Reemplaza en GitHub:
-   - admin.html
-   - admin-v111.js
-   - admin-v111.css
+PROBLEMA:
+La V6 tenía un error de sintaxis en admin-v111.js. Por eso ese archivo no alcanzaba
+a ejecutarse y el botón dinámico “Autoridades y firmas” no aparecía.
 
-Después:
-Administración > Autoridades y firmas
+REEMPLAZAR EN GITHUB:
+- admin.html
+- admin-v111.js
+- admin-v111.css
 
-FIRMAS
-- Edita Presidente(a) y carga su firma PNG/JPG.
-- Edita Secretario(a) y carga su firma PNG/JPG.
-- Máximo 700 KB por imagen.
-- Recomendado: PNG recortado, fondo transparente.
+NO ES NECESARIO volver a ejecutar el SQL si ya ejecutaste
+SIGVE18_V6_AGREGAR_TIMBRE.sql.
 
-TIMBRE
-- En Configuración del certificado digital aparece “Timbre oficial”.
-- Carga PNG/JPG y pulsa Guardar configuración.
-- Recomendado: PNG transparente y bien recortado.
+Después de publicar, cerrar y volver a abrir Administración o usar Ctrl+F5.
 
-El certificado digital usará automáticamente las autoridades vigentes, sus firmas y el timbre guardado.
-No cambia el módulo de certificados ni su flujo.
+Se mantiene:
+- Certificado media hoja
+- Impresión V5
+- Autoridades y firmas
+- Carga de firma Presidente/Secretario
+- Carga de timbre oficial
