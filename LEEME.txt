@@ -1,11 +1,18 @@
-SIGVE 18 · Ajuste exclusivo del certificado digital
+SIGVE18 - CERTIFICADO DIGITAL FORMATO ACTUAL V2
 
-Reemplazar en GitHub:
-- admin-v111.js
-- admin-v111.css
+PROBLEMA CORREGIDO:
+El navegador seguía cargando admin-v111.js?v=550 y admin-v111.css?v=549 desde caché,
+por eso no se apreciaban los cambios.
 
-NO ejecutar SQL.
-NO modifica solicitudes, pagos, folios ni el módulo de certificados.
-Solo cambia el formato que se abre al presionar “Generar digital”.
+REEMPLAZAR EN GITHUB:
+1. admin.html
+2. admin-v111.js
+3. admin-v111.css
 
-Se mantienen las firmas configuradas en Autoridades y firmas. El timbre queda como espacio visual temporal porque aún no hay una imagen oficial de timbre almacenada en SIGVE.
+NO EJECUTAR SQL.
+
+Después de publicar:
+- cerrar la pestaña de SIGVE y abrirla de nuevo, o
+- presionar Ctrl+F5 una vez.
+
+Los nuevos archivos se cargan con ?v=560.
