@@ -1,18 +1,17 @@
-SIGVE18 - CERTIFICADO DIGITAL MEDIA PAGINA V3
+SIGVE18 - CERTIFICADO MEDIA PAGINA V4
+
+Esta versión corrige el selector real usado por el certificado:
+.cert-print-sheet.cert-residencia-oficial
 
 REEMPLAZAR EN GITHUB:
-1. admin.html
-2. admin-v111.js
-3. admin-v111.css
+- admin.html
+- admin-v111.js
+- admin-v111.css
 
 NO EJECUTAR SQL.
 
-CAMBIO:
-- El certificado digital queda en formato media hoja carta horizontal (8,5 x 5,5 pulgadas aprox.).
-- Al imprimir se ocultan los menús y controles y queda solo el certificado.
-- Cache actualizado a v=561.
+El certificado ahora mide físicamente:
+8,5 x 5,5 pulgadas (media hoja carta, horizontal)
+y se imprime en la mitad superior de una hoja carta.
 
-FIRMAS Y TIMBRE:
-Esta versión no cambia todavía el almacenamiento de firmas/timbre.
-Si ya usas 'Autoridades y firmas', las firmas pueden seguir tomándose desde allí.
-Para el timbre, lo recomendable es agregar una carga de imagen PNG con fondo transparente en Administración.
+La ventana de Generar digital carga admin-v111.css?v=562 para evitar caché.

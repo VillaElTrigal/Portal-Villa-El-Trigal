@@ -114,7 +114,7 @@ async function printCert111(x){
   const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const fechaLarga=`${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
   const w=window.open('','_blank');
-  w.document.write(`<html><head><meta charset="utf-8"><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css"></head><body>
+  w.document.write(`<html><head><meta charset="utf-8"><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css?v=562"></head><body>
   <div class="cert-print-sheet cert-residencia-oficial">
     <div class="cert-print-header">
       <div class="cert-print-brand"><img src="assets/logo.svg" alt="Villa El Trigal"></div>
