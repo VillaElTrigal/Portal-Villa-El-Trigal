@@ -1,8 +1,4 @@
-SIGVE18 - CERTIFICADO DIGITAL FORMATO ACTUAL V2
-
-PROBLEMA CORREGIDO:
-El navegador seguía cargando admin-v111.js?v=550 y admin-v111.css?v=549 desde caché,
-por eso no se apreciaban los cambios.
+SIGVE18 - CERTIFICADO DIGITAL MEDIA PAGINA V3
 
 REEMPLAZAR EN GITHUB:
 1. admin.html
@@ -11,8 +7,12 @@ REEMPLAZAR EN GITHUB:
 
 NO EJECUTAR SQL.
 
-Después de publicar:
-- cerrar la pestaña de SIGVE y abrirla de nuevo, o
-- presionar Ctrl+F5 una vez.
+CAMBIO:
+- El certificado digital queda en formato media hoja carta horizontal (8,5 x 5,5 pulgadas aprox.).
+- Al imprimir se ocultan los menús y controles y queda solo el certificado.
+- Cache actualizado a v=561.
 
-Los nuevos archivos se cargan con ?v=560.
+FIRMAS Y TIMBRE:
+Esta versión no cambia todavía el almacenamiento de firmas/timbre.
+Si ya usas 'Autoridades y firmas', las firmas pueden seguir tomándose desde allí.
+Para el timbre, lo recomendable es agregar una carga de imagen PNG con fondo transparente en Administración.

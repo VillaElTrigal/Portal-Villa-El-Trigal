@@ -118,3 +118,64 @@
 .cert-stamp-circle{width:88px;height:88px;margin:0 auto 6px;border:2px solid #555;border-radius:50%;display:grid;place-items:center;align-content:center;line-height:1.15;font-weight:700;font-size:12px;letter-spacing:.04em}
 .cert-digital-note{margin-top:58px;padding-top:10px;border-top:1px solid #ddd;text-align:center;font-size:10px;color:#666}
 @media print{@page{size:letter portrait;margin:10mm}.cert-residencia-oficial{border:0;max-width:none;min-height:auto;padding:18px 24px 10px}.cert-digital-note{color:#444}}
+
+
+/* === Certificado digital: formato media hoja carta horizontal === */
+.sigve-certificado-digital,
+.certificado-digital,
+.certificado-preview,
+#certificadoDigitalPreview {
+  width: 8.5in !important;
+  max-width: 8.5in !important;
+  min-height: 5.5in !important;
+  height: auto !important;
+  margin: 18px auto !important;
+  padding: 0.35in 0.45in !important;
+  box-sizing: border-box !important;
+  background: #fff !important;
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .sigve-certificado-digital,
+  .sigve-certificado-digital *,
+  .certificado-digital,
+  .certificado-digital *,
+  .certificado-preview,
+  .certificado-preview *,
+  #certificadoDigitalPreview,
+  #certificadoDigitalPreview * {
+    visibility: visible !important;
+  }
+
+  .sigve-certificado-digital,
+  .certificado-digital,
+  .certificado-preview,
+  #certificadoDigitalPreview {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 8.5in !important;
+    min-height: 5.5in !important;
+    padding: 0.35in 0.45in !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  .no-print,
+  .modal-actions,
+  .certificado-actions {
+    display: none !important;
+  }
+}
