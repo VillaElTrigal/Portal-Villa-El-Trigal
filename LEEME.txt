@@ -1,17 +1,11 @@
-SIGVE v3.0.3 - Parche de campos ocultos
+SIGVE 18 · Ajuste exclusivo del certificado digital
 
-Archivo a reemplazar:
-- portal-socio.css
+Reemplazar en GitHub:
+- admin-v111.js
+- admin-v111.css
 
-Qué corrige:
-- La sección "Necesidades o consideraciones especiales" permanece oculta mientras la casilla no esté marcada.
-- El campo "Otra ocupación" permanece oculto mientras la ocupación seleccionada no sea "Otro".
-- Se mantiene la lógica existente que limpia los datos de condiciones especiales al desmarcar la casilla.
+NO ejecutar SQL.
+NO modifica solicitudes, pagos, folios ni el módulo de certificados.
+Solo cambia el formato que se abre al presionar “Generar digital”.
 
-Instalación:
-1. Copia portal-socio.css a la carpeta principal del proyecto.
-2. Acepta reemplazar el archivo existente.
-3. Publica los cambios.
-4. Recarga la página con Ctrl+F5 para evitar que el navegador use el CSS anterior en caché.
-
-No requiere ejecutar SQL en Supabase.
+Se mantienen las firmas configuradas en Autoridades y firmas. El timbre queda como espacio visual temporal porque aún no hay una imagen oficial de timbre almacenada en SIGVE.

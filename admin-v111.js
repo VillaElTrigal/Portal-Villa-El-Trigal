@@ -102,7 +102,48 @@ async function openCert(x=null){
 }
 
 async function getDocConfig(){const[{data:conf},{data:auths}]=await Promise.all([sb.from('configuracion_documentos').select('*').eq('id',1).single(),sb.from('autoridades_junta').select('*').eq('activo',true)]);return{conf:conf||{},auths:auths||[]}}
-async function printCert111(x){const{conf,auths}=await getDocConfig();if(conf.certificado_digital_habilitado===false&&!confirm('La generación digital está deshabilitada en configuración. ¿Deseas generar una vista previa de todas formas?'))return;const cargos=['secretario','presidente','tesorero'].filter(c=>conf[`firma_${c}`]);const signatureHtml=cargos.map(c=>{const a=auths.find(y=>y.cargo===c);return a?`<div class="cert-signature">${a.firma_data_url?`<img src="${a.firma_data_url}">`:''}<div class="line"><strong>${esc(a.nombre_completo)}</strong><br>${c[0].toUpperCase()+c.slice(1)}(a)</div></div>`:''}).join('');const checks={laboral:'',estudiantil:'',transporte:'',otro:''};checks[x.finalidad||'otro']='✓';const w=window.open('','_blank');w.document.write(`<html><head><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css"></head><body><div class="cert-print-sheet"><div class="cert-print-header"><img src="assets/logo.svg"><div class="cert-print-title"><h1>JUNTA DE VECINOS VILLA EL TRIGAL</h1><h2>CERTIFICADO DE RESIDENCIA</h2></div><div class="cert-print-folio">Folio N° ${String(x.folio).padStart(5,'0')}<br>Valor ${money(x.valor)}</div></div><div class="cert-print-body"><p>La Junta de Vecinos Villa El Trigal certifica que don(ña) <strong>${esc(x.nombre)}</strong>, de nacionalidad <strong>${esc(x.nacionalidad||'no informada')}</strong>, RUT <strong>${esc(x.rut)}</strong>, tiene domicilio en <strong>${esc(x.direccion)}</strong>.</p><p>Se extiende el presente certificado a petición de la persona interesada para los fines indicados:</p><div class="cert-purpose"><span>${checks.laboral} Laboral</span><span>${checks.estudiantil} Estudiantil</span><span>${checks.transporte} Transporte</span><span>${checks.otro} Otro</span></div>${x.finalidad==='otro'&&x.finalidad_otro?`<p><strong>Otro:</strong> ${esc(x.finalidad_otro)}</p>`:''}<p>San Antonio, ${dateCL(x.fecha)}.</p></div><div class="cert-signatures">${signatureHtml||'<div class="cert-signature"><div class="line">Firma y timbre</div></div>'}</div></div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
+async function printCert111(x){
+  const{conf,auths}=await getDocConfig();
+  if(conf.certificado_digital_habilitado===false&&!confirm('La generación digital está deshabilitada en configuración. ¿Deseas generar una vista previa de todas formas?'))return;
+  const secretario=auths.find(y=>y.cargo==='secretario');
+  const presidente=auths.find(y=>y.cargo==='presidente');
+  const firma=(a,cargo)=>`<div class="cert-signature">${a?.firma_data_url?`<img src="${a.firma_data_url}" alt="Firma ${cargo}">`:''}<div class="line">${a?.nombre_completo?`<strong>${esc(a.nombre_completo)}</strong><br>`:''}${cargo}</div></div>`;
+  const checks={laboral:'',estudiantil:'',transporte:'',otro:''};
+  checks[x.finalidad||'otro']='✓';
+  const fecha=new Date(`${x.fecha}T12:00:00`);
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fechaLarga=`${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><meta charset="utf-8"><title>Certificado ${x.folio}</title><link rel="stylesheet" href="admin-v111.css"></head><body>
+  <div class="cert-print-sheet cert-residencia-oficial">
+    <div class="cert-print-header">
+      <div class="cert-print-brand"><img src="assets/logo.svg" alt="Villa El Trigal"></div>
+      <div class="cert-print-title"><h2>CERTIFICADO DE RESIDENCIA</h2><h1>JUNTA DE VECINOS VILLA EL TRIGAL DE SAN ANTONIO</h1></div>
+      <div class="cert-print-folio">Folio N° <strong>${String(x.folio).padStart(5,'0')}</strong><br><span>VALOR ${money(x.valor)}</span></div>
+    </div>
+    <div class="cert-print-body">
+      <p>La Junta de Vecinos <strong>Villa El Trigal</strong> de la Unidad Vecinal N° 12, sector Placilla, San Antonio, certifica que don(ña) <strong>${esc(x.nombre)}</strong>, Cédula de Identidad N° <strong>${esc(x.rut)}</strong>, de nacionalidad <strong>${esc(x.nacionalidad||'no informada')}</strong>, tiene su residencia habitual, según consta en el registro de socios, en <strong>${esc(x.direccion)}</strong>.</p>
+      <p>Se extiende el presente certificado a petición de la persona interesada para fines:</p>
+      <p class="cert-legal-note">(Este documento no es válido para fines judiciales)</p>
+      <div class="cert-purpose cert-purpose-photo">
+        <span><b class="cert-check">${checks.laboral}</b> Laborales</span>
+        <span><b class="cert-check">${checks.estudiantil}</b> Estudiantiles</span>
+        <span><b class="cert-check">${checks.transporte}</b> Transporte</span>
+        <span><b class="cert-check">${checks.otro}</b> Otros</span>
+      </div>
+      ${x.finalidad==='otro'&&x.finalidad_otro?`<p class="cert-other"><strong>Especificar:</strong> ${esc(x.finalidad_otro)}</p>`:''}
+      <p class="cert-date-line"><strong>San Antonio, ${fechaLarga}.</strong></p>
+    </div>
+    <div class="cert-signatures cert-signatures-photo">
+      ${firma(secretario,'Secretario(a)')}
+      <div class="cert-stamp-space"><div class="cert-stamp-circle">TIMBRE<br>OFICIAL</div><small>Junta de Vecinos Villa El Trigal</small></div>
+      ${firma(presidente,'Presidente(a)')}
+    </div>
+    <div class="cert-digital-note">Documento generado digitalmente por SIGVE · Folio ${String(x.folio).padStart(5,'0')}</div>
+  </div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
 
 async function loadAuthorities(){const{data,error}=await sb.from('autoridades_junta').select('*').order('activo',{ascending:false}).order('cargo');if(error)return toast(error.message,true);$('#authorities-list').innerHTML=(data||[]).map(a=>`<div class="authority-card"><div><strong>${esc(a.nombre_completo)}</strong> · ${esc(a.cargo)}${a.activo?' · Vigente':' · Histórico'}<small>${a.periodo_desde?dateCL(a.periodo_desde):'Sin fecha'} — ${a.periodo_hasta?dateCL(a.periodo_hasta):'Actual'}</small>${a.firma_data_url?`<img class="signature-preview" src="${a.firma_data_url}">`:''}</div><div><button class="button secondary" data-edit-authority="${a.id}">Editar</button></div></div>`).join('')||'<p>No hay autoridades registradas.</p>';$$('[data-edit-authority]').forEach(b=>b.onclick=()=>editAuthority((data||[]).find(a=>a.id===b.dataset.editAuthority)));const{data:conf}=await sb.from('configuracion_documentos').select('*').eq('id',1).single();if(conf){const f=$('#document-config-form');f.certificado_digital_habilitado.checked=conf.certificado_digital_habilitado;f.firma_presidente.checked=conf.firma_presidente;f.firma_secretario.checked=conf.firma_secretario;f.firma_tesorero.checked=conf.firma_tesorero}}
 function fileData(file){return new Promise((resolve,reject)=>{if(!file)return resolve(null);if(file.size>700000)return reject(new Error('La imagen debe pesar menos de 700 KB'));const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
