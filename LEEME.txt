@@ -1,23 +1,10 @@
-SIGVE18 · NOTIFICACIONES ADMIN V10
+SIGVE18 · NOTIFICACIONES ADMIN V11
 
-OBJETIVO
-Ampliar el Centro de Notificaciones del Portal Administración y avisar
-CUALQUIER ingreso que llegue al módulo Finanzas.
-
-AHORA SE MOSTRARÁN:
-- Solicitudes administrativas que lleguen a notificaciones_admin
-  (por ejemplo: nuevo socio, socio asociado, cambio de cotizante).
-- Nueva solicitud de arriendo pendiente.
-- Certificado de residencia pendiente.
-- CUALQUIER movimiento tipo INGRESO registrado en Finanzas durante los últimos 7 días:
-  cuotas, certificados, arriendos, Zumba, aportes y otros ingresos manuales.
-
-COMPORTAMIENTO
-- La campanilla muestra solo la cantidad pendiente de leer.
-- Al abrir, las notificaciones permanecen visibles.
-- Al pinchar una, queda marcada como “Leída”.
-- Los ingresos financieros indican concepto, monto y fondo (Caja/Banco).
-- Si el ingreso está relacionado con un socio, también muestra su nombre/número.
+AJUSTE:
+- Cuando no existan notificaciones pendientes, el encabezado vuelve a mostrar:
+  “Todo al día”.
+- Las notificaciones ya leídas siguen visibles como historial reciente.
+- No cambia la lógica de pagos ni de las demás notificaciones.
 
 REEMPLAZAR EN GITHUB:
 1. admin.html
@@ -26,4 +13,4 @@ REEMPLAZAR EN GITHUB:
 NO EJECUTAR SQL.
 
 CACHE:
-admin-v7.js?v=NOTIFADMIN10
+admin-v7.js?v=NOTIFADMIN11

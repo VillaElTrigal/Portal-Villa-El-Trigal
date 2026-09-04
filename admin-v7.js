@@ -393,7 +393,7 @@ function renderNotificationCenter(items){
     const summary=panel.querySelector('#notification-summary');
     if(summary) summary.textContent=unread.length
       ? `${unread.length} pendiente${unread.length===1?'':'s'} · ${items.length} reciente${items.length===1?'':'s'}`
-      : (items.length ? `${items.length} notificación${items.length===1?'':'es'} reciente${items.length===1?'':'s'}` : 'Sin notificaciones recientes');
+      : 'Todo al día';
     const clear=panel.querySelector('#notification-read-all');
     if(clear){clear.hidden=!items.length||!unread.length;clear.onclick=e=>{e.stopPropagation();markNotificationsRead()}}
   }
