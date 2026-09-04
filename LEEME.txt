@@ -1,22 +1,22 @@
-SIGVE18 V7 · CORRECCIÓN AUTORIDADES Y FIRMAS
+SIGVE18 · CORRECCIÓN NOTIFICACIONES ADMIN V8
 
 PROBLEMA:
-La V6 tenía un error de sintaxis en admin-v111.js. Por eso ese archivo no alcanzaba
-a ejecutarse y el botón dinámico “Autoridades y firmas” no aparecía.
+Al abrir la campanilla, SIGVE marcaba TODAS las notificaciones como leídas
+antes de mostrarlas. Por eso aparecía el contador, pero al pinchar decía
+“Todo al día” y no permitía saber a qué correspondía.
+
+CORRECCIÓN:
+- Abrir la campanilla ya NO marca todo como leído.
+- Las notificaciones se muestran con título, detalle y acceso a la sección correspondiente.
+- Una notificación se marca como leída al pincharla.
+- Se mantiene el botón “Marcar todo leído”.
+- El contador disminuye a medida que se leen.
 
 REEMPLAZAR EN GITHUB:
-- admin.html
-- admin-v111.js
-- admin-v111.css
+1. admin.html
+2. admin-v7.js
 
-NO ES NECESARIO volver a ejecutar el SQL si ya ejecutaste
-SIGVE18_V6_AGREGAR_TIMBRE.sql.
+NO EJECUTAR SQL.
 
-Después de publicar, cerrar y volver a abrir Administración o usar Ctrl+F5.
-
-Se mantiene:
-- Certificado media hoja
-- Impresión V5
-- Autoridades y firmas
-- Carga de firma Presidente/Secretario
-- Carga de timbre oficial
+Se cambió la versión de caché de admin-v7.js a:
+?v=NOTIFADMIN8
