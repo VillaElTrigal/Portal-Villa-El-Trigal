@@ -371,7 +371,7 @@ function openMovement(type){const transfer=type==='transferencia',d=modal(`<h3>$
 async function generateReport(){const from=$('#report-from').value,to=$('#report-to').value,fund=$('#report-fund').value,type=$('#report-type').value,periodo=await getActivePeriod();let q=sb.from('movimientos_financieros').select('*').eq('periodo_id',periodo.id).gte('fecha',from).lte('fecha',to).order('fecha');if(type!=='todos')q=q.eq('tipo',type);const{data,error}=await q;if(error)return msg(error.message,true);let rows=(data||[]).filter(x=>fund==='todos'||x.fondo===fund||x.fondo_origen===fund||x.fondo_destino===fund);const ing=rows.filter(x=>x.tipo==='ingreso').reduce((a,x)=>a+Number(x.monto),0),gas=rows.filter(x=>x.tipo==='gasto').reduce((a,x)=>a+Number(x.monto),0);$('#report-summary').innerHTML=`<div class="stat"><span>Ingresos</span><strong>${money(ing)}</strong></div><div class="stat"><span>Gastos</span><strong>${money(gas)}</strong></div><div class="stat"><span>Resultado</span><strong>${money(ing-gas)}</strong></div>`;$('#report-body').innerHTML=rows.map(x=>`<tr><td>${dateCL(x.fecha)}</td><td>${esc(x.concepto)}</td><td>${esc(x.tipo)}</td><td>${esc(x.fondo||`${x.fondo_origen} → ${x.fondo_destino}`)}</td><td>${money(x.monto)}</td></tr>`).join('')||'<tr><td colspan="5">Sin movimientos en el período.</td></tr>';window.currentReportRows=rows}
 function exportReport(){const rows=[['Fecha','Concepto','Tipo','Categoría','Fondo','Monto','Observaciones']];(window.currentReportRows||[]).forEach(x=>rows.push([dateCL(x.fecha),x.concepto,x.tipo,x.categoria||'',x.fondo||`${x.fondo_origen} -> ${x.fondo_destino}`,x.monto,x.observaciones||'']));downloadCsv(`reporte-finanzas-${$('#report-from').value}-${$('#report-to').value}.csv`,rows)}
 function presetReport(kind){const now=new Date();if(kind==='month'){const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');$('#report-from').value=`${y}-${m}-01`;$('#report-to').value=new Date(y,now.getMonth()+1,0).toISOString().slice(0,10)}else{$('#report-from').value=`${now.getFullYear()}-01-01`;$('#report-to').value=`${now.getFullYear()}-12-31`}generateReport()}
-const NOTIFICATION_READ_KEY='villa-el-trigal-notificaciones-leidas-v1';
+const NOTIFICATION_READ_KEY='villa-el-trigal-notificaciones-leidas-v2';
 function getReadNotifications(){try{const data=JSON.parse(localStorage.getItem(NOTIFICATION_READ_KEY)||'{}'),limit=Date.now()-90*864e5;for(const [key,ts] of Object.entries(data))if(Number(ts)<limit)delete data[key];return data}catch{return {}}}
 function saveReadNotifications(data){localStorage.setItem(NOTIFICATION_READ_KEY,JSON.stringify(data))}
 function markNotificationsRead(){
@@ -390,65 +390,147 @@ function renderNotificationCenter(items){
   if(panel){
     let head=panel.querySelector('.notification-center-head');
     if(!head){panel.querySelector(':scope > strong')?.remove();panel.insertAdjacentHTML('afterbegin','<div class="notification-center-head"><div><strong>Centro de notificaciones</strong><small id="notification-summary"></small></div><button type="button" id="notification-read-all">Marcar todo leído</button></div>');head=panel.querySelector('.notification-center-head')}
-    const summary=panel.querySelector('#notification-summary');if(summary)summary.textContent=unread.length?`${unread.length} pendiente${unread.length===1?'':'s'}`:'Todo al día';
-    const clear=panel.querySelector('#notification-read-all');if(clear){clear.hidden=!items.length||!unread.length;clear.onclick=e=>{e.stopPropagation();markNotificationsRead()}}
+    const summary=panel.querySelector('#notification-summary');
+    if(summary) summary.textContent=unread.length
+      ? `${unread.length} pendiente${unread.length===1?'':'s'} · ${items.length} reciente${items.length===1?'':'s'}`
+      : (items.length ? `${items.length} notificación${items.length===1?'':'es'} reciente${items.length===1?'':'s'}` : 'Sin notificaciones recientes');
+    const clear=panel.querySelector('#notification-read-all');
+    if(clear){clear.hidden=!items.length||!unread.length;clear.onclick=e=>{e.stopPropagation();markNotificationsRead()}}
   }
   if(!list)return;
-  const order={alta:0,media:1,baja:2};const visible=[...unread].sort((a,b)=>(order[a.priority]??9)-(order[b.priority]??9)||String(a.date||'').localeCompare(String(b.date||'')));
-  list.innerHTML=visible.map(i=>`<button type="button" class="notification-item notification-card unread priority-${esc(i.priority||'baja')}" data-notification-id="${esc(i.id)}" data-notification-section="${esc(i.section||'')}"><span class="notification-card-icon">${notificationIcon(i.type)}</span><span class="notification-card-copy"><strong>${esc(i.title||'Aviso')}</strong><small>${esc(i.text||'')}</small><em>${esc(i.label||'')}</em></span><span class="notification-card-arrow">→</span></button>`).join('')||'<div class="notification-empty"><span>✅</span><strong>Todo al día</strong><small>No tienes notificaciones nuevas.</small></div>';
-  list.querySelectorAll('[data-notification-section]').forEach(el=>el.onclick=()=>{markNotificationRead(el.dataset.notificationId);const key=el.dataset.notificationSection;if(key)document.querySelector(`[data-section="${key}"]`)?.click();$('#notification-panel')?.classList.remove('open');renderNotificationCenter(window.v7NotificationItems||[])});
+
+  const order={alta:0,media:1,baja:2};
+  const visible=[...items].sort((a,b)=>{
+    const ar=read[a.id]?1:0, br=read[b.id]?1:0;
+    return ar-br || (order[a.priority]??9)-(order[b.priority]??9) || new Date(b.date||0)-new Date(a.date||0);
+  });
+
+  list.innerHTML=visible.map(i=>{
+    const isRead=!!read[i.id];
+    return `<button type="button" class="notification-item notification-card ${isRead?'read':'unread'} priority-${esc(i.priority||'baja')}" data-notification-id="${esc(i.id)}" data-notification-section="${esc(i.section||'')}">
+      <span class="notification-card-icon">${notificationIcon(i.type)}</span>
+      <span class="notification-card-copy">
+        <strong>${esc(i.title||'Aviso')}</strong>
+        <small>${esc(i.text||'')}</small>
+        <em>${esc(i.label||'')}${isRead?' · Leída':''}</em>
+      </span>
+      <span class="notification-card-arrow">→</span>
+    </button>`;
+  }).join('')||'<div class="notification-empty"><span>✅</span><strong>Sin notificaciones recientes</strong><small>Cuando llegue una nueva, aparecerá aquí con su detalle.</small></div>';
+
+  list.querySelectorAll('[data-notification-section]').forEach(el=>el.onclick=()=>{
+    markNotificationRead(el.dataset.notificationId);
+    const key=el.dataset.notificationSection;
+    if(key)document.querySelector(`[data-section="${key}"]`)?.click();
+    $('#notification-panel')?.classList.remove('open');
+    renderNotificationCenter(window.v7NotificationItems||[]);
+  });
 }
 async function loadNotifications(){
   const now=new Date();
   const since=new Date(now.getTime()-7*864e5).toISOString();
-  const [reservas,pagos,certificados,notificaciones]=await Promise.all([
+
+  const [reservas,certificados,notificaciones,ingresos]=await Promise.all([
     sb.from('reservas_sede')
       .select('id,fecha_evento,nombre_arrendatario,creado_en')
       .eq('tipo','arriendo').eq('estado','pendiente').order('creado_en',{ascending:false}),
-    sb.from('cuotas_socios')
-      .select('id,periodo,monto,fecha_pago,actualizado_en,socios(nombre_completo,numero_socio)')
-      .eq('estado','pagado').gte('actualizado_en',since).order('actualizado_en',{ascending:false}),
     sb.from('certificados_emitidos')
       .select('id,folio,nombre,fecha,estado_pago,estado_documento,creado_en')
       .eq('estado_pago','pendiente').order('creado_en',{ascending:false}),
     sb.from('notificaciones_admin')
       .select('id,tipo,referencia_id,titulo,detalle,seccion,prioridad,creado_en')
-      .gte('creado_en',since).order('creado_en',{ascending:false})
+      .gte('creado_en',since).order('creado_en',{ascending:false}),
+    sb.from('movimientos_financieros')
+      .select('id,fecha,tipo,concepto,categoria,monto,fondo,socio_id,creado_en,socios(nombre_completo,numero_socio)')
+      .eq('tipo','ingreso')
+      .gte('creado_en',since)
+      .order('creado_en',{ascending:false})
   ]);
 
   const items=[];
+
+  // Notificaciones que otros módulos ya envían al centro administrativo:
+  // solicitudes de socio, socio asociado, cambio de cotizante y futuros avisos.
   for(const x of notificaciones.data||[])items.push({
     id:`notificacion:${x.id}`,
-    type:x.tipo||'socio',priority:x.prioridad||'alta',
-    title:x.titulo||'Nueva solicitud de socio',
-    text:x.detalle||'Nueva solicitud recibida',
-    label:'Revisar incorporación',section:x.seccion||'socios',date:x.creado_en
-  });
-  for(const x of reservas.data||[])items.push({
-    id:`arriendo-pendiente:${x.id}`,type:'reserva',priority:'alta',
-    title:'Arriendo pendiente de aprobar',
-    text:`${x.nombre_arrendatario||'Sin nombre'} · ${dateCL(x.fecha_evento)}`,
-    label:'Revisar solicitud',section:'reservas-v7',date:x.creado_en||x.fecha_evento
-  });
-  for(const x of pagos.data||[])items.push({
-    id:`pago-cuota:${x.id}:${x.actualizado_en||x.fecha_pago||''}`,type:'cuota',priority:'media',
-    title:'Nuevo pago de cuota',
-    text:`${x.socios?.nombre_completo||'Socio'}${x.socios?.numero_socio?` · N° ${x.socios.numero_socio}`:''} · ${money(x.monto)}`,
-    label:`Cuota ${dateCL(x.periodo)}`,section:'cuotas',date:x.actualizado_en||x.fecha_pago
-  });
-  for(const x of (certificados.data||[]).filter(x=>!['anulado','entregado'].includes(x.estado_documento)))items.push({
-    id:`certificado-pendiente:${x.id}`,type:'certificado',priority:'alta',
-    title:'Certificado de residencia pendiente',
-    text:`CR-${String(x.folio||0).padStart(5,'0')} · ${x.nombre||'Sin nombre'}`,
-    label:'Pendiente de pago o gestión',section:'certificados',date:x.creado_en||x.fecha
+    type:x.tipo||'socio',
+    priority:x.prioridad||'alta',
+    title:x.titulo||'Nueva notificación administrativa',
+    text:x.detalle||'Hay una nueva gestión pendiente',
+    label:notificationActionLabel(x.tipo,x.titulo),
+    section:x.seccion||'socios',
+    date:x.creado_en
   });
 
-  [reservas,pagos,certificados,notificaciones].forEach(r=>{
+  // Solicitudes de arriendo pendientes.
+  for(const x of reservas.data||[])items.push({
+    id:`arriendo-pendiente:${x.id}`,
+    type:'reserva',
+    priority:'alta',
+    title:'Nueva solicitud de arriendo',
+    text:`${x.nombre_arrendatario||'Sin nombre'} · ${dateCL(x.fecha_evento)}`,
+    label:'Revisar solicitud',
+    section:'reservas-v7',
+    date:x.creado_en||x.fecha_evento
+  });
+
+  // Certificados aún pendientes de pago/gestión.
+  for(const x of (certificados.data||[]).filter(x=>!['anulado','entregado'].includes(x.estado_documento)))items.push({
+    id:`certificado-pendiente:${x.id}`,
+    type:'certificado',
+    priority:'alta',
+    title:'Certificado de residencia pendiente',
+    text:`CR-${String(x.folio||0).padStart(5,'0')} · ${x.nombre||'Sin nombre'}`,
+    label:'Revisar certificado',
+    section:'certificados',
+    date:x.creado_en||x.fecha
+  });
+
+  // CUALQUIER ingreso que llegue a Finanzas:
+  // cuotas, certificados, arriendos, zumba, aportes y otros ingresos manuales.
+  for(const x of ingresos.data||[]){
+    const socio=x.socios?.nombre_completo||'';
+    const numero=x.socios?.numero_socio?` · Socio N° ${x.socios.numero_socio}`:'';
+    const fondo=x.fondo?` · ${x.fondo==='caja'?'Caja':'Banco'}`:'';
+    items.push({
+      id:`finanzas-ingreso:${x.id}`,
+      type:'pago',
+      priority:'media',
+      title:'Nuevo ingreso en Finanzas',
+      text:`${x.concepto||x.categoria||'Ingreso'} · ${money(x.monto)}${fondo}`,
+      label:socio?`${socio}${numero}`:'Ver movimiento',
+      section:'finanzas',
+      date:x.creado_en||x.fecha
+    });
+  }
+
+  [reservas,certificados,notificaciones,ingresos].forEach(r=>{
     if(r.error)console.warn('Centro de notificaciones:',r.error.message)
   });
-  items.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  window.v7NotificationItems=items;
-  renderNotificationCenter(items);
+
+  // Evita duplicados exactos por ID.
+  const unique=[];
+  const seen=new Set();
+  for(const item of items){
+    if(seen.has(item.id))continue;
+    seen.add(item.id);
+    unique.push(item);
+  }
+
+  unique.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  window.v7NotificationItems=unique;
+  renderNotificationCenter(unique);
+}
+
+function notificationActionLabel(tipo,titulo){
+  const s=`${tipo||''} ${titulo||''}`.toLowerCase();
+  if(s.includes('asociad'))return 'Revisar socio asociado';
+  if(s.includes('cotizante'))return 'Revisar cambio de cotizante';
+  if(s.includes('socio'))return 'Revisar incorporación';
+  if(s.includes('certific'))return 'Revisar certificado';
+  if(s.includes('arriendo')||s.includes('reserva'))return 'Revisar reserva';
+  if(s.includes('pago')||s.includes('finanza'))return 'Revisar Finanzas';
+  return 'Revisar gestión';
 }
 async function loadDashboardV7(){try{const [s,r,b]=await Promise.all([sb.from('socios').select('id',{count:'exact',head:true}).eq('estado','activo'),sb.from('reservas_sede').select('id',{count:'exact',head:true}).eq('tipo','arriendo').gte('fecha_evento',today()).not('estado','in','("cancelado","archivado")'),balances()]);$('#stat-socios').textContent=s.count||0;$('#stat-reservas').textContent=r.count||0;$('#stat-caja').textContent=money(b.caja);$('#stat-banco').textContent=money(b.banco)}catch(e){console.error(e)}}
 async function loadGestion(){const c=await settings(),f=$('#gestion-form');if(!f)return;Object.keys(c).forEach(k=>{if(f.elements[k])f.elements[k].value=c[k]??''})}

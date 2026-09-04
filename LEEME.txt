@@ -1,16 +1,23 @@
-SIGVE18 · CORRECCIÓN NOTIFICACIONES ADMIN V8
+SIGVE18 · NOTIFICACIONES ADMIN V10
 
-PROBLEMA:
-Al abrir la campanilla, SIGVE marcaba TODAS las notificaciones como leídas
-antes de mostrarlas. Por eso aparecía el contador, pero al pinchar decía
-“Todo al día” y no permitía saber a qué correspondía.
+OBJETIVO
+Ampliar el Centro de Notificaciones del Portal Administración y avisar
+CUALQUIER ingreso que llegue al módulo Finanzas.
 
-CORRECCIÓN:
-- Abrir la campanilla ya NO marca todo como leído.
-- Las notificaciones se muestran con título, detalle y acceso a la sección correspondiente.
-- Una notificación se marca como leída al pincharla.
-- Se mantiene el botón “Marcar todo leído”.
-- El contador disminuye a medida que se leen.
+AHORA SE MOSTRARÁN:
+- Solicitudes administrativas que lleguen a notificaciones_admin
+  (por ejemplo: nuevo socio, socio asociado, cambio de cotizante).
+- Nueva solicitud de arriendo pendiente.
+- Certificado de residencia pendiente.
+- CUALQUIER movimiento tipo INGRESO registrado en Finanzas durante los últimos 7 días:
+  cuotas, certificados, arriendos, Zumba, aportes y otros ingresos manuales.
+
+COMPORTAMIENTO
+- La campanilla muestra solo la cantidad pendiente de leer.
+- Al abrir, las notificaciones permanecen visibles.
+- Al pinchar una, queda marcada como “Leída”.
+- Los ingresos financieros indican concepto, monto y fondo (Caja/Banco).
+- Si el ingreso está relacionado con un socio, también muestra su nombre/número.
 
 REEMPLAZAR EN GITHUB:
 1. admin.html
@@ -18,5 +25,5 @@ REEMPLAZAR EN GITHUB:
 
 NO EJECUTAR SQL.
 
-Se cambió la versión de caché de admin-v7.js a:
-?v=NOTIFADMIN8
+CACHE:
+admin-v7.js?v=NOTIFADMIN10
