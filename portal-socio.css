@@ -169,3 +169,11 @@
 .socio-notification-empty small{
   font-size:.88rem;
 }
+
+.multi-payment-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.multi-payment-actions select{min-width:130px;border:1px solid #d7dce5;border-radius:10px;padding:10px 12px;background:#fff;font:inherit}
+.multi-payment-actions button{white-space:nowrap}
+@media(max-width:600px){
+  .multi-payment-actions{width:100%;margin-top:10px}
+  .multi-payment-actions select,.multi-payment-actions button{width:100%}
+}

@@ -98,7 +98,7 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
   const currentQuotaYear=()=>Number(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric'}).format(new Date()));
   const currentQuotaPeriod=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit'}).format(new Date());
 
-  async function loadPortalQuotas(selectAnnual=false){
+  async function loadPortalQuotas(selectAnnual=false,selectCount=0){
     const box=$('portalQuotaList'); if(!box)return;
     try{
       if($('prepareAnnualPayment')){
@@ -110,7 +110,7 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
       const currentPeriod=currentQuotaPeriod();
 
       // Mostrar todas las cuotas pendientes ya creadas, incluyendo anticipadas.
-      portalPendingQuotas=allPendingQuotas;
+      portalPendingQuotas=[...allPendingQuotas].sort((a,b)=>String(a.periodo||'').localeCompare(String(b.periodo||'')));
 
       // Estado "Al día" solo considera vencidas + mes actual.
       const exigibles=allPendingQuotas.filter(q=>String(q.periodo||'').slice(0,7)<=currentPeriod);
@@ -145,7 +145,10 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
 
       box.querySelectorAll('[data-portal-quota]').forEach(c=>c.addEventListener('change',updatePortalQuotaTotal));
 
-      if(selectAnnual){
+      if(selectCount>0){
+        const ids=new Set(portalPendingQuotas.slice(0,selectCount).map(q=>String(q.id)));
+        box.querySelectorAll('[data-portal-quota]').forEach(c=>{c.checked=ids.has(String(c.dataset.portalQuota))});
+      }else if(selectAnnual){
         const year=String(currentQuotaYear());
         box.querySelectorAll('[data-portal-quota]').forEach(c=>{
           const q=portalPendingQuotas.find(x=>String(x.id)===String(c.dataset.portalQuota));
@@ -170,6 +173,23 @@ const validRut=(value)=>{const clean=rutClean(value);if(clean.length<7)return fa
     $('sendQuotaWhatsapp').disabled=!selected.length;
     if($('requestCashPayment'))$('requestCashPayment').disabled=!selected.length
   }
+
+  $('prepareMultiplePayment')?.addEventListener('click',async()=>{
+    if(portalModality==='asociado')return msg('paymentMsg','Los socios asociados no generan cuotas propias.','error');
+    const cantidad=Number($('multipleQuotaCount')?.value||0);
+    if(cantidad<1||cantidad>12)return msg('paymentMsg','Selecciona entre 1 y 12 cuotas.','error');
+    if(!confirm(`¿Preparar las próximas ${cantidad} cuota(s)?\n\nSe tomarán primero las cuotas pendientes más antiguas y, si es necesario, SIGVE continuará al año siguiente.`))return;
+    try{
+      msg('paymentMsg','Preparando cuotas…');
+      await rpc('portal_socio_preparar_proximas_cuotas',{p_token:token,p_cantidad:cantidad});
+      await loadPortalQuotas(false,cantidad);
+      const selected=selectedPortalQuotas();
+      const total=selected.reduce((a,q)=>a+Number(q.monto||0),0);
+      msg('paymentMsg',selected.length?`Se seleccionaron ${selected.length} cuota(s). Total: ${money(total)}`:'No fue posible preparar cuotas pendientes.','success');
+    }catch(err){
+      msg('paymentMsg',err.message,'error');
+    }
+  });
 
   $('prepareAnnualPayment')?.addEventListener('click',async()=>{
     if(portalModality==='asociado')return msg('paymentMsg','Los socios asociados no generan cuotas propias.','error');

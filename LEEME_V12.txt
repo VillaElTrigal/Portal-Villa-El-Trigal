@@ -1,0 +1,43 @@
+SIGVE · ACTUALIZACIÓN V12
+Basada directamente en el ZIP Portal-Villa-El-Trigal(6).zip adjuntado.
+
+CAMBIOS:
+1) Mensaje de cobranza WhatsApp con datos bancarios completos.
+2) Administración > Cuotas:
+   - Nuevo botón “Varias cuotas”.
+   - Permite registrar de 1 a 12 cuotas juntas.
+   - Puede pasar de diciembre a enero del año siguiente.
+3) Portal Socio > Pago de cuotas:
+   - Nuevo “Pagar varias cuotas”.
+   - Opciones de 1 a 12 meses.
+   - Selecciona automáticamente las cuotas más antiguas.
+   - Puede generar meses del año siguiente.
+4) Se mantiene “Pago anual / Completar año”.
+5) No se modifica la regla de beneficios: una cuota futura no habilita anticipadamente beneficios del año siguiente.
+
+ORDEN DE INSTALACIÓN:
+1. Supabase > SQL Editor:
+   ejecutar ACTUALIZAR_SUPABASE_CUOTAS_MULTIPLES_V12.sql
+2. GitHub:
+   reemplazar SOLO:
+   - admin.html
+   - admin-v110.js
+   - portal-socio.html
+   - portal-socio.js
+   - portal-socio.css
+3. Esperar publicación y actualizar el navegador.
+
+PRUEBA RECOMENDADA:
+- Socio pagado hasta agosto 2026.
+- Registrar 5 cuotas.
+- Debe mostrar:
+  septiembre 2026
+  octubre 2026
+  noviembre 2026
+  diciembre 2026
+  enero 2027
+- Total esperado con cuota de $2.000: $10.000.
+
+IMPORTANTE:
+- Este parche conserva las notificaciones actuales NOTIFADMIN11.
+- No reemplaza admin-v7.js ni admin-v111.js.

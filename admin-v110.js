@@ -31,14 +31,91 @@ function setQuotaFilter(value){$('#cuotas-filter').value=value;renderCuotas()}
 function renderCuotas(){const q=($('#cuotas-search').value||'').toLowerCase(),f=$('#cuotas-filter').value;const decorated=cuotas.map(x=>({...x,_visual:quotaVisual(x),_debt:debtFor(x)}));const rows=decorated.filter(x=>{const matchesStatus=f==='todos'||x.estado===f||x._visual.key===f;return matchesStatus&&`${x.socios?.numero_socio||''} ${x.socios?.nombre_completo||''} ${x.socios?.rut||''}`.toLowerCase().includes(q)});
 const paid=decorated.filter(x=>x.estado==='pagado'),pending=decorated.filter(x=>x.estado==='pendiente'),upToDate=decorated.filter(x=>x._visual.key==='al_dia'),monthPending=decorated.filter(x=>x._visual.key==='pendiente_mes'),oldDebt=decorated.filter(x=>x._visual.key==='deuda_anterior'),exempt=decorated.filter(x=>x.estado==='exento_incorporacion'),cash=paid.filter(x=>x.medio_pago==='efectivo').reduce((a,x)=>a+Number(x.monto),0),bank=paid.filter(x=>x.medio_pago==='transferencia').reduce((a,x)=>a+Number(x.monto),0),expected=decorated.filter(x=>x.estado!=='exento_incorporacion'&&x.estado!=='anulado').reduce((a,x)=>a+Number(x.monto),0),collected=cash+bank,missing=Math.max(0,expected-collected),pct=expected?Math.round(collected/expected*100):0;
 $('#cuotas-summary').innerHTML=`<button class="stat cuota-stat total" data-quota-filter="todos"><span>Socios del mes</span><strong>${cuotas.length}</strong></button><button class="stat cuota-stat al-dia" data-quota-filter="al_dia"><span>🟢 Al día</span><strong>${upToDate.length}</strong></button><button class="stat cuota-stat pendiente" data-quota-filter="pendiente_mes"><span>🟡 Pendientes del mes</span><strong>${monthPending.length}</strong></button><button class="stat cuota-stat deuda" data-quota-filter="deuda_anterior"><span>🔴 Con deuda anterior</span><strong>${oldDebt.length}</strong></button><button class="stat cuota-stat exento" data-quota-filter="exento_incorporacion"><span>⚪ Exentos</span><strong>${exempt.length}</strong></button><div class="stat cuota-money"><span>Total recaudado</span><strong>${money(collected)}</strong><small>Falta ${money(missing)}</small></div><div class="stat cuota-progress-card"><span>Cumplimiento</span><strong>${pct}%</strong><div class="cuota-progress"><i style="width:${Math.min(100,pct)}%"></i></div><small>${paid.length} cuotas pagadas</small></div>`;
-$('#cuotas-body').innerHTML=rows.map(x=>{const canWA=phoneWA(x.socios?.telefono)&&x.socios?.autoriza_whatsapp;const debtMonths=x._debt.map(d=>monthName(d.periodo)).join(', ');const debtTotal=x._debt.reduce((a,d)=>a+Number(d.monto),0);return `<tr class="quota-row ${x._visual.className}"><td><input class="quota-select" type="checkbox" data-select-quota="${x.id}" ${cuotasSeleccionadas.has(x.id)?'checked':''} aria-label="Seleccionar a ${esc(x.socios?.nombre_completo)}"></td><td>${x.socios?.numero_socio||'—'}</td><td><strong>${x._visual.icon} ${esc(x.socios?.nombre_completo)}</strong><br><small>${esc(x.socios?.rut)}</small>${debtMonths?`<div class="quota-debt-detail">Debe: ${esc(debtMonths)} · <strong>${money(debtTotal)}</strong></div>`:''}</td><td><span class="v110-status ${x._visual.className}">${x._visual.label}</span><br><small>${x.estado==='pagado'?'Mes pagado':x.estado==='pendiente'?'Mes sin pagar':x.estado==='exento_incorporacion'?'No corresponde cobro':''}</small></td><td>${dateCL(x.fecha_pago)}</td><td>${esc(x.medio_pago||'—')}</td><td>${money(x.monto)}</td><td><div class="v110-table-actions">${x.estado==='pendiente'?`<button class="button primary" data-pay-quota="${x.id}">Registrar pago</button><button class="button secondary" data-pay-year="${x.socio_id}">Pago anual</button>`:''}${x.estado==='pagado'?`<button class="button danger" data-void-quota="${x.id}">Anular pago</button>`:''}${x._visual.key!=='al_dia'?`<button class="button whatsapp" data-wa-quota="${x.id}" ${canWA?'':'disabled title="Sin celular o sin autorización de WhatsApp"'}>📲 Recordar</button>`:''}<button class="button secondary" data-history="${x.socio_id}">Historial</button></div></td></tr>`}).join('')||'<tr><td colspan="8">No hay cuotas que coincidan con el filtro.</td></tr>';
-$$('[data-quota-filter]').forEach(b=>b.onclick=()=>setQuotaFilter(b.dataset.quotaFilter));$$('[data-pay-quota]').forEach(b=>b.onclick=()=>payQuota(b.dataset.payQuota));$$('[data-pay-year]').forEach(b=>b.onclick=()=>payAnnualQuota(b.dataset.payYear));$$('[data-void-quota]').forEach(b=>b.onclick=()=>voidQuota(b.dataset.voidQuota));$$('[data-history]').forEach(b=>b.onclick=()=>quotaHistory(b.dataset.history));$$('[data-wa-quota]').forEach(b=>b.onclick=()=>openQuotaWhatsApp(b.dataset.waQuota));$$('[data-select-quota]').forEach(b=>b.onchange=()=>{b.checked?cuotasSeleccionadas.add(b.dataset.selectQuota):cuotasSeleccionadas.delete(b.dataset.selectQuota);updateQuotaSelection()});updateQuotaSelection()}
+$('#cuotas-body').innerHTML=rows.map(x=>{const canWA=phoneWA(x.socios?.telefono)&&x.socios?.autoriza_whatsapp;const debtMonths=x._debt.map(d=>monthName(d.periodo)).join(', ');const debtTotal=x._debt.reduce((a,d)=>a+Number(d.monto),0);return `<tr class="quota-row ${x._visual.className}"><td><input class="quota-select" type="checkbox" data-select-quota="${x.id}" ${cuotasSeleccionadas.has(x.id)?'checked':''} aria-label="Seleccionar a ${esc(x.socios?.nombre_completo)}"></td><td>${x.socios?.numero_socio||'—'}</td><td><strong>${x._visual.icon} ${esc(x.socios?.nombre_completo)}</strong><br><small>${esc(x.socios?.rut)}</small>${debtMonths?`<div class="quota-debt-detail">Debe: ${esc(debtMonths)} · <strong>${money(debtTotal)}</strong></div>`:''}</td><td><span class="v110-status ${x._visual.className}">${x._visual.label}</span><br><small>${x.estado==='pagado'?'Mes pagado':x.estado==='pendiente'?'Mes sin pagar':x.estado==='exento_incorporacion'?'No corresponde cobro':''}</small></td><td>${dateCL(x.fecha_pago)}</td><td>${esc(x.medio_pago||'—')}</td><td>${money(x.monto)}</td><td><div class="v110-table-actions">${x.estado==='pendiente'?`<button class="button primary" data-pay-quota="${x.id}">Registrar pago</button><button class="button secondary" data-pay-multiple="${x.socio_id}">Varias cuotas</button><button class="button secondary" data-pay-year="${x.socio_id}">Pago anual</button>`:''}${x.estado==='pagado'?`<button class="button danger" data-void-quota="${x.id}">Anular pago</button>`:''}${x._visual.key!=='al_dia'?`<button class="button whatsapp" data-wa-quota="${x.id}" ${canWA?'':'disabled title="Sin celular o sin autorización de WhatsApp"'}>📲 Recordar</button>`:''}<button class="button secondary" data-history="${x.socio_id}">Historial</button></div></td></tr>`}).join('')||'<tr><td colspan="8">No hay cuotas que coincidan con el filtro.</td></tr>';
+$$('[data-quota-filter]').forEach(b=>b.onclick=()=>setQuotaFilter(b.dataset.quotaFilter));$$('[data-pay-quota]').forEach(b=>b.onclick=()=>payQuota(b.dataset.payQuota));$$('[data-pay-multiple]').forEach(b=>b.onclick=()=>payMultipleQuotas(b.dataset.payMultiple));$$('[data-pay-year]').forEach(b=>b.onclick=()=>payAnnualQuota(b.dataset.payYear));$$('[data-void-quota]').forEach(b=>b.onclick=()=>voidQuota(b.dataset.voidQuota));$$('[data-history]').forEach(b=>b.onclick=()=>quotaHistory(b.dataset.history));$$('[data-wa-quota]').forEach(b=>b.onclick=()=>openQuotaWhatsApp(b.dataset.waQuota));$$('[data-select-quota]').forEach(b=>b.onchange=()=>{b.checked?cuotasSeleccionadas.add(b.dataset.selectQuota):cuotasSeleccionadas.delete(b.dataset.selectQuota);updateQuotaSelection()});updateQuotaSelection()}
 function updateQuotaSelection(){const count=cuotasSeleccionadas.size;const label=$('#cuotas-selected-count');if(label)label.textContent=count?`${count} seleccionado${count===1?'':'s'}`:'Ningún seleccionado';const send=$('#cuotas-whatsapp-selected');if(send)send.disabled=!count}
 function selectQuotaDebtors(){cuotasSeleccionadas=new Set(cuotas.filter(x=>['pendiente_mes','deuda_anterior'].includes(quotaVisual(x).key)&&phoneWA(x.socios?.telefono)&&x.socios?.autoriza_whatsapp).map(x=>String(x.id)));renderCuotas()}
-function quotaMessage(x){const debt=debtFor(x),months=debt.length?debt.map(d=>monthName(d.periodo)).join(', '):monthName(x.periodo),total=debt.length?debt.reduce((a,d)=>a+Number(d.monto),0):Number(x.monto);return `Hola ${x.socios?.nombre_completo||''}.\n\nEsperamos que se encuentre bien. Según nuestros registros, mantiene pendiente ${debt.length>1?'las cuotas de':'la cuota de'} ${months}, por un total de ${money(total)}.\n\nSi ya realizó el pago, por favor ignore este mensaje o envíenos el comprobante.\n\nMuchas gracias.\nJunta de Vecinos Villa El Trigal.`}
+function quotaMessage(x){const debt=debtFor(x),months=debt.length?debt.map(d=>monthName(d.periodo)).join(', '):monthName(x.periodo),total=debt.length?debt.reduce((a,d)=>a+Number(d.monto),0):Number(x.monto);return `Hola ${x.socios?.nombre_completo||''} 👋\n\nTe informamos que actualmente registramos pendiente ${debt.length>1?'el pago de tus cuotas correspondientes a':'el pago de tu cuota correspondiente a'} ${months}, por un total de ${money(total)}.\n\n💳 DATOS PARA TRANSFERENCIA\nBanco: BancoEstado\nTipo de cuenta: Chequera Electrónica / Cuenta Vista\nN° de cuenta: 36570811031\nTitular: J.J.VV. VILLA EL TRIGAL\nRUT: 65.165.529-3\nCorreo: JJVVELTRIGAL123@HOTMAIL.COM\n\nUna vez realizada la transferencia, recuerda enviar tu comprobante de pago para poder registrarlo.\n\nSi ya realizaste el pago, por favor omite este mensaje o envíanos tu comprobante si aún no ha sido registrado.\n\nMuchas gracias por mantener tus cuotas al día y apoyar a nuestra comunidad. 🏡\nJunta de Vecinos Villa El Trigal · Etapas 1, 2 y 3.`}
 function openQuotaWhatsApp(id){const x=cuotas.find(q=>String(q.id)===String(id));if(!x)return;const phone=phoneWA(x.socios?.telefono);if(!phone||!x.socios?.autoriza_whatsapp)return toast('El vecino no tiene celular válido o no autorizó comunicaciones por WhatsApp.',true);window.SIGVE_WHATSAPP?.open?window.SIGVE_WHATSAPP.open(phone,quotaMessage(x)):window.open(`https://wa.me/${phone}?text=${encodeURIComponent(quotaMessage(x))}`,'_blank','noopener')}
 function openBulkQuotaWhatsApp(){const selected=cuotas.filter(x=>cuotasSeleccionadas.has(String(x.id)));const valid=selected.filter(x=>phoneWA(x.socios?.telefono)&&x.socios?.autoriza_whatsapp);if(!valid.length)return toast('Selecciona vecinos con celular y autorización de WhatsApp.',true);const d=modal(`<h3>📲 Cobranza por WhatsApp</h3><p>Se prepararon <strong>${valid.length}</strong> mensajes individuales. Revisa y abre cada conversación antes de enviarla.</p><div class="quota-wa-list">${valid.map(x=>`<article><div><strong>${esc(x.socios?.nombre_completo)}</strong><br><small>${esc(phoneWA(x.socios?.telefono))} · ${quotaVisual(x).label}</small></div><button class="button whatsapp" data-open-wa="${x.id}">Abrir WhatsApp</button></article>`).join('')}</div><div class="actions"><button class="button secondary" data-close>Cerrar</button></div>`);d.querySelectorAll('[data-open-wa]').forEach(b=>b.onclick=()=>openQuotaWhatsApp(b.dataset.openWa))}
 async function generateQuotas(){const m=$('#cuotas-month').value;if(!m)return;const{data,error}=await client().rpc('generar_cuotas_mes',{p_periodo:m+'-01'});if(error)return toast(error.message,true);toast(`Mes preparado. Se crearon ${data||0} registros nuevos.`);loadCuotas()}
+
+async function payMultipleQuotas(socioId){
+ const currentSocio=(cuotas.find(x=>String(x.socio_id)===String(socioId))||{}).socios;
+ if(!currentSocio)return toast('No fue posible identificar al socio.',true);
+
+ const selector=modal(`<h3>Registrar varias cuotas</h3>
+   <p><strong>${esc(currentSocio.nombre_completo)}</strong> · Socio N° ${esc(currentSocio.numero_socio||'—')}</p>
+   <form>
+     <div class="v7-grid">
+       <label>Cantidad de cuotas
+         <select name="cantidad">
+           ${Array.from({length:12},(_,i)=>`<option value="${i+1}" ${i===2?'selected':''}>${i+1} cuota${i===0?'':'s'}</option>`).join('')}
+         </select>
+       </label>
+     </div>
+     <div class="notice">SIGVE tomará primero las cuotas pendientes más antiguas. Si faltan meses, generará los siguientes y podrá continuar al año siguiente.</div>
+     <div class="actions"><button class="button primary">Continuar</button><button type="button" class="button secondary" data-close>Cancelar</button></div>
+   </form>`);
+
+ selector.querySelector('form').onsubmit=async e=>{
+   e.preventDefault();
+   const cantidad=Number(e.currentTarget.cantidad.value||0);
+   if(cantidad<1||cantidad>12)return toast('Selecciona entre 1 y 12 cuotas.',true);
+
+   const prep=await client().rpc('preparar_proximas_cuotas_socio',{p_socio_id:socioId,p_cantidad:cantidad});
+   if(prep.error)return toast(prep.error.message,true);
+
+   const {data,error}=await client().from('cuotas_socios')
+     .select('id,socio_id,periodo,monto,estado,socios(id,numero_socio,nombre_completo,rut)')
+     .eq('socio_id',socioId)
+     .eq('estado','pendiente')
+     .order('periodo',{ascending:true})
+     .limit(cantidad);
+
+   if(error)return toast(error.message,true);
+   const selected=data||[];
+   if(!selected.length)return toast('El socio no tiene cuotas pendientes disponibles.');
+   selector.remove();
+
+   const total=selected.reduce((a,x)=>a+Number(x.monto||0),0);
+   const d=modal(`<h3>Registrar ${selected.length} cuota(s)</h3>
+     <p><strong>${esc(currentSocio.nombre_completo)}</strong> · Socio N° ${esc(currentSocio.numero_socio||'—')}</p>
+     <div class="caja-review">${selected.map(q=>`<div><span>${esc(monthName(q.periodo))}</span><strong>${money(q.monto)}</strong></div>`).join('')}<div class="total"><span>Total</span><strong>${money(total)}</strong></div></div>
+     <form>
+       <div class="v7-grid">
+         <label>Fecha<input name="fecha" type="date" value="${today()}" required></label>
+         <label>Medio<select name="medio"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select></label>
+         <label>Fondo<select name="fondo"><option value="caja">Caja chica</option><option value="banco">Cuenta bancaria</option></select></label>
+         <label>Referencia transferencia<input name="referencia"></label>
+         <label>Observaciones<textarea name="obs" placeholder="Pago de ${selected.length} cuotas"></textarea></label>
+       </div>
+       <div class="actions"><button class="button primary">Confirmar ${selected.length} cuota(s)</button><button type="button" class="button secondary" data-close>Cancelar</button></div>
+     </form>`);
+
+   const f=d.querySelector('form');
+   const sync=()=>{f.fondo.value=f.medio.value==='transferencia'?'banco':'caja';f.referencia.closest('label').style.display=f.medio.value==='transferencia'?'':'none'};
+   f.medio.onchange=sync;sync();
+
+   f.onsubmit=async ev=>{
+     ev.preventDefault();
+     const ids=selected.map(q=>q.id);
+     const {data:count,error:payError}=await client().rpc('registrar_pago_cuotas_caja',{
+       p_cuota_ids:ids,
+       p_fecha:f.fecha.value,
+       p_medio:f.medio.value,
+       p_fondo:f.fondo.value,
+       p_referencia:f.referencia.value||null,
+       p_observaciones:f.obs.value||`Pago de ${selected.length} cuotas`
+     });
+     if(payError)return toast(payError.message,true);
+     d.remove();
+     toast(`Pago registrado: ${count||ids.length} cuota(s) ingresadas a Finanzas.`);
+     loadCuotas();
+   };
+ };
+}
+
 async function payAnnualQuota(socioId){
  const year=Number(today().slice(0,4));
  const currentSocio=(cuotas.find(x=>String(x.socio_id)===String(socioId))||{}).socios;
