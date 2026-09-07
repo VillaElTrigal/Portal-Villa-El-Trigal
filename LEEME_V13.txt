@@ -1,0 +1,23 @@
+SIGVE · ADELANTO DE CUOTAS V13
+
+Esta corrección es para el caso:
+- socio ya pagó hasta diciembre de 2026;
+- no tiene cuotas pendientes;
+- entrega $2.000 adicionales;
+- Administración debe permitir crear y registrar enero de 2027.
+
+INSTALACIÓN
+1. Ejecutar en Supabase:
+   ACTUALIZAR_SUPABASE_ADELANTO_CUOTAS_V13.sql
+2. En GitHub reemplazar:
+   - admin.html
+   - admin-v110.js
+
+Los archivos del Portal Socio incluidos en el ZIP corresponden a la V12 y no necesitan
+volver a reemplazarse si ya los subiste.
+
+PRUEBA
+Administración > Cuotas > socia al día > Adelantar cuotas > 1 cuota.
+Debe crear enero 2027 y permitir registrar los $2.000.
+
+No modifica las cuotas ya pagadas de 2026.
