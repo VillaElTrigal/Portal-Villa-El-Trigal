@@ -1,0 +1,17 @@
+SIGVE · ADELANTAR CUOTAS V14
+
+CORRECCIÓN:
+El botón “Adelantar cuotas” ahora también aparece cuando el último mes visible del socio ya está PAGADO / AL DÍA.
+
+Caso Leslie:
+- Pagada hasta diciembre 2026.
+- En su fila aparecerá “Adelantar cuotas”.
+- Elegir 1 cuota.
+- SIGVE debe crear enero 2027 y permitir registrar $2.000.
+
+INSTALACIÓN:
+1. GitHub: reemplazar SOLO admin.html y admin-v110.js.
+2. Si ya ejecutaste ACTUALIZAR_SUPABASE_ADELANTO_CUOTAS_V13.sql, NO vuelvas a ejecutarlo.
+3. Si todavía no lo ejecutaste, está incluido en este ZIP.
+
+No modifica cuotas pagadas ni otros módulos.
