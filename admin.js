@@ -1,7 +1,7 @@
 (() => {
 const cfg=window.PORTAL_CONFIG||{}; const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const state={user:null,admin:null,currentImages:{noticias:[],galeria:[],actividades:[]}};
+const state={user:null,admin:null,currentImages:{noticias:[],galeria:[],actividades:[]},originalImages:{noticias:[],galeria:[],actividades:[]}};
 const SIGVE_CONNECTORS=new Set(['de','del','la','las','los','y','e']);
 const cleanSpaces=v=>String(v??'').replace(/\s+/g,' ').trim();
 function normalizeName(v){return cleanSpaces(v).toLocaleLowerCase('es-CL').split(' ').map((w,i)=>i>0&&SIGVE_CONNECTORS.has(w)?w:w.split('-').map(p=>p?p.charAt(0).toLocaleUpperCase('es-CL')+p.slice(1):p).join('-')).join(' ')}
@@ -12,7 +12,7 @@ const defs={
  galeria:{title:'Galería',fields:[['titulo','Título del álbum','text',1],['descripcion','Descripción breve','textarea'],['fecha','Fecha de la actividad','date'],['imagenes','Fotografías','multiimage',1],['publicado','Publicado','checkbox']]}
 };
 function message(t,bad=false){$('global-message').textContent=t;$('global-message').className='form-message '+(bad?'error':'success');setTimeout(()=>{$('global-message').textContent=''},5000)}
-function fieldHtml(f){const[n,l,t,r,opts]=f;if(t==='textarea')return `<label>${l}<textarea name="${n}" ${r?'required':''}></textarea></label>`;if(t==='select')return `<label>${l}<select name="${n}">${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></label>`;if(t==='checkbox')return `<label class="check"><input name="${n}" type="checkbox" checked> ${l}</label>`;if(t==='image')return `<label>${l}<input name="${n}" type="file" accept="image/*" ${r?'required':''}><small class="current-image"></small></label>`;if(t==='multiimage')return `<label>${l}<input name="${n}" type="file" accept="image/*" multiple ${r?'required':''}><small class="help">Puedes seleccionar hasta 5 imágenes. <span class="image-count">0 de 5</span></small><div class="multi-preview"></div></label>`;return `<label>${l}<input name="${n}" type="${t}" ${r?'required':''}></label>`}
+function fieldHtml(f){const[n,l,t,r,opts]=f;if(t==='textarea')return `<label>${l}<textarea name="${n}" ${r?'required':''}></textarea></label>`;if(t==='select')return `<label>${l}<select name="${n}">${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></label>`;if(t==='checkbox')return `<label class="check"><input name="${n}" type="checkbox" checked> ${l}</label>`;if(t==='image')return `<label>${l}<input name="${n}" type="file" accept="image/*" ${r?'required':''}><small class="current-image"></small></label>`;if(t==='multiimage')return `<label>${l}<input name="${n}" type="file" accept="image/*" multiple ${r?'required':''}><small class="help">Puedes seleccionar hasta 5 imágenes. <span class="image-count">0 de 5</span></small><div class="multi-preview"></div><button type="button" class="button danger remove-all-images" hidden>Quitar todas las imágenes</button><small class="help remove-images-note" hidden>Al guardar, la publicación quedará sin fotografías.</small></label>`;return `<label>${l}<input name="${n}" type="${t}" ${r?'required':''}></label>`}
 function buildForms(){for(const[k,d]of Object.entries(defs)){ $(`form-${k}`).innerHTML=`<section class="panel"><h3>Nueva publicación</h3><form data-table="${k}"><input type="hidden" name="id"><div class="form-grid">${d.fields.map(fieldHtml).join('')}</div><div class="actions"><button class="button primary" type="submit">Guardar</button><button class="button secondary cancel" type="button" hidden>Cancelar edición</button></div></form></section>`;}}
 async function verify(){const{data:{session}}=await sb.auth.getSession();if(!session)return showLogin();state.user=session.user;const{data,error}=await sb.from('administradores').select('*').eq('user_id',state.user.id).eq('activo',true).single();if(error||!data){await sb.auth.signOut();$('login-message').textContent='Este usuario no tiene permisos de administrador.';return showLogin()}state.admin=data;showAdmin();await loadAll()}
 function showLogin(){$('login-view').hidden=false;$('admin-view').hidden=true} function showAdmin(){$('login-view').hidden=true;$('admin-view').hidden=false;$('admin-name').textContent=state.admin?.nombre||state.user.email}
@@ -21,10 +21,30 @@ async function uploadMany(files,folder){const arr=[...files].slice(0,5);return P
 function normalizeImages(row){if(Array.isArray(row.imagenes))return row.imagenes.filter(Boolean);if(row.imagen_url)return[row.imagen_url];return[]}
 async function loadTable(table){const order=table==='actividades'?'fecha':table==='noticias'?'fecha_publicacion':table==='galeria'?'fecha':'creado_en';const{data,error}=await sb.from(table).select('*').order(order,{ascending:false,nullsFirst:false});if(error){message(error.message,true);return}renderList(table,data||[]);$(`stat-${table}`)&&($(`stat-${table}`).textContent=(data||[]).length)}
 function renderList(table,rows){const el=$(`list-${table}`);if(!rows.length){el.innerHTML='<div class="panel empty">Todavía no hay publicaciones.</div>';return}el.innerHTML=rows.map(x=>{const imgs=normalizeImages(x);return `<article class="item"><div>${imgs[0]?`<img class="thumb" src="${esc(imgs[0])}" alt="">`:''}<h3>${esc(x.titulo||'Sin título')}</h3><p>${esc(x.descripcion||x.contenido||'')}</p>${imgs.length?`<div class="item-meta">${imgs.length} foto${imgs.length===1?'':'s'}</div>`:''}<div class="item-meta">${x.publicado===false?'Borrador':'Publicado'}</div></div><div class="actions"><button class="button secondary" data-edit="${x.id}">Editar</button><button class="button danger" data-delete="${x.id}">Eliminar</button></div></article>`}).join('');el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editRow(table,rows.find(r=>r.id===b.dataset.edit)));el.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteRow(table,b.dataset.delete))}
-function renderPreviews(form,table){const box=form.querySelector('.multi-preview');if(!box)return;const imgs=state.currentImages[table]||[];box.innerHTML=imgs.map((src,i)=>`<figure><img src="${esc(src)}" alt=""><button type="button" data-remove="${i}" aria-label="Quitar imagen">×</button></figure>`).join('');const count=form.querySelector('.image-count');if(count)count.textContent=`${imgs.length} de 5`;box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{imgs.splice(Number(b.dataset.remove),1);renderPreviews(form,table)})}
+function renderPreviews(form,table){
+ const box=form.querySelector('.multi-preview');if(!box)return;
+ const imgs=state.currentImages[table]||[];
+ box.innerHTML=imgs.map((src,i)=>`<figure><img src="${esc(src)}" alt=""><button type="button" data-remove="${i}" aria-label="Quitar imagen" title="Quitar imagen">×</button></figure>`).join('');
+ const count=form.querySelector('.image-count');if(count)count.textContent=`${imgs.length} de 5`;
+ box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{imgs.splice(Number(b.dataset.remove),1);renderPreviews(form,table)});
+ const removeAll=form.querySelector('.remove-all-images');
+ const note=form.querySelector('.remove-images-note');
+ if(removeAll){
+   const show=table==='noticias'&&!!form.elements.id.value&&imgs.length>0;
+   removeAll.hidden=!show;
+   if(note)note.hidden=true;
+   removeAll.onclick=()=>{
+     if(!confirm('¿Quitar todas las imágenes de esta noticia?\n\nEl cambio se aplicará cuando presiones Guardar.'))return;
+     state.currentImages[table]=[];
+     if(form.elements.imagenes)form.elements.imagenes.value='';
+     renderPreviews(form,table);
+     if(note)note.hidden=false;
+   };
+ }
+}
 function bindMultiInputs(){document.querySelectorAll('input[type=file][multiple]').forEach(input=>input.onchange=()=>{const form=input.form,table=form.dataset.table;const existing=state.currentImages[table]||[];const selected=[...input.files];if(existing.length+selected.length>5){message('Solo puedes usar hasta 5 imágenes por publicación.',true);input.value='';return}selected.forEach(file=>existing.push(URL.createObjectURL(file)));state.currentImages[table]=existing;renderPreviews(form,table)})}
-function editRow(table,row){const form=document.querySelector(`form[data-table="${table}"]`);form.id.value=row.id;state.currentImages[table]=normalizeImages(row);for(const f of defs[table].fields){const[n,,t]=f;const input=form.elements[n];if(!input)continue;if(t==='checkbox')input.checked=!!row[n];else if(t==='image'){input.required=false;input.closest('label').querySelector('.current-image').textContent=row[n]?'Imagen actual cargada':''}else if(t==='multiimage'){input.required=false;renderPreviews(form,table)}else if(t==='date'&&row[n])input.value=String(row[n]).slice(0,10);else if(t==='datetime-local'&&row[n])input.value=String(row[n]).slice(0,16);else input.value=row[n]??''}form.closest('.panel').querySelector('h3').textContent='Editar publicación';form.querySelector('.cancel').hidden=false;form.scrollIntoView({behavior:'smooth'})}
-function resetForm(form){const table=form.dataset.table;form.reset();form.id.value='';state.currentImages[table]=[];renderPreviews(form,table);form.closest('.panel').querySelector('h3').textContent='Nueva publicación';form.querySelector('.cancel').hidden=true;form.querySelectorAll('input[type=file]').forEach(i=>i.required=!!defs[table].fields.find(f=>f[0]===i.name)?.[3])}
+function editRow(table,row){const form=document.querySelector(`form[data-table="${table}"]`);form.id.value=row.id;state.currentImages[table]=normalizeImages(row);state.originalImages[table]=[...state.currentImages[table]];for(const f of defs[table].fields){const[n,,t]=f;const input=form.elements[n];if(!input)continue;if(t==='checkbox')input.checked=!!row[n];else if(t==='image'){input.required=false;input.closest('label').querySelector('.current-image').textContent=row[n]?'Imagen actual cargada':''}else if(t==='multiimage'){input.required=false;renderPreviews(form,table)}else if(t==='date'&&row[n])input.value=String(row[n]).slice(0,10);else if(t==='datetime-local'&&row[n])input.value=String(row[n]).slice(0,16);else input.value=row[n]??''}form.closest('.panel').querySelector('h3').textContent='Editar publicación';form.querySelector('.cancel').hidden=false;form.scrollIntoView({behavior:'smooth'})}
+function resetForm(form){const table=form.dataset.table;form.reset();form.id.value='';state.currentImages[table]=[];state.originalImages[table]=[];renderPreviews(form,table);const note=form.querySelector('.remove-images-note');if(note)note.hidden=true;form.closest('.panel').querySelector('h3').textContent='Nueva publicación';form.querySelector('.cancel').hidden=true;form.querySelectorAll('input[type=file]').forEach(i=>i.required=!!defs[table].fields.find(f=>f[0]===i.name)?.[3])}
 async function saveForm(form){
   const table=form.dataset.table;
   const button=form.querySelector('button[type="submit"]');
@@ -39,6 +59,7 @@ async function saveForm(form){
       const contenido=form.elements.contenido.value.trim();
       if(!titulo||!contenido)throw new Error('Escribe el título y el texto de la noticia.');
 
+      const originalImages=normalizeBlobUrls(state.originalImages.noticias);
       const existing=normalizeBlobUrls(state.currentImages.noticias);
       const files=[...(form.elements.imagenes?.files||[])].slice(0,Math.max(0,5-existing.length));
       const uploaded=files.length?await uploadMany(files,'noticias'):[];
@@ -67,6 +88,8 @@ async function saveForm(form){
         result=await sb.from('noticias').insert([payload]).select('*').single();
       }
       if(result.error)throw result.error;
+      const removedImages=originalImages.filter(url=>!imagenes.includes(url));
+      if(removedImages.length)await cleanupRemovedPortalImages(removedImages);
       console.info('Noticia guardada correctamente',result.data);
       message(id?'Noticia actualizada correctamente.':'Noticia publicada correctamente.');
       resetForm(form);
@@ -121,6 +144,8 @@ async function saveForm(form){
   }
 }
 function normalizeBlobUrls(arr){return(arr||[]).filter(x=>!String(x).startsWith('blob:'))}
+function portalImageStoragePath(url){try{const u=new URL(url);const marker='/storage/v1/object/public/portal-imagenes/';const i=u.pathname.indexOf(marker);return i>=0?decodeURIComponent(u.pathname.slice(i+marker.length)):null}catch{return null}}
+async function cleanupRemovedPortalImages(urls){const paths=[...new Set((urls||[]).map(portalImageStoragePath).filter(Boolean))];if(!paths.length)return;const{error}=await sb.storage.from('portal-imagenes').remove(paths);if(error)console.warn('No se pudieron borrar imágenes antiguas de Storage:',error.message)}
 async function deleteRow(table,id){if(!confirm('¿Eliminar esta publicación?'))return;const{error}=await sb.from(table).delete().eq('id',id);if(error)return message(error.message,true);message('Publicación eliminada.');loadTable(table)}
 async function loadConfig(){const{data,error}=await sb.from('configuracion_portal').select('*').eq('id',1).maybeSingle();if(error)return message(error.message,true);if(!data)return;const f=$('config-form');['titulo_portada','texto_portada','whatsapp','telefono','correo','direccion','periodo_directiva'].forEach(k=>f.elements[k].value=data[k]||'');f.dataset.portada=data.portada_url||'';$('portada-actual').textContent=data.portada_url?'Foto de portada actual cargada':''}
 $('config-form').onsubmit=async e=>{e.preventDefault();try{const f=e.currentTarget;const d=Object.fromEntries(new FormData(f));delete d.portada;const file=f.elements.portada.files[0];d.portada_url=file?await upload(file,'configuracion'):f.dataset.portada||null;d.actualizado_por=state.user.id;const{error}=await sb.from('configuracion_portal').upsert({id:1,...d});if(error)throw error;f.dataset.portada=d.portada_url||'';message('Datos del portal actualizados.')}catch(err){message(err.message||String(err),true)}};

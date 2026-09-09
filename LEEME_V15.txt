@@ -1,0 +1,21 @@
+SIGVE · NOTICIAS Y NOVEDADES · QUITAR IMAGEN V15
+
+Basado directamente en el ZIP adjuntado el 09-09-2026.
+
+CAMBIO
+En Administración > Noticias > Editar ahora puedes:
+- mantener las imágenes actuales;
+- agregar/reemplazar fotografías;
+- quitar una fotografía con la X;
+- usar el botón “Quitar todas las imágenes” para dejar la noticia solo con texto.
+
+El cambio se aplica al presionar Guardar.
+Las imágenes quitadas se eliminan también de Storage de forma automática cuando sea posible.
+
+INSTALACIÓN
+Reemplazar SOLO en GitHub:
+- admin.js
+- admin.html
+
+NO REQUIERE SQL.
+No modifica cuotas, finanzas, certificados, notificaciones ni otros módulos.
