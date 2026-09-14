@@ -1,0 +1,14 @@
+SIGVE V16 - ACTIVIDAD GRATUITA MASIVA EN SEDE
+
+Instalación:
+1. Reemplazar en GitHub: admin.html
+2. Reemplazar en GitHub: admin-v7.js
+3. NO ejecutar SQL.
+
+Nueva función en Administración > Sede y arriendos:
+- Botón "Actividad gratuita masiva".
+- Permite nombre, fecha desde/hasta, días de semana, horario y descripción.
+- Crea todas las fechas coincidentes como actividad gratuita confirmada ($0).
+- Fechas con conflicto de horario se omiten automáticamente.
+- No crea movimientos en Finanzas.
+- Cada fecha queda como registro individual, por lo que puede editarse o cancelarse después.
