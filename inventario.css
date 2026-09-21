@@ -1,1 +1,17 @@
 .inv-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.inv-summary .stat{padding:14px;border:1px solid #e3e8ef;border-radius:12px;background:#fff}.inv-summary .stat span{display:block;font-size:.82rem;color:#64748b}.inv-summary .stat strong{display:block;margin-top:5px;font-size:1.15rem}.inv-state{font-weight:700}.inv-bueno{color:#16794b}.inv-regular{color:#a16207}.inv-malo{color:#b42318}.inv-inactive{opacity:.6}.inv-modal{max-width:720px}@media(max-width:720px){.inv-summary{grid-template-columns:1fr}.inv-modal{width:94vw}.v7-table-wrap table{min-width:900px}}
+
+/* Ajuste visual del inventario: modal centrado en PC y móvil */
+.inv-backdrop{position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.55);display:grid;place-items:center;padding:16px}
+.inv-modal{width:min(720px,calc(100vw - 32px));max-height:92dvh;overflow:auto;margin:0;background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.25)}
+.inv-modal h3{margin:0 0 18px}
+.inv-modal .form-grid{width:100%}
+.inv-modal .actions{justify-content:flex-end}
+@media(max-width:720px){
+ .inv-backdrop{padding:12px;place-items:center}
+ .inv-modal{width:100%;max-width:100%;max-height:calc(100dvh - 24px);padding:16px;margin:0;border-radius:18px}
+ .inv-modal .form-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ .inv-modal .form-grid label,.inv-modal .form-grid label[style]{grid-column:1!important;min-width:0}
+ .inv-modal input,.inv-modal select,.inv-modal textarea{width:100%;max-width:100%;min-width:0}
+ .inv-modal .actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:10px}
+ .inv-modal .actions .button{width:100%;margin:0}
+}
