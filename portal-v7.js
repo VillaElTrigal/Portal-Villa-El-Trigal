@@ -351,12 +351,27 @@
 
   function setupRentalRequest() {
     const link = document.getElementById('rental-whatsapp');
+    const acceptance = document.getElementById('rental-rules-accept');
+    const help = document.getElementById('rental-rules-help');
     if (!link) return;
     link.removeAttribute('target');
     link.removeAttribute('href');
     link.setAttribute('role', 'button');
+    const syncAcceptance = () => {
+      const accepted = !!acceptance?.checked;
+      link.classList.toggle('is-disabled', !accepted);
+      link.setAttribute('aria-disabled', accepted ? 'false' : 'true');
+      if (help) help.classList.toggle('accepted', accepted);
+    };
+    acceptance?.addEventListener('change', syncAcceptance);
+    syncAcceptance();
     link.addEventListener('click', event => {
       event.preventDefault();
+      if (acceptance && !acceptance.checked) {
+        acceptance.focus();
+        if (help) help.textContent = 'Debes leer y aceptar las condiciones antes de solicitar la reserva.';
+        return;
+      }
       openRentalForm();
     });
   }
