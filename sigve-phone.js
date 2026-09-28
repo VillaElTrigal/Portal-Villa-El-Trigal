@@ -59,7 +59,7 @@
     const select=document.createElement('select');select.className='sigve-phone-country';select.innerHTML=COUNTRIES.filter(c=>c[0]!=='CL').map(c=>`<option value="${c[3]}" data-iso="${c[0]}">${c[2]} (+${c[3]})</option>`).join('')+'<option value="other" data-iso="">Otro país / código</option>';
     countryBox.append(flag,select);intl.appendChild(countryBox);
     const code=document.createElement('input');code.type='text';code.inputMode='numeric';code.placeholder='Código';code.className='sigve-phone-code';code.hidden=true;intl.appendChild(code);
-    row.insertBefore(intl,input);row.appendChild(input);wrap.appendChild(row);
+    row.appendChild(intl);row.appendChild(input);wrap.appendChild(row);
     const toggle=document.createElement('label');toggle.className='sigve-phone-foreign';toggle.innerHTML='<input type="checkbox" data-sigve-foreign> <span>Mi número de WhatsApp es extranjero</span>';wrap.appendChild(toggle);
     const help=document.createElement('small');help.className='sigve-phone-help';help.textContent='Ingresa los 8 dígitos después de +56 9.';wrap.appendChild(help);
     const cb=toggle.querySelector('input');
