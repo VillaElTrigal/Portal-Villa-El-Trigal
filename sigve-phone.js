@@ -8,27 +8,31 @@
   const digits = v => String(v || '').replace(/\D/g, '');
   const css = document.createElement('style');
   css.textContent = `
-    .sigve-phone-wrap{display:flex;flex-direction:column;gap:.55rem;width:100%}
+    .public-phone.sigve-phone-host,.phone-field.sigve-phone-host{display:block!important;border:0!important;border-radius:0!important;overflow:visible!important;background:transparent!important}
+    .sigve-phone-wrap{display:flex;flex-direction:column;gap:.45rem;width:100%}
     .sigve-phone-row{display:flex;align-items:stretch;gap:.55rem;width:100%}
-    .sigve-phone-row input{min-width:0;flex:1}
-    .sigve-phone-prefix{display:flex;align-items:center;justify-content:center;white-space:nowrap;font-weight:700;color:#334155;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:0 .8rem;min-width:78px}
-    .sigve-phone-foreign{display:inline-flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:600;color:#334155;cursor:pointer;width:max-content;max-width:100%}
-    .sigve-phone-foreign input{width:16px!important;height:16px!important;min-width:16px!important;flex:0 0 16px!important;margin:0;accent-color:#198754}
-    .sigve-phone-intl{display:flex;align-items:center;gap:.55rem;width:100%}
-    .sigve-phone-countrybox{display:flex;align-items:center;gap:.45rem;position:relative;flex:0 0 230px;min-width:0}
+    .sigve-phone-row>input{min-width:0;flex:1;height:54px!important;border:1px solid #cbd5e1!important;border-radius:10px!important;padding:.75rem .9rem!important;background:#fff!important;box-shadow:none!important}
+    .sigve-phone-row>input:focus{outline:none!important;border-color:#1f9d67!important;box-shadow:0 0 0 3px rgba(31,157,103,.12)!important}
+    .sigve-phone-prefix{display:flex;align-items:center;justify-content:center;white-space:nowrap;font-weight:700;color:#334155;background:#f8fafc!important;border:1px solid #cbd5e1;border-radius:10px!important;padding:0 .9rem!important;min-width:80px;height:54px;box-sizing:border-box}
+    .sigve-phone-foreign{display:flex!important;align-items:center!important;gap:.5rem!important;font-size:.86rem;font-weight:600;color:#334155;cursor:pointer;width:max-content;max-width:100%;padding:0!important;background:transparent!important;border:0!important}
+    .sigve-phone-foreign input{appearance:auto!important;width:16px!important;height:16px!important;min-width:16px!important;flex:0 0 16px!important;margin:0!important;padding:0!important;accent-color:#198754}
+    .sigve-phone-intl{display:flex;align-items:stretch;gap:.45rem;flex:0 0 235px;min-width:0}
+    .sigve-phone-countrybox{display:flex;align-items:center;gap:.45rem;position:relative;flex:1;min-width:0;height:54px;padding-left:.6rem;border:1px solid #cbd5e1;border-radius:10px;background:#fff;box-sizing:border-box}
     .sigve-phone-flag{width:25px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(15,23,42,.12);flex:0 0 auto}
-    .sigve-phone-country{width:100%;min-width:0;height:44px;padding:.55rem 2rem .55rem .65rem;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font:inherit}
-    .sigve-phone-country:focus,.sigve-phone-code:focus{outline:none;border-color:#1f9d67;box-shadow:0 0 0 3px rgba(31,157,103,.12)}
-    .sigve-phone-help{font-size:.78rem;color:#64748b;line-height:1.35;margin-top:-.1rem}
-    .sigve-phone-code{height:44px;width:105px!important;flex:0 0 105px!important;border-radius:10px!important}
+    .sigve-phone-country{width:100%;min-width:0;height:52px;padding:.55rem 1.7rem .55rem 0!important;border:0!important;border-radius:10px!important;background:#fff!important;color:#0f172a;font:inherit;box-shadow:none!important}
+    .sigve-phone-country:focus,.sigve-phone-code:focus{outline:none!important;box-shadow:none!important}
+    .sigve-phone-countrybox:focus-within{border-color:#1f9d67;box-shadow:0 0 0 3px rgba(31,157,103,.12)}
+    .sigve-phone-help{display:block;font-size:.78rem;color:#64748b;line-height:1.35;margin:0}
+    .sigve-phone-code{height:54px!important;width:92px!important;flex:0 0 92px!important;border:1px solid #cbd5e1!important;border-radius:10px!important;padding:.6rem!important;box-sizing:border-box}
     @media(max-width:600px){
-      .sigve-phone-row,.sigve-phone-intl{flex-wrap:wrap}
-      .sigve-phone-countrybox{flex:1 1 100%}
-      .sigve-phone-code{flex:0 0 100%!important;width:100%!important}
-      .sigve-phone-prefix{min-height:44px}
+      .sigve-phone-row{flex-wrap:wrap}
+      .sigve-phone-intl{flex:1 1 100%;width:100%}
+      .sigve-phone-row>input{flex:1 1 160px}
+      .sigve-phone-prefix{height:50px}
+      .sigve-phone-row>input,.sigve-phone-countrybox,.sigve-phone-code{height:50px!important}
+      .sigve-phone-country{height:48px}
     }`;
   document.head.appendChild(css);
-
   function inferForeign(raw) {
     const d = digits(raw).replace(/^0+/, '');
     if (!d || /^569\d{8}$/.test(d)) return null;
@@ -42,19 +46,21 @@
     input.dataset.sigvePhoneReady='1';
     const original = input.value || '';
     const parent = input.parentElement;
+    if (parent) parent.classList.add('sigve-phone-host');
     const existingPrefix = parent?.querySelector('span');
     const wrap = document.createElement('div'); wrap.className='sigve-phone-wrap';
     const row = document.createElement('div'); row.className='sigve-phone-row';
     if (existingPrefix) { existingPrefix.classList.add('sigve-phone-prefix'); existingPrefix.textContent='+56 9'; row.appendChild(existingPrefix); }
     else { const p=document.createElement('span');p.className='sigve-phone-prefix';p.textContent='+56 9';row.appendChild(p); }
-    input.parentNode.insertBefore(wrap,input); row.appendChild(input); wrap.appendChild(row);
-    const toggle=document.createElement('label');toggle.className='sigve-phone-foreign';toggle.innerHTML='<input type="checkbox" data-sigve-foreign> <span>Mi número de WhatsApp es extranjero</span>';wrap.appendChild(toggle);
+    input.parentNode.insertBefore(wrap,input);
     const intl=document.createElement('div');intl.className='sigve-phone-intl';intl.hidden=true;
     const countryBox=document.createElement('div');countryBox.className='sigve-phone-countrybox';
     const flag=document.createElement('img');flag.className='sigve-phone-flag';flag.alt='';flag.loading='lazy';
     const select=document.createElement('select');select.className='sigve-phone-country';select.innerHTML=COUNTRIES.filter(c=>c[0]!=='CL').map(c=>`<option value="${c[3]}" data-iso="${c[0]}">${c[2]} (+${c[3]})</option>`).join('')+'<option value="other" data-iso="">Otro país / código</option>';
-    countryBox.append(flag,select);intl.appendChild(countryBox);wrap.appendChild(intl);
-    const code=document.createElement('input');code.type='text';code.inputMode='numeric';code.placeholder='Código, ej. +51';code.className='sigve-phone-code';code.hidden=true;intl.appendChild(code);
+    countryBox.append(flag,select);intl.appendChild(countryBox);
+    const code=document.createElement('input');code.type='text';code.inputMode='numeric';code.placeholder='Código';code.className='sigve-phone-code';code.hidden=true;intl.appendChild(code);
+    row.insertBefore(intl,input);row.appendChild(input);wrap.appendChild(row);
+    const toggle=document.createElement('label');toggle.className='sigve-phone-foreign';toggle.innerHTML='<input type="checkbox" data-sigve-foreign> <span>Mi número de WhatsApp es extranjero</span>';wrap.appendChild(toggle);
     const help=document.createElement('small');help.className='sigve-phone-help';help.textContent='Ingresa los 8 dígitos después de +56 9.';wrap.appendChild(help);
     const cb=toggle.querySelector('input');
     const updateFlag=()=>{const opt=select.options[select.selectedIndex];const iso=opt?.dataset?.iso||'';flag.hidden=!iso;if(iso)flag.src=`https://flagcdn.com/40x30/${iso.toLowerCase()}.png`;};
