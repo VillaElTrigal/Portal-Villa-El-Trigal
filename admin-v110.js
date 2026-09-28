@@ -20,7 +20,7 @@ async function settings(){const{data,error}=await client().from('configuracion_g
 
 let cuotas=[],cuotasDeuda=[],cuotasSeleccionadas=new Set();
 const monthName=v=>{if(!v)return '';const [y,m]=v.slice(0,7).split('-');return new Date(Number(y),Number(m)-1,1).toLocaleDateString('es-CL',{month:'long',year:'numeric'})};
-const phoneWA=v=>{const d=String(v||'').replace(/\D/g,'');if(!d)return '';if(d.startsWith('56')&&d.length>=11)return d;if(d.startsWith('9')&&d.length===9)return '56'+d;if(d.length===8)return '569'+d;return ''};
+const phoneWA=v=>window.SIGVE_WHATSAPP?.normalizePhone(v)||'';
 function debtFor(x){return cuotasDeuda.filter(d=>d.socio_id===x.socio_id&&d.estado==='pendiente'&&d.periodo<=($('#cuotas-month').value+'-01')).sort((a,b)=>a.periodo.localeCompare(b.periodo))}
 function quotaVisual(x){const debt=debtFor(x),prior=debt.filter(d=>d.periodo<x.periodo);if(prior.length)return{key:'deuda_anterior',label:'Con deuda anterior',icon:'🔴',className:'deuda'};if(x.estado==='pendiente')return{key:'pendiente_mes',label:'Pendiente del mes',icon:'🟡',className:'pendiente-mes'};if(x.estado==='pagado')return{key:'al_dia',label:'Al día',icon:'🟢',className:'al-dia'};if(x.estado==='exento_incorporacion')return{key:'exento_incorporacion',label:'Exento',icon:'⚪',className:'exento'};return{key:x.estado,label:x.estado,icon:'⚪',className:'otro'}}
 async function loadCuotas(){const m=$('#cuotas-month').value;if(!m)return;const current=m+'-01';const [currentRes,debtRes]=await Promise.all([

@@ -59,13 +59,11 @@
     const digits = phoneDigits(value);
     return digits ? `${digits.slice(0,4)}${digits.length > 4 ? ' ' + digits.slice(4) : ''}` : '';
   };
-  const formatPhone = value => {
-    const digits = phoneDigits(value);
-    return digits ? `+56 9 ${digits.slice(0,4)}${digits.length > 4 ? ' ' + digits.slice(4) : ''}` : '';
-  };
+  const formatPhone = value => window.SIGVE_PHONE?.format(value) || String(value || '');
   const phoneDb = value => {
-    const digits = phoneDigits(value);
-    return digits.length === 8 ? `+569${digits}` : null;
+    const el=(value&&value.nodeType===1)?value:null;
+    if(el) return window.SIGVE_PHONE?.getDbValue(el)||null;
+    return window.SIGVE_PHONE?.normalizeE164(value)||null;
   };
   const iso = (year, month, day) => `${year}-${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
   const readable = (year, month, day) => `${day} de ${monthNames[month].toLowerCase()} de ${year}`;
@@ -282,21 +280,19 @@
     };
     loadReservationBenefits();
     rut.addEventListener('input', () => rut.value = formatRut(rut.value));
-    phone.addEventListener('input', () => {const d=String(phone.value||'').replace(/\D/g,'').slice(0,8);phone.value=d.length>4?`${d.slice(0,4)} ${d.slice(4)}`:d});
 
     form.onsubmit = async event => {
       event.preventDefault();
       const message = form.querySelector('.public-form-message');
       const submit = form.querySelector('button[type="submit"]');
       const formattedRut = formatRut(rut.value);
-      const localPhoneDigits=String(phone.value||'').replace(/\D/g,'').slice(0,8);
-      const dbPhone=localPhoneDigits.length===8?`+569${localPhoneDigits}`:null;
+      const dbPhone=phoneDb(phone);
       if (formattedRut && !validRut(formattedRut)) {
         message.textContent = 'Revisa el RUT ingresado.';
         return;
       }
       if (!dbPhone) {
-        message.textContent = 'El celular debe tener 8 dígitos después de +56 9.';
+        message.textContent = 'Ingresa un número de WhatsApp válido. Para Chile son 8 dígitos después de +56 9.';
         return;
       }
       submit.disabled = true;
@@ -422,14 +418,11 @@
       return d.slice(0,8);
     };
     phone.addEventListener('input',()=>{
-      const d=publicSocioPhoneDigits(phone.value);
-      phone.value=d.length>4?`${d.slice(0,4)} ${d.slice(4)}`:d;
     });
     form.onsubmit = async event => {
       event.preventDefault();
       const formattedRut = formatRut(rut.value);
-      const socioPhoneDigits=publicSocioPhoneDigits(phone.value);
-      const dbPhone=socioPhoneDigits.length===8?`+569${socioPhoneDigits}`:null;
+      const dbPhone=phoneDb(phone);
       const via=vias.find(v=>v.id===form.elements.via_id.value);
       const numero=form.elements.numero_domicilio.value.trim();
       if (!picker.valid() || !via) {message.textContent='Selecciona una calle, pasaje o avenida válida de la lista.';return}
@@ -439,7 +432,7 @@
         return;
       }
       if (!dbPhone) {
-        message.textContent = 'El celular debe tener 8 dígitos después de +56 9.';
+        message.textContent = 'Ingresa un número de WhatsApp válido. Para Chile son 8 dígitos después de +56 9.';
         return;
       }
       message.textContent = 'Enviando…';

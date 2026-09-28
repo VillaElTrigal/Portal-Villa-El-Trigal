@@ -27,7 +27,9 @@
     number = number.replace(/^0+/, '');
     if (number.length === 8) number = '569' + number;
     else if (number.length === 9 && number.startsWith('9')) number = '56' + number;
-    return /^569\d{8}$/.test(number) ? number : '';
+    // Chile conserva +569 + 8 dígitos. Los números ya guardados en formato
+    // internacional E.164 se respetan sin anteponer 56.
+    return /^\d{7,15}$/.test(number) ? number : '';
   }
 
   function isMobileDevice() {
