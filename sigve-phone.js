@@ -7,7 +7,26 @@
   ];
   const digits = v => String(v || '').replace(/\D/g, '');
   const css = document.createElement('style');
-  css.textContent = `.sigve-phone-wrap{display:flex;flex-direction:column;gap:.45rem}.sigve-phone-row{display:flex;align-items:center;gap:.45rem}.sigve-phone-row input{min-width:0;flex:1}.sigve-phone-prefix{white-space:nowrap;font-weight:600}.sigve-phone-foreign{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:500}.sigve-phone-country{width:100%;max-width:100%;padding:.55rem .65rem;border:1px solid #cbd5e1;border-radius:8px;background:#fff}.sigve-phone-help{font-size:.78rem;color:#64748b}.sigve-phone-code{width:90px!important;flex:0 0 90px!important}@media(max-width:600px){.sigve-phone-row{flex-wrap:wrap}.sigve-phone-country{font-size:.9rem}}`;
+  css.textContent = `
+    .sigve-phone-wrap{display:flex;flex-direction:column;gap:.55rem;width:100%}
+    .sigve-phone-row{display:flex;align-items:stretch;gap:.55rem;width:100%}
+    .sigve-phone-row input{min-width:0;flex:1}
+    .sigve-phone-prefix{display:flex;align-items:center;justify-content:center;white-space:nowrap;font-weight:700;color:#334155;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:0 .8rem;min-width:78px}
+    .sigve-phone-foreign{display:inline-flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:600;color:#334155;cursor:pointer;width:max-content;max-width:100%}
+    .sigve-phone-foreign input{width:16px!important;height:16px!important;min-width:16px!important;flex:0 0 16px!important;margin:0;accent-color:#198754}
+    .sigve-phone-intl{display:flex;align-items:center;gap:.55rem;width:100%}
+    .sigve-phone-countrybox{display:flex;align-items:center;gap:.45rem;position:relative;flex:0 0 230px;min-width:0}
+    .sigve-phone-flag{width:25px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(15,23,42,.12);flex:0 0 auto}
+    .sigve-phone-country{width:100%;min-width:0;height:44px;padding:.55rem 2rem .55rem .65rem;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font:inherit}
+    .sigve-phone-country:focus,.sigve-phone-code:focus{outline:none;border-color:#1f9d67;box-shadow:0 0 0 3px rgba(31,157,103,.12)}
+    .sigve-phone-help{font-size:.78rem;color:#64748b;line-height:1.35;margin-top:-.1rem}
+    .sigve-phone-code{height:44px;width:105px!important;flex:0 0 105px!important;border-radius:10px!important}
+    @media(max-width:600px){
+      .sigve-phone-row,.sigve-phone-intl{flex-wrap:wrap}
+      .sigve-phone-countrybox{flex:1 1 100%}
+      .sigve-phone-code{flex:0 0 100%!important;width:100%!important}
+      .sigve-phone-prefix{min-height:44px}
+    }`;
   document.head.appendChild(css);
 
   function inferForeign(raw) {
@@ -29,12 +48,17 @@
     if (existingPrefix) { existingPrefix.classList.add('sigve-phone-prefix'); existingPrefix.textContent='+56 9'; row.appendChild(existingPrefix); }
     else { const p=document.createElement('span');p.className='sigve-phone-prefix';p.textContent='+56 9';row.appendChild(p); }
     input.parentNode.insertBefore(wrap,input); row.appendChild(input); wrap.appendChild(row);
-    const toggle=document.createElement('label');toggle.className='sigve-phone-foreign';toggle.innerHTML='<input type="checkbox" data-sigve-foreign> Mi número de WhatsApp es extranjero';wrap.appendChild(toggle);
-    const select=document.createElement('select');select.className='sigve-phone-country';select.hidden=true;select.innerHTML=COUNTRIES.filter(c=>c[0]!=='CL').map(c=>`<option value="${c[3]}">${c[1]} ${c[2]} (+${c[3]})</option>`).join('')+'<option value="other">🌎 Otro país / código</option>';wrap.appendChild(select);
-    const code=document.createElement('input');code.type='text';code.inputMode='numeric';code.placeholder='+ código';code.className='sigve-phone-code';code.hidden=true;row.insertBefore(code,input);
+    const toggle=document.createElement('label');toggle.className='sigve-phone-foreign';toggle.innerHTML='<input type="checkbox" data-sigve-foreign> <span>Mi número de WhatsApp es extranjero</span>';wrap.appendChild(toggle);
+    const intl=document.createElement('div');intl.className='sigve-phone-intl';intl.hidden=true;
+    const countryBox=document.createElement('div');countryBox.className='sigve-phone-countrybox';
+    const flag=document.createElement('img');flag.className='sigve-phone-flag';flag.alt='';flag.loading='lazy';
+    const select=document.createElement('select');select.className='sigve-phone-country';select.innerHTML=COUNTRIES.filter(c=>c[0]!=='CL').map(c=>`<option value="${c[3]}" data-iso="${c[0]}">${c[2]} (+${c[3]})</option>`).join('')+'<option value="other" data-iso="">Otro país / código</option>';
+    countryBox.append(flag,select);intl.appendChild(countryBox);wrap.appendChild(intl);
+    const code=document.createElement('input');code.type='text';code.inputMode='numeric';code.placeholder='Código, ej. +51';code.className='sigve-phone-code';code.hidden=true;intl.appendChild(code);
     const help=document.createElement('small');help.className='sigve-phone-help';help.textContent='Ingresa los 8 dígitos después de +56 9.';wrap.appendChild(help);
     const cb=toggle.querySelector('input');
-    const sync=()=>{const foreign=cb.checked;row.querySelector('.sigve-phone-prefix').hidden=foreign;select.hidden=!foreign;code.hidden=!foreign||select.value!=='other';input.maxLength=foreign?15:8;input.placeholder=foreign?'Número sin código de país':'12345678';help.textContent=foreign?'Selecciona el país del número e ingresa el número de WhatsApp sin el código internacional.':'Ingresa los 8 dígitos después de +56 9.';input.value=digits(input.value).slice(0,foreign?15:8)};
+    const updateFlag=()=>{const opt=select.options[select.selectedIndex];const iso=opt?.dataset?.iso||'';flag.hidden=!iso;if(iso)flag.src=`https://flagcdn.com/40x30/${iso.toLowerCase()}.png`;};
+    const sync=()=>{const foreign=cb.checked;row.querySelector('.sigve-phone-prefix').hidden=foreign;intl.hidden=!foreign;code.hidden=!foreign||select.value!=='other';input.maxLength=foreign?15:8;input.placeholder=foreign?'Número de WhatsApp':'12345678';help.textContent=foreign?'Ingresa el número sin el código de país.':'Ingresa los 8 dígitos después de +56 9.';updateFlag();input.value=digits(input.value).slice(0,foreign?15:8)};
     cb.addEventListener('change',sync);select.addEventListener('change',sync);input.addEventListener('input',()=>{input.value=digits(input.value).slice(0,cb.checked?15:8)});code.addEventListener('input',()=>{code.value='+'+digits(code.value).slice(0,4)});
     const foreign=inferForeign(original);
     if(foreign){cb.checked=true;if(foreign.country){select.value=foreign.country[3]}else{select.value='other';code.value='+';}input.value=foreign.national}else{let d=digits(original);if(d.startsWith('569')&&d.length>=11)d=d.slice(3);else if(d.startsWith('56'))d=d.slice(2).replace(/^9/,'');else if(d.length===9&&d.startsWith('9'))d=d.slice(1);input.value=d.slice(0,8)}
