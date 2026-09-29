@@ -68,3 +68,20 @@
 .fin-icon-btn.danger:hover{background:#ffe2e2;color:#aa2626}
 @media(max-width:800px){.fin-icon-btn{width:32px;height:32px;min-width:32px;border-radius:8px}.fin-icon-btn svg{width:16px;height:16px}#section-finanzas td:last-child .actions{gap:5px}}
 
+
+
+/* Reservas: tarjetas y acciones compactas */
+.calendar-list{align-items:start}
+.calendar-card{align-self:start}
+.calendar-card .reservation-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:.65rem}
+.res-action-btn{width:36px;height:36px;min-width:36px;padding:0;border:0;border-radius:10px;background:#eaf1f4;color:#244b5b;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(36,75,91,.06);transition:background .15s ease,color .15s ease,transform .15s ease,box-shadow .15s ease}
+.res-action-btn svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.res-action-btn:hover{background:#dce8ed;color:#173b4a;transform:translateY(-1px);box-shadow:0 3px 8px rgba(20,55,70,.12)}
+.res-action-btn:focus-visible{outline:2px solid #7ca6b7;outline-offset:2px}
+.res-action-btn.whatsapp{background:#e8f5ee;color:#18754a}
+.res-action-btn.whatsapp:hover{background:#d7eddf;color:#0f603a}
+.res-action-btn.danger{background:#fff0f0;color:#c83b3b}
+.res-action-btn.danger:hover{background:#ffe2e2;color:#aa2626}
+.res-action-btn.migration{background:#fff6df;color:#946200}
+.res-action-btn.migration:hover{background:#ffedbd;color:#704a00}
+@media(max-width:800px){.res-action-btn{width:34px;height:34px;min-width:34px;border-radius:9px}.res-action-btn svg{width:17px;height:17px}.calendar-card .reservation-actions{gap:6px}}
