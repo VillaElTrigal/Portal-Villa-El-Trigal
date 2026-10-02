@@ -489,9 +489,12 @@ La solicitud quedó registrada en SIGVE.`;
       memberRentalBenefits=await rpc('portal_socio_beneficios_fecha',{p_token:token,p_fecha:iso})||[];
       const eligible=memberRentalBenefits.filter(x=>x.cumple);
       benefitBox.innerHTML=`<div class="member-price-row"><span>Valor normal</span><strong>${money(memberRentalBase)}</strong></div>
-      ${eligible.length?`<div class="member-benefit-options"><p><strong>Beneficios disponibles</strong></p><p class="hint">El beneficio es opcional. Si no lo usas ahora, seguirá disponible para otra reserva.</p>
+      ${memberRentalBenefits.length?`<div class="member-benefit-options"><p><strong>Beneficios para ${selectedYear}</strong></p><p class="hint">Los beneficios disponibles se pueden seleccionar. Los que aún no cumples se muestran para que puedas ver tu avance.</p>
       <label class="member-benefit-radio"><input type="radio" name="memberBenefitChoice" value="" checked><span><strong>No usar beneficio</strong><small>Reservar con el valor normal.</small></span></label>
-      ${eligible.map(x=>`<label class="member-benefit-radio"><input type="radio" name="memberBenefitChoice" value="${x.beneficio_id}"><span><strong>${escape(x.nombre)}</strong><small>${escape(x.detalle||'Beneficio disponible')}</small></span></label>`).join('')}</div>`:`<p class="hint">No tienes beneficios aplicables para esta fecha.</p>`}
+      ${memberRentalBenefits.map(x=>x.cumple
+        ?`<label class="member-benefit-radio"><input type="radio" name="memberBenefitChoice" value="${x.beneficio_id}"><span><strong>${escape(x.nombre)}</strong><small>${escape(x.detalle||'Beneficio disponible')}</small></span></label>`
+        :`<div class="member-benefit-radio" style="opacity:.72;cursor:default"><span><strong>${escape(x.nombre)} · Aún no disponible</strong><small>${escape(x.motivo||'Aún no cumples los requisitos.')}${x.detalle?` · ${escape(x.detalle)}`:''}</small></span></div>`
+      ).join('')}</div>`:`<p class="hint">No hay beneficios configurados para esta fecha.</p>`}
       <div class="member-price-row total"><span>Total estimado</span><strong>${money(memberRentalBase)}</strong></div>`;
       benefitBox.querySelectorAll('input[name="memberBenefitChoice"]').forEach(r=>r.addEventListener('change',()=>{
         const selected=eligible.find(x=>String(x.beneficio_id)===r.value);
