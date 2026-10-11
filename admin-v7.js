@@ -247,11 +247,12 @@ async function loadReservas(){
   if(!br.error)(br.data||[]).forEach(b=>requestedBenefitMap[b.id]=b.nombre);
  }
  // Control informativo de 48 horas: jamás libera la fecha automáticamente.
- const pendingRentalIds=rows.filter(x=>x.tipo==='arriendo'&&x.estado==='pendiente').map(x=>x.id);
+ const pendingRentalIds=rows.filter(x=>x.tipo==='arriendo'&&!['cancelado','archivado','finalizado'].includes(x.estado)).map(x=>x.id);
  const pendingPayments={};
+ let depositPaymentsLoaded=true;
  if(pendingRentalIds.length){
   const result=await sb.from('movimientos_financieros').select('reserva_id,monto').in('reserva_id',pendingRentalIds).eq('tipo','ingreso');
-  if(result.error){console.warn('No se pudo consultar pagos pendientes:',result.error.message);}
+  if(result.error){depositPaymentsLoaded=false;console.warn('No se pudo consultar pagos pendientes:',result.error.message);}
   else (result.data||[]).forEach(m=>pendingPayments[m.reserva_id]=(pendingPayments[m.reserva_id]||0)+Number(m.monto||0));
  }
  const migratedIds=rows.filter(x=>x.tipo==='arriendo'&&x.descripcion?.includes('Migración desde Excel')&&!x.migracion_regularizada).map(x=>x.id);
@@ -270,7 +271,7 @@ async function loadReservas(){
   const pending=Math.max(0,Number(x.valor_total||0)-paid);
   const admin=x.tipo==='administrativa';
   const label=admin?'Reserva administrativa':x.tipo;
-  const awaitingDeposit=x.tipo==='arriendo'&&x.estado==='pendiente'&&Number(pendingPayments[x.id]||0)<10000;
+  const awaitingDeposit=depositPaymentsLoaded&&x.tipo==='arriendo'&&!['cancelado','archivado','finalizado'].includes(x.estado)&&Number(pendingPayments[x.id]||0)<10000;
   const deadline=x.creado_en?new Date(new Date(x.creado_en).getTime()+48*3600000):null;
   const overdue=awaitingDeposit&&deadline&&!Number.isNaN(deadline.getTime())&&Date.now()>=deadline.getTime();
   const depositBadge=awaitingDeposit?` <span class="v7-badge" title="La fecha permanece bloqueada hasta que la directiva decida liberarla.">${overdue?'⚠️ Abono vencido (48 h)':'⏳ Abono pendiente (48 h)'}</span>`:'';
@@ -310,7 +311,7 @@ async function regularizeMigratedReservation(x){
 }
 function moveReservationMonth(delta){const input=$('#reserva-calendar-month');if(!input)return;const value=input.value||today().slice(0,7),[y,m]=value.split('-').map(Number),d=new Date(y,m-1+delta,1,12);input.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;loadReservas()}
 async function remindReservationDeposit(x){
- if(!x||x.tipo!=='arriendo'||x.estado!=='pendiente')return alert('Esta reserva ya no está pendiente. Actualiza el listado.');
+ if(!x||x.tipo!=='arriendo'||['cancelado','archivado','finalizado'].includes(x.estado))return alert('Esta reserva no admite recordatorios de abono. Actualiza el listado.');
  const r=await sb.from('movimientos_financieros').select('monto').eq('reserva_id',x.id).eq('tipo','ingreso');
  if(r.error)return alert('No se pudo verificar el abono. No se enviará un recordatorio sin revisar los pagos: '+r.error.message);
  const paid=(r.data||[]).reduce((sum,m)=>sum+Number(m.monto||0),0);
