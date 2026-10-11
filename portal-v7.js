@@ -320,9 +320,9 @@
         const { error } = await sb.rpc(rpcName, rpcArgs);
         if (error) throw error;
         const finalValue = appliedBenefit ? Number(appliedBenefit.valor_final) : baseRentalValue;
-        const benefitText = appliedBenefit ? ` Beneficio aplicado: ${appliedBenefit.nombre}. Total del arriendo: ${money(finalValue)}.` : '';
-        const paymentText = finalValue === 0 ? ' No corresponde abono por tratarse de un arriendo gratuito.' : ' Adjuntaré el comprobante del abono de $10.000.';
-        const whatsappText = `Hola, envié una solicitud de arriendo de la Sede Social Villa El Trigal para el día ${selectedRentalLabel}. Mi nombre es ${form.elements.nombre.value.trim()} y mi celular es ${formatPhone(dbPhone)}.${benefitText}${paymentText} Entiendo que la reserva queda confirmada únicamente cuando la Junta de Vecinos responda por WhatsApp.`;
+        const benefitText = appliedBenefit ? `🎁 *Beneficio solicitado:* ${appliedBenefit.nombre}\n` : '';
+        const paymentText = finalValue === 0 ? '💵 *Abono requerido:* No corresponde (arriendo gratuito).' : '💵 *Abono requerido:* $10.000';
+        const whatsappText = `🏡 *SOLICITUD DE ARRIENDO – SEDE VILLA EL TRIGAL*\n\nHola, envié una solicitud de arriendo de la sede.\n\n👤 *Solicitante:* ${form.elements.nombre.value.trim()}\n📱 *Celular:* ${formatPhone(dbPhone)}\n📅 *Fecha solicitada:* ${selectedRentalLabel}\n${benefitText}💰 *Total estimado del arriendo:* ${money(finalValue)}\n${paymentText}\n\n${finalValue === 0 ? '' : '📎 Adjuntaré el comprobante del abono para su revisión.\n\n'}📌 Entiendo que la reserva${appliedBenefit ? ' y el beneficio solicitado' : ''} quedará${appliedBenefit ? 'n' : ''} confirmada${appliedBenefit ? 's' : ''} únicamente cuando la Junta de Vecinos responda por WhatsApp.\n\n*Junta de Vecinos Villa El Trigal*`;
         const whatsappUrl = window.SIGVE_WHATSAPP?.url('56974596793',whatsappText)||`https://wa.me/56974596793?text=${encodeURIComponent(whatsappText)}`;
         if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
         else window.location.href = whatsappUrl;
