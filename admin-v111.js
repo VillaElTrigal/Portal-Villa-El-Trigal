@@ -21,29 +21,11 @@ function modal(html){const d=document.createElement('dialog');d.className='v7-mo
 
 let certs=[];
 async function loadCerts111(){const{data,error}=await sb.from('certificados_emitidos').select('*').order('folio',{ascending:false}).limit(500);if(error)return toast('Certificados: '+error.message,true);certs=data||[];renderCerts111()}
-function renderCerts111(){const q=($('#cert-search')?.value||'').toLowerCase();const rows=certs.filter(x=>`${x.folio||''} ${x.nombre||''} ${x.rut||''}`.toLowerCase().includes(q));const paid=certs.filter(x=>x.estado_pago==='pagado');$('#cert-summary').innerHTML=`<div class="stat"><span>Registrados</span><strong>${certs.length}</strong></div><div class="stat"><span>Pagados</span><strong>${paid.length}</strong></div><div class="stat"><span>Pendientes</span><strong>${certs.filter(x=>x.estado_pago==='pendiente').length}</strong></div><div class="stat"><span>Recaudado</span><strong>${money(paid.reduce((a,x)=>a+Number(x.valor),0))}</strong></div>`;
-$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_pago)}">${esc(x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button>${x.estado_documento==='anulado'&&!x.movimiento_id?`<button class="button danger" data-reorder-cert="${x.id}">Reorganizar correlativos</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
+function renderCerts111(){const q=($('#cert-search')?.value||'').toLowerCase();const rows=certs.filter(x=>`${x.folio||''} ${x.nombre||''} ${x.rut||''}`.toLowerCase().includes(q));const activos=certs.filter(x=>x.estado_documento!=='anulado');const paid=activos.filter(x=>x.estado_pago==='pagado');$('#cert-summary').innerHTML=`<div class="stat"><span>Registrados</span><strong>${certs.length}</strong></div><div class="stat"><span>Pagados</span><strong>${paid.length}</strong></div><div class="stat"><span>Pendientes</span><strong>${activos.filter(x=>x.estado_pago==='pendiente').length}</strong></div><div class="stat"><span>Recaudado</span><strong>${money(paid.reduce((a,x)=>a+Number(x.valor),0))}</strong></div>`;
+$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}">${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button></div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
 $$('[data-edit-cert]').forEach(b=>b.onclick=()=>openCert(certs.find(x=>x.id===b.dataset.editCert)));
 $$('[data-print-cert111]').forEach(b=>b.onclick=()=>printCert111(certs.find(x=>x.id===b.dataset.printCert111)));
-$$('[data-reorder-cert]').forEach(b=>b.onclick=()=>reorderCertificate(certs.find(x=>x.id===b.dataset.reorderCert)));
-}
-async function reorderCertificate(x){
-  if(!x)return;
-  const folio=String(x.folio||0).padStart(5,'0');
-  const posteriores=certs.filter(c=>Number(c.folio)>Number(x.folio));
-  const emitidos=posteriores.filter(c=>['emitido','entregado'].includes(c.estado_documento));
-  if(emitidos.length)return toast(`No se puede reorganizar: existen ${emitidos.length} certificado(s) posterior(es) ya emitido(s).`,true);
-  const detalle=posteriores.length?` Los ${posteriores.length} folio(s) posteriores disminuirán en 1.`:' El folio quedará disponible para la próxima solicitud.';
-  if(!confirm(`¿Reorganizar desde el folio ${folio}?
 
-Se eliminará este registro anulado.${detalle}
-
-Esta acción no se puede deshacer.`))return;
-  const{data,error}=await sb.rpc('reorganizar_correlativos_certificados',{p_certificado_id:x.id});
-  if(error)return toast(error.message,true);
-  const r=Array.isArray(data)?data[0]:data;
-  toast(`Correlativos reorganizados. ${Number(r?.registros_desplazados||0)} registro(s) actualizado(s).`);
-  await loadCerts111();
 }
 async function openCert(x=null){
   const [st,so,folioRes]=await Promise.all([
@@ -89,15 +71,17 @@ async function openCert(x=null){
   const f=d.querySelector('form'),otherWrap=d.querySelector('[data-purpose-other]');
   f.finalidad.value=x?.finalidad||'laboral';f.estado_documento.value=x?.estado_documento||'emitido';f.estado_pago.value=x?.estado_pago||'pendiente';f.medio.value=x?.medio_pago||'efectivo';f.fondo.value=x?.fondo||'caja';
   const toggleOther=()=>{const show=f.finalidad.value==='otro';otherWrap.hidden=!show;f.finalidad_otro.required=show;if(!show)f.finalidad_otro.value=''};toggleOther();f.finalidad.onchange=toggleOther;
+  f.estado_documento.addEventListener('change',()=>{if(f.estado_documento.value==='anulado'&&f.estado_pago.value!=='pagado')f.estado_pago.value='anulado';});
   f.rut.addEventListener('input',()=>f.rut.value=formatRut(f.rut.value));
   f.socio.onchange=()=>{const socio=(so.data||[]).find(y=>y.id===f.socio.value);if(socio){f.nombre.value=socio.nombre_completo;f.nacionalidad.value=socio.nacionalidad||'';f.rut.value=formatRut(socio.rut);f.direccion.value=socio.direccion||''}};
   f.medio.onchange=()=>f.fondo.value=f.medio.value==='transferencia'?'banco':'caja';
-  f.onsubmit=async e=>{e.preventDefault();f.rut.value=formatRut(f.rut.value);if(!validRut(f.rut.value))return toast('El RUT ingresado no es válido.',true);if(f.finalidad.value==='otro'&&!f.finalidad_otro.value.trim())return toast('Especifica la otra finalidad.',true);
+  f.onsubmit=async e=>{e.preventDefault();f.rut.value=formatRut(f.rut.value);if(!validRut(f.rut.value))return toast('El RUT ingresado no es válido.',true);if(f.finalidad.value==='otro'&&!f.finalidad_otro.value.trim())return toast('Especifica la otra finalidad.',true);if(f.estado_documento.value==='anulado'){if(x?.movimiento_id||f.estado_pago.value==='pagado')return toast('Este certificado tiene un pago asociado. Revisa primero Finanzas.',true);f.estado_pago.value='anulado';}
     const common={p_folio:Number(f.folio.value),p_nombre:f.nombre.value,p_rut:f.rut.value,p_nacionalidad:f.nacionalidad.value.trim(),p_direccion:f.direccion.value,p_finalidad:f.finalidad.value,p_finalidad_otro:f.finalidad_otro.value,p_fecha:f.fecha.value,p_valor:Number(f.valor.value),p_estado_documento:f.estado_documento.value,p_estado_pago:f.estado_pago.value,p_medio:f.medio.value,p_fondo:f.fondo.value,p_referencia:'',p_observaciones:''};
     const call=x?['actualizar_certificado_v111',{p_id:x.id,...common}]:['registrar_certificado_v111',{p_socio_id:f.socio.value||null,...common}];
+    if(x&&x.estado_documento!=='anulado'&&f.estado_documento.value==='anulado'&&!confirm('¿Confirmas que este certificado NO fue entregado? Si es el último folio y no tiene pagos, se archivará la anulación y su número quedará libre automáticamente.'))return;
     const{data,error}=await sb.rpc(call[0],call[1]);if(error)return toast(error.message,true);
     const certId=x?.id||data;const upd=await sb.from('certificados_emitidos').update({telefono:null,correo:null,nacionalidad:f.nacionalidad.value.trim()||null,destino:null,referencia_transferencia:null,observaciones:null}).eq('id',certId);if(upd.error)return toast(upd.error.message,true);
-    d.remove();toast(x?'Certificado actualizado.':'Certificado registrado.');loadCerts111();
+    d.remove();toast(x?'Certificado actualizado. Si era el último folio anulado y sin pagos, se liberó automáticamente.':'Certificado registrado.');loadCerts111();
   };
 }
 
