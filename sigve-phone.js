@@ -36,7 +36,7 @@
   document.head.appendChild(css);
   function inferForeign(raw) {
     const d = digits(raw).replace(/^0+/, '');
-    if (!d || /^569\d{8}$/.test(d)) return null;
+    if (!d || /^569\d{8}$/.test(d) || /^9\d{8}$/.test(d) || /^\d{8}$/.test(d) || /^56(?:9)?\d{8}$/.test(d)) return null;
     const candidates = COUNTRIES.filter(c => d.startsWith(c[3])).sort((a,b)=>b[3].length-a[3].length);
     const c = candidates[0];
     return c ? {country:c, national:d.slice(c[3].length)} : {country:null, national:d};
@@ -68,18 +68,21 @@
     const sync=()=>{const foreign=cb.checked;row.querySelector('.sigve-phone-prefix').hidden=foreign;intl.hidden=!foreign;code.hidden=!foreign||select.value!=='other';input.maxLength=foreign?15:8;input.placeholder=foreign?'Número de WhatsApp':'12345678';help.textContent=foreign?'Ingresa el número sin el código de país.':'Ingresa los 8 dígitos después de +56 9.';updateFlag();input.value=digits(input.value).slice(0,foreign?15:8)};
     cb.addEventListener('change',sync);select.addEventListener('change',sync);input.addEventListener('input',()=>{input.value=digits(input.value).slice(0,cb.checked?15:8)});code.addEventListener('input',()=>{code.value='+'+digits(code.value).slice(0,4)});
     const foreign=inferForeign(original);
-    if(foreign){cb.checked=true;if(foreign.country){select.value=foreign.country[3]}else{select.value='other';code.value='+';}input.value=foreign.national}else{let d=digits(original);if(d.startsWith('569')&&d.length>=11)d=d.slice(3);else if(d.startsWith('56'))d=d.slice(2).replace(/^9/,'');else if(d.length===9&&d.startsWith('9'))d=d.slice(1);input.value=d.slice(0,8)}
-    sync(); input._sigvePhone={wrap,row,cb,select,code,help};
+    if(foreign){cb.checked=true;if(foreign.country){select.value=foreign.country[3]}else{select.value='other';code.value='+';}input.value=foreign.national}else{let d=digits(original);if(d.startsWith('569')&&d.length>=11)d=d.slice(3);else if(/^569\d{8}$/.test(d))d=d.slice(3);else if(/^56\d{8}$/.test(d))d=d.slice(2);else if(d.length===9&&d.startsWith('9'))d=d.slice(1);input.value=d.slice(0,8)}
+    sync(); input._sigvePhone={wrap,row,cb,select,code,help,original,dirty:false};
+    const markDirty=()=>{if(input._sigvePhone)input._sigvePhone.dirty=true};
+    input.addEventListener('input',markDirty);cb.addEventListener('change',markDirty);select.addEventListener('change',markDirty);code.addEventListener('input',markDirty);
   }
   function setValue(input, value){
     if(!input)return; enhance(input); const ui=input._sigvePhone; if(!ui)return;
     const raw=String(value||''); const f=inferForeign(raw);
     if(f){ui.cb.checked=true;if(f.country){ui.select.value=f.country[3]}else{ui.select.value='other';ui.code.value='+';}input.value=f.national}
-    else{ui.cb.checked=false;let d=digits(raw);if(d.startsWith('569')&&d.length>=11)d=d.slice(3);else if(d.startsWith('56'))d=d.slice(2).replace(/^9/,'');else if(d.length===9&&d.startsWith('9'))d=d.slice(1);input.value=d.slice(0,8)}
-    ui.cb.dispatchEvent(new Event('change'));
+    else{ui.cb.checked=false;let d=digits(raw);if(d.startsWith('569')&&d.length>=11)d=d.slice(3);else if(/^569\d{8}$/.test(d))d=d.slice(3);else if(/^56\d{8}$/.test(d))d=d.slice(2);else if(d.length===9&&d.startsWith('9'))d=d.slice(1);input.value=d.slice(0,8)}
+    ui.cb.dispatchEvent(new Event('change'));ui.original=raw;ui.dirty=false;
   }
   function getDbValue(input){
     if(!input)return null; enhance(input); const ui=input._sigvePhone; const n=digits(input.value);
+    if(ui && !ui.dirty && ui.original && !/^569\d{8}$/.test(digits(ui.original)) && !/^9\d{8}$/.test(digits(ui.original)) && !/^\d{8}$/.test(digits(ui.original)))return ui.original;
     if(!ui || !ui.cb.checked) return n.length===8?`+569${n}`:null;
     if(!n)return null; let cc=ui.select.value==='other'?digits(ui.code.value):ui.select.value; if(!cc)return null; const full=cc+n; return full.length>=7&&full.length<=15?`+${full}`:null;
   }

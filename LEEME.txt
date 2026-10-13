@@ -1,16 +1,5 @@
-SIGVE18 · NOTIFICACIONES ADMIN V11
-
-AJUSTE:
-- Cuando no existan notificaciones pendientes, el encabezado vuelve a mostrar:
-  “Todo al día”.
-- Las notificaciones ya leídas siguen visibles como historial reciente.
-- No cambia la lógica de pagos ni de las demás notificaciones.
-
-REEMPLAZAR EN GITHUB:
-1. admin.html
-2. admin-v7.js
-
-NO EJECUTAR SQL.
-
-CACHE:
-admin-v7.js?v=NOTIFADMIN11
+SIGVE - Corrección de teléfonos en Administración.
+Reemplazar únicamente sigve-phone.js y admin.html en la raíz del sitio. No ejecutar SQL.
+Actualizar página con Ctrl+F5. Verificar 3 socios sin guardar, comprobar prefijo +56 9 y ocho dígitos.
+ADVERTENCIA: Si en la base ya existen teléfonos incompletos (por ejemplo 6 dígitos), este cambio NO reconstruye los dígitos faltantes; habrá que recuperarlos desde un respaldo o consultar al socio.
+Guardar copia de ambos archivos originales antes de reemplazar.
