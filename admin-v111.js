@@ -22,11 +22,47 @@ function modal(html){const d=document.createElement('dialog');d.className='v7-mo
 let certs=[];
 async function loadCerts111(){const{data,error}=await sb.from('certificados_emitidos').select('*').order('folio',{ascending:false}).limit(500);if(error)return toast('Certificados: '+error.message,true);certs=data||[];renderCerts111()}
 function renderCerts111(){const q=($('#cert-search')?.value||'').toLowerCase();const rows=certs.filter(x=>`${x.folio||''} ${x.nombre||''} ${x.rut||''}`.toLowerCase().includes(q));const activos=certs.filter(x=>x.estado_documento!=='anulado');const paid=activos.filter(x=>x.estado_pago==='pagado');$('#cert-summary').innerHTML=`<div class="stat"><span>Registrados</span><strong>${certs.length}</strong></div><div class="stat"><span>Pagados</span><strong>${paid.length}</strong></div><div class="stat"><span>Pendientes</span><strong>${activos.filter(x=>x.estado_pago==='pendiente').length}</strong></div><div class="stat"><span>Recaudado</span><strong>${money(paid.reduce((a,x)=>a+Number(x.valor),0))}</strong></div>`;
-$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}">${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button></div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
+$('#cert-body').innerHTML=rows.map(x=>`<tr><td><strong>${String(x.folio||0).padStart(5,'0')}</strong></td><td>${dateCL(x.fecha)}</td><td>${esc(x.nombre)}<br><small>${esc(x.rut)}</small>${x.para_otra_persona&&x.solicitante_nombre?`<br><small>Solicitado por: ${esc(x.solicitante_nombre)}</small>`:''}<br><small>${x.origen_solicitud==='portal_socio'?'👤 Portal Socio':x.origen_solicitud==='publico'?'🌐 Portal público':'⚙️ Administración'}</small></td><td>${esc(x.direccion)}</td><td><span class="v110-status ${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}">${esc(x.estado_documento==='anulado'?'anulado':x.estado_pago)}</span><br><small>${esc(x.estado_documento||'emitido')}</small></td><td>${money(x.valor)}</td><td><div class="cert-actions"><button class="button secondary" data-edit-cert="${x.id}">Editar</button><button class="button secondary" data-print-cert111="${x.id}">Generar digital</button>${x.estado_documento==='emitido'?`<button class="button whatsapp" type="button" data-wa-cert111="${x.id}">📲 Avisar retiro</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="7">Sin certificados.</td></tr>';
 $$('[data-edit-cert]').forEach(b=>b.onclick=()=>openCert(certs.find(x=>x.id===b.dataset.editCert)));
 $$('[data-print-cert111]').forEach(b=>b.onclick=()=>printCert111(certs.find(x=>x.id===b.dataset.printCert111)));
+$$('[data-wa-cert111]').forEach(b=>b.onclick=()=>avisarRetiroCert111(certs.find(x=>x.id===b.dataset.waCert111)));
 
 }
+// Aviso manual: no altera el certificado ni su estado de pago.
+async function avisarRetiroCert111(x){
+  if(!x||x.estado_documento!=='emitido')return toast('Solo se puede avisar el retiro de certificados emitidos.',true);
+  let phone=String(x.telefono||'').trim();
+  if(!phone&&x.socio_id){
+    const {data,error}=await sb.from('socios').select('telefono').eq('id',x.socio_id).maybeSingle();
+    if(!error)phone=String(data?.telefono||'').trim();
+  }
+  // Las solicitudes antiguas pueden no tener teléfono: se solicita manualmente.
+  if(!phone)phone=prompt('Este certificado no tiene WhatsApp registrado. Ingresa el número completo (ej.: +56912345678):')||'';
+  if(!phone.trim())return;
+  let digits=phone.replace(/\D/g,'');
+  if(digits.length===8)digits='569'+digits;
+  else if(digits.length===9&&digits.startsWith('9'))digits='56'+digits;
+  if(!/^\d{7,15}$/.test(digits))return toast('El número de WhatsApp no tiene un formato válido.',true);
+  const msg=`🎉📜 *¡TU CERTIFICADO ESTÁ LISTO!* 📜🎉
+
+🏡 *JUNTA DE VECINOS VILLA EL TRIGAL*
+
+¡Hola! 👋😊
+
+Te informamos que tu certificado ya fue emitido y está disponible para retiro. ✅
+
+📍 *Lugar de retiro:* Las Riendas N.º 1284, San Antonio.
+🏟️ *Referencia:* Frente a la cancha.
+
+📌 Te recomendamos coordinar previamente tu retiro.
+
+💚 ¡Gracias por confiar en nuestra Junta de Vecinos!
+✨ *Juntos seguimos construyendo una mejor comunidad.* ✨
+
+*Junta de Vecinos Villa El Trigal* · Etapas 1, 2 y 3 🏘️`;
+  window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(msg),'_blank','noopener');
+}
+
 async function openCert(x=null){
   const [st,so,folioRes]=await Promise.all([
     sb.from('configuracion_gestion').select('*').eq('id',1).single(),
@@ -80,7 +116,7 @@ async function openCert(x=null){
     const call=x?['actualizar_certificado_v111',{p_id:x.id,...common}]:['registrar_certificado_v111',{p_socio_id:f.socio.value||null,...common}];
     if(x&&x.estado_documento!=='anulado'&&f.estado_documento.value==='anulado'&&!confirm('¿Confirmas que este certificado NO fue entregado? Si es el último folio y no tiene pagos, se archivará la anulación y su número quedará libre automáticamente.'))return;
     const{data,error}=await sb.rpc(call[0],call[1]);if(error)return toast(error.message,true);
-    const certId=x?.id||data;const upd=await sb.from('certificados_emitidos').update({telefono:null,correo:null,nacionalidad:f.nacionalidad.value.trim()||null,destino:null,referencia_transferencia:null,observaciones:null}).eq('id',certId);if(upd.error)return toast(upd.error.message,true);
+    const certId=x?.id||data;const upd=await sb.from('certificados_emitidos').update({nacionalidad:f.nacionalidad.value.trim()||null}).eq('id',certId);if(upd.error)return toast(upd.error.message,true);
     d.remove();toast(x?'Certificado actualizado. Si era el último folio anulado y sin pagos, se liberó automáticamente.':'Certificado registrado.');loadCerts111();
   };
 }

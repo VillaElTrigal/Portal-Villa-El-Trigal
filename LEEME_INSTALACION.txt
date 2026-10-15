@@ -1,0 +1,14 @@
+SIGVE - Aviso de retiro por WhatsApp
+
+Reemplazar solamente index.html, admin.html y admin-v111.js en la raíz del proyecto.
+
+Cambios:
+- Solicitud pública de certificado: teléfono/WhatsApp obligatorio con el componente existente.
+- El teléfono se registra mediante el parámetro p_telefono de la función SQL existente.
+- Administración: botón Avisar retiro para certificados emitidos. Abre WhatsApp con texto preparado; el envío es manual.
+- Solicitudes antiguas sin teléfono: se solicita número manual.
+- En edición de certificado se evita borrar teléfono/correo guardados.
+
+IMPORTANTE: No incluye SQL. No se modifican las funciones de folios, pagos o anulaciones. La dirección del mensaje está en admin-v111.js y se puede cambiar en el futuro.
+
+PRUEBAS: 1) enviar solicitud pública de prueba con teléfono; 2) comprobar en Administración que se guardó; 3) abrir Avisar retiro en un certificado emitido; 4) comprobar que no se envía automáticamente.

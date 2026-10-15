@@ -243,6 +243,7 @@
                 <label>Nombre completo<input id="cert-name" type="text" autocomplete="name" required></label>
                 <label>RUT<input id="cert-rut" type="text" inputmode="text" maxlength="12" placeholder="12.345.678-9" required><small class="field-help">Los puntos y el guion se agregan automáticamente.</small></label>
                 <label>Nacionalidad<input id="cert-nationality" type="text" maxlength="80" required></label>
+                <label>Teléfono / WhatsApp<div class="phone-field"><input id="cert-phone" data-phone type="tel" inputmode="numeric" autocomplete="tel" required placeholder="12345678"></div></label>
                 <label class="certificate-wide-field">Calle, pasaje o avenida
   <div class="via-picker certificate-via-picker" id="cert-via-picker">
     <input id="cert-via-search" type="text" autocomplete="off" required placeholder="Escribe una letra o el nombre de la vía" aria-expanded="false">
@@ -554,7 +555,10 @@
         const purposeOther=document.getElementById('cert-purpose-other').value.trim();
         if(purpose==='otro'&&!purposeOther){alert('Especifica la otra finalidad.');document.getElementById('cert-purpose-other').focus();return;}
         updateCertAddress();if(!certAddress.value){alert('Selecciona una vía e ingresa el número.');return;}
-        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:null,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
+        const phoneInput=document.getElementById('cert-phone');
+        const phone=window.SIGVE_PHONE?.getDbValue(phoneInput);
+        if(!phone){alert('Ingresa un número de WhatsApp válido.');phoneInput.focus();return;}
+        const args={p_nombre:document.getElementById('cert-name').value.trim(),p_rut:rut,p_nacionalidad:document.getElementById('cert-nationality').value.trim(),p_direccion:document.getElementById('cert-address').value.trim(),p_finalidad:purpose,p_finalidad_otro:purposeOther||null,p_telefono:phone,p_correo:null,p_origen:'publico',p_token:null,p_para_otro:false};
         const {data,error}=await client.rpc('solicitar_certificado_residencia',args); if(error)throw error;
         const row=Array.isArray(data)?data[0]:data; const folio=String(row.folio).padStart(5,'0');
         const purposeLabel=purpose==='otro'?purposeOther:({laboral:'Laboral',estudiantil:'Estudiantil',transporte:'Transporte'}[purpose]||purpose);
@@ -566,6 +570,7 @@ Nombre: ${args.p_nombre}
 Nacionalidad: ${args.p_nacionalidad}
 RUT: ${row.rut_formateado||rut}
 Dirección: ${args.p_direccion}
+WhatsApp de contacto: ${phone}
 Finalidad: ${purposeLabel}
 Estado: Pendiente de pago
 Valor: $${Number(row.valor||1000).toLocaleString('es-CL')}
@@ -588,7 +593,7 @@ La solicitud quedó registrada en SIGVE.`;
 
   </script>
   <link rel="stylesheet" href="navidad.css?v=3">
-  <script src="sigve-phone.js?v=6"></script><script src="sigve-whatsapp.js?v=525"></script><script src="navidad.js?v=NOMBRES2026A"></script>
+  <script src="sigve-phone.js?v=CERTWSP20261015"></script><script src="sigve-whatsapp.js?v=525"></script><script src="navidad.js?v=NOMBRES2026A"></script>
   <script src="portal-content.js?v=630"></script>
   <script src="portal-popup.js?v=630"></script>
   <script src="portal-v7.js?v=SOLICITUDWSP20261011"></script>
