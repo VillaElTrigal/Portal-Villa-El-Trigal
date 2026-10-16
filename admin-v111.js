@@ -60,7 +60,9 @@ Te informamos que tu certificado ya fue emitido y est\u00E1 disponible para reti
 \u2728 *Juntos seguimos construyendo una mejor comunidad.* \u2728
 
 *Junta de Vecinos Villa El Trigal* \u00B7 Etapas 1, 2 y 3 \u{1F3D8}\uFE0F`;
-  window.open('https://api.whatsapp.com/send?phone='+digits+'&text='+encodeURIComponent(msg),'_blank','noopener');
+  const wa=window.SIGVE_WHATSAPP;
+  if(wa?.open)wa.open(digits,msg);
+  else window.open('https://web.whatsapp.com/send?phone='+digits+'&text='+encodeURIComponent(msg),'_blank','noopener');
 }
 
 async function openCert(x=null){

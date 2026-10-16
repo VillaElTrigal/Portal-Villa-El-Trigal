@@ -1,9 +1,9 @@
-SIGVE - Ajuste puntual del enlace de WhatsApp
+SIGVE - Aviso de retiro con el componente WhatsApp compartido
 
-1. Reemplazar solamente admin-v111.js en el repositorio.
-2. Si admin.html usa un parametro ?v= en el script admin-v111.js, cambiarlo por un identificador nuevo, por ejemplo ?v=WAAPI20261016, para evitar cache.
-3. Publicar y recargar con Ctrl+F5.
-4. Probar Avisar retiro sin enviar hasta comprobar emojis y destinatario.
+1. Reemplazar SOLO admin-v111.js en GitHub con el archivo incluido.
+2. En admin.html, modificar UNICAMENTE el valor de version del script admin-v111.js a ?v=WHATSAPPCOMPARTIDO20261015 para evitar cache. No reemplazar admin.html completo.
+3. Publicar, recargar con Ctrl+F5 y probar Avisar retiro sin enviar hasta verificar.
 
-Cambio unico: wa.me/NUMERO?text= pasa a api.whatsapp.com/send?phone=NUMERO&text=.
-No se modifican folios, pagos ni datos.
+El cambio llama window.SIGVE_WHATSAPP.open(digits,msg), igual que otros modulos.
+No hay SQL ni cambios en certificados, folios o pagos.
+La solucion aun requiere prueba en el sitio publicado.
