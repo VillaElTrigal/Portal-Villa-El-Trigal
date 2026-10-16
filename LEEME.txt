@@ -1,5 +1,11 @@
-SIGVE - Corrección de teléfonos en Administración.
-Reemplazar únicamente sigve-phone.js y admin.html en la raíz del sitio. No ejecutar SQL.
-Actualizar página con Ctrl+F5. Verificar 3 socios sin guardar, comprobar prefijo +56 9 y ocho dígitos.
-ADVERTENCIA: Si en la base ya existen teléfonos incompletos (por ejemplo 6 dígitos), este cambio NO reconstruye los dígitos faltantes; habrá que recuperarlos desde un respaldo o consultar al socio.
-Guardar copia de ambos archivos originales antes de reemplazar.
+CORRECCION EMOJIS WHATSAPP - SIGVE
+
+Reemplazar solamente en la raiz del sitio:
+- admin-v111.js
+- admin.html
+
+Publicar cambios y actualizar Administracion con Ctrl+F5.
+Probar el aviso en WhatsApp Web y/o smartphone antes de usar con vecinos.
+
+No se modifica Supabase, folios, pagos, ni anulaciones.
+La codificacion del mensaje usa escapes Unicode de JavaScript para que los emojis se construyan correctamente aun si el archivo se interpreta con una codificacion incorrecta.

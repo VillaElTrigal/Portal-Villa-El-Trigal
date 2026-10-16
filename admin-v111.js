@@ -43,23 +43,23 @@ async function avisarRetiroCert111(x){
   if(digits.length===8)digits='569'+digits;
   else if(digits.length===9&&digits.startsWith('9'))digits='56'+digits;
   if(!/^\d{7,15}$/.test(digits))return toast('El número de WhatsApp no tiene un formato válido.',true);
-  const msg=`🎉📜 *¡TU CERTIFICADO ESTÁ LISTO!* 📜🎉
+  const msg=`\u{1F389}\u{1F4DC} *\u00A1TU CERTIFICADO EST\u00C1 LISTO!* \u{1F4DC}\u{1F389}
 
-🏡 *JUNTA DE VECINOS VILLA EL TRIGAL*
+\u{1F3E1} *JUNTA DE VECINOS VILLA EL TRIGAL*
 
-¡Hola! 👋😊
+\u00A1Hola! \u{1F44B}\u{1F60A}
 
-Te informamos que tu certificado ya fue emitido y está disponible para retiro. ✅
+Te informamos que tu certificado ya fue emitido y est\u00E1 disponible para retiro. \u2705
 
-📍 *Lugar de retiro:* Las Riendas N.º 1284, San Antonio.
-🏟️ *Referencia:* Frente a la cancha.
+\u{1F4CD} *Lugar de retiro:* Las Riendas N.\u00BA 1284, San Antonio.
+\u{1F3DF}\uFE0F *Referencia:* Frente a la cancha.
 
-📌 Te recomendamos coordinar previamente tu retiro.
+\u{1F4CC} Te recomendamos coordinar previamente tu retiro.
 
-💚 ¡Gracias por confiar en nuestra Junta de Vecinos!
-✨ *Juntos seguimos construyendo una mejor comunidad.* ✨
+\u{1F49A} \u00A1Gracias por confiar en nuestra Junta de Vecinos!
+\u2728 *Juntos seguimos construyendo una mejor comunidad.* \u2728
 
-*Junta de Vecinos Villa El Trigal* · Etapas 1, 2 y 3 🏘️`;
+*Junta de Vecinos Villa El Trigal* \u00B7 Etapas 1, 2 y 3 \u{1F3D8}\uFE0F`;
   window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(msg),'_blank','noopener');
 }
 
