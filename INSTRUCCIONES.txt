@@ -1,17 +1,9 @@
-SIGVE 18 · ELIMINAR APARIENCIA DE TEMPORADA
+SIGVE - Ajuste puntual del enlace de WhatsApp
 
-1) En GitHub reemplaza SOLO estos 3 archivos:
-   - index.html
-   - portal-socio.html
-   - admin.html
+1. Reemplazar solamente admin-v111.js en el repositorio.
+2. Si admin.html usa un parametro ?v= en el script admin-v111.js, cambiarlo por un identificador nuevo, por ejemplo ?v=WAAPI20261016, para evitar cache.
+3. Publicar y recargar con Ctrl+F5.
+4. Probar Avisar retiro sin enviar hasta comprobar emojis y destinatario.
 
-2) Elimina de GitHub estos archivos, porque ya no se utilizan:
-   - temas-temporada.css
-   - temas-temporada.js
-   - admin-apariencia.js
-
-3) En Supabase > SQL Editor ejecuta:
-   - ELIMINAR_APARIENCIA_SUPABASE.sql
-
-Esto elimina únicamente el módulo de apariencia/temas de temporada.
-No modifica socios, cuotas, beneficios, reservas, certificados, finanzas, avisos ni WhatsApp.
+Cambio unico: wa.me/NUMERO?text= pasa a api.whatsapp.com/send?phone=NUMERO&text=.
+No se modifican folios, pagos ni datos.
