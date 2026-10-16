@@ -1,9 +1,6 @@
-SIGVE - Aviso de retiro con el componente WhatsApp compartido
-
-1. Reemplazar SOLO admin-v111.js en GitHub con el archivo incluido.
-2. En admin.html, modificar UNICAMENTE el valor de version del script admin-v111.js a ?v=WHATSAPPCOMPARTIDO20261015 para evitar cache. No reemplazar admin.html completo.
-3. Publicar, recargar con Ctrl+F5 y probar Avisar retiro sin enviar hasta verificar.
-
-El cambio llama window.SIGVE_WHATSAPP.open(digits,msg), igual que otros modulos.
-No hay SQL ni cambios en certificados, folios o pagos.
-La solucion aun requiere prueba en el sitio publicado.
+Corrección puntual del aviso de retiro por WhatsApp.
+1. Sustituir admin-v111.js por el archivo incluido.
+2. En admin.html cambiar únicamente el parámetro de versión de admin-v111.js a ?v=CERTWAARRIENDO20261016.
+3. Publicar y actualizar con Ctrl+F5.
+4. Probar en WhatsApp Web y en celular antes de enviar.
+No se modifican SQL, folios, pagos ni otros archivos.

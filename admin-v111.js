@@ -43,26 +43,31 @@ async function avisarRetiroCert111(x){
   if(digits.length===8)digits='569'+digits;
   else if(digits.length===9&&digits.startsWith('9'))digits='56'+digits;
   if(!/^\d{7,15}$/.test(digits))return toast('El número de WhatsApp no tiene un formato válido.',true);
-  const msg=`\u{1F389}\u{1F4DC} *\u00A1TU CERTIFICADO EST\u00C1 LISTO!* \u{1F4DC}\u{1F389}
+  // Mismo patrón que la confirmación de arriendo de sede (admin-v7.js):
+  // emojis literales y envío mediante el componente compartido SIGVE_WHATSAPP.
+  const msg=`🎉📜 *¡TU CERTIFICADO ESTÁ LISTO!* 📜🎉
 
-\u{1F3E1} *JUNTA DE VECINOS VILLA EL TRIGAL*
+🏡 *JUNTA DE VECINOS VILLA EL TRIGAL*
 
-\u00A1Hola! \u{1F44B}\u{1F60A}
+¡Hola! 👋😊
 
-Te informamos que tu certificado ya fue emitido y est\u00E1 disponible para retiro. \u2705
+Te informamos que tu certificado ya fue emitido y está disponible para retiro. ✅
 
-\u{1F4CD} *Lugar de retiro:* Las Riendas N.\u00BA 1284, San Antonio.
-\u{1F3DF}\uFE0F *Referencia:* Frente a la cancha.
+📍 *Lugar de retiro:* Las Riendas N.º 1284, San Antonio.
+🏟️ *Referencia:* Frente a la cancha.
 
-\u{1F4CC} Te recomendamos coordinar previamente tu retiro.
+📌 Te recomendamos coordinar previamente tu retiro.
 
-\u{1F49A} \u00A1Gracias por confiar en nuestra Junta de Vecinos!
-\u2728 *Juntos seguimos construyendo una mejor comunidad.* \u2728
+💚 ¡Gracias por confiar en nuestra Junta de Vecinos!
+✨ *Juntos seguimos construyendo una mejor comunidad.* ✨
 
-*Junta de Vecinos Villa El Trigal* \u00B7 Etapas 1, 2 y 3 \u{1F3D8}\uFE0F`;
-  const wa=window.SIGVE_WHATSAPP;
-  if(wa?.open)wa.open(digits,msg);
-  else window.open('https://web.whatsapp.com/send?phone='+digits+'&text='+encodeURIComponent(msg),'_blank','noopener');
+*Junta de Vecinos Villa El Trigal* · Etapas 1, 2 y 3 🏘️`;
+  if(window.SIGVE_WHATSAPP?.open){
+    window.SIGVE_WHATSAPP.open(digits,msg);
+  }else{
+    // Mismo respaldo usado por confirmación de arriendos.
+    window.open(`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`,'_blank');
+  }
 }
 
 async function openCert(x=null){
