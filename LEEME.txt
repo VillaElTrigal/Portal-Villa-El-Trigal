@@ -1,11 +1,3 @@
-CORRECCION EMOJIS WHATSAPP - SIGVE
-
-Reemplazar solamente en la raiz del sitio:
-- admin-v111.js
-- admin.html
-
-Publicar cambios y actualizar Administracion con Ctrl+F5.
-Probar el aviso en WhatsApp Web y/o smartphone antes de usar con vecinos.
-
-No se modifica Supabase, folios, pagos, ni anulaciones.
-La codificacion del mensaje usa escapes Unicode de JavaScript para que los emojis se construyan correctamente aun si el archivo se interpreta con una codificacion incorrecta.
+Reemplazar admin-v7.js y admin.html en la raiz del repositorio. Publicar y actualizar con Ctrl+F5.
+Se restablece changeSocioStatus y se evita la reactivacion de socios dados de baja, por riesgo de cuotas retroactivas. No requiere SQL.
+Probar primero con un registro de prueba.
