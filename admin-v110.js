@@ -27,11 +27,13 @@ async function loadCuotas(){const m=$('#cuotas-month').value;if(!m)return;const 
 const prep=await client().rpc('generar_cuotas_mes',{p_periodo:current});
 if(prep.error)return toast('No fue posible preparar las cuotas del mes: '+prep.error.message,true);
 const [currentRes,debtRes]=await Promise.all([
-client().from('cuotas_socios').select('*,socios(id,numero_socio,nombre_completo,rut,fecha_ingreso,telefono,autoriza_whatsapp)').eq('periodo',current).order('socios(numero_socio)',{ascending:true}),
-client().from('cuotas_socios').select('id,socio_id,periodo,estado,monto,socios(id,numero_socio,nombre_completo,rut,fecha_ingreso,telefono,autoriza_whatsapp)').eq('estado','pendiente').lte('periodo',current).order('periodo',{ascending:true})
+client().from('cuotas_socios').select('*,socios(id,numero_socio,nombre_completo,rut,fecha_ingreso,telefono,autoriza_whatsapp,estado)').eq('periodo',current).order('socios(numero_socio)',{ascending:true}),
+client().from('cuotas_socios').select('id,socio_id,periodo,estado,monto,socios(id,numero_socio,nombre_completo,rut,fecha_ingreso,telefono,autoriza_whatsapp,estado)').eq('estado','pendiente').lte('periodo',current).order('periodo',{ascending:true})
 ]);if(currentRes.error)return toast('Cuotas: '+currentRes.error.message,true);if(debtRes.error)return toast('Deudas: '+debtRes.error.message,true);const actuales=currentRes.data||[],deudas=debtRes.data||[],presentes=new Set(actuales.map(x=>x.socio_id)),arrastrados=[],vistos=new Set();
 for(const d of deudas){if(d.periodo<current&&!presentes.has(d.socio_id)&&!vistos.has(d.socio_id)){arrastrados.push({...d,_arrastre:true});vistos.add(d.socio_id)}}
-cuotas=[...actuales,...arrastrados];cuotasDeuda=deudas;cuotasSeleccionadas.clear();renderCuotas()}
+// La renuncia voluntaria excluye al socio de la cobranza activa, sin borrar cuotas históricas.
+const cobrables = fila => fila.socios?.estado !== 'renunciado';
+cuotas=[...actuales,...arrastrados].filter(cobrables);cuotasDeuda=deudas.filter(cobrables);cuotasSeleccionadas.clear();renderCuotas()}
 function setQuotaFilter(value){$('#cuotas-filter').value=value;renderCuotas()}
 function renderCuotas(){const q=($('#cuotas-search').value||'').toLowerCase(),f=$('#cuotas-filter').value;const decorated=cuotas.map(x=>({...x,_visual:quotaVisual(x),_debt:debtFor(x)}));const rows=decorated.filter(x=>{const matchesStatus=f==='todos'||x.estado===f||x._visual.key===f;return matchesStatus&&`${x.socios?.numero_socio||''} ${x.socios?.nombre_completo||''} ${x.socios?.rut||''}`.toLowerCase().includes(q)});
 const paid=decorated.filter(x=>x.estado==='pagado'),pending=decorated.filter(x=>x.estado==='pendiente'),upToDate=decorated.filter(x=>x._visual.key==='al_dia'),monthPending=decorated.filter(x=>x._visual.key==='pendiente_mes'),oldDebt=decorated.filter(x=>x._visual.key==='deuda_anterior'),exempt=decorated.filter(x=>x.estado==='exento_incorporacion'),cash=paid.filter(x=>x.medio_pago==='efectivo').reduce((a,x)=>a+Number(x.monto),0),bank=paid.filter(x=>x.medio_pago==='transferencia').reduce((a,x)=>a+Number(x.monto),0),expected=decorated.filter(x=>!x._arrastre&&x.estado!=='exento_incorporacion'&&x.estado!=='anulado').reduce((a,x)=>a+Number(x.monto),0),collected=cash+bank,missing=Math.max(0,expected-collected),pct=expected?Math.round(collected/expected*100):0;

@@ -1,6 +1,9 @@
-Corrección puntual del aviso de retiro por WhatsApp.
-1. Sustituir admin-v111.js por el archivo incluido.
-2. En admin.html cambiar únicamente el parámetro de versión de admin-v111.js a ?v=CERTWAARRIENDO20261016.
-3. Publicar y actualizar con Ctrl+F5.
-4. Probar en WhatsApp Web y en celular antes de enviar.
-No se modifican SQL, folios, pagos ni otros archivos.
+SIGVE - Renuncias voluntarias en Cuotas
+
+1. Respalda admin-v110.js y admin.html de GitHub.
+2. Reemplaza esos dos archivos en la raíz del proyecto.
+3. Publica y actualiza Administración con Ctrl+F5.
+4. Verifica que el socio renunciado ya no aparezca en cobranza activa.
+
+Este ajuste solo filtra la visualización y los totales del módulo de cuotas. NO borra ni anula registros ni modifica Supabase.
+IMPORTANTE: La función SQL generar_cuotas_mes sigue ejecutándose; se debe revisar por separado que no cree cuotas para socios renunciados.
